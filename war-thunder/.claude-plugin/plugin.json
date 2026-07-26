@@ -1,5 +1,5 @@
 {
   "name": "war-thunder",
-  "description": "Outils pour War Thunder : notation d'avions et analyse chiffrée via datamine",
-  "version": "0.1.0"
+  "description": "Outils War Thunder de Florian : analyse chiffree d'avions (datamine, wiki, forums) et grille de notation personnelle.",
+  "version": "0.2.0"
 }

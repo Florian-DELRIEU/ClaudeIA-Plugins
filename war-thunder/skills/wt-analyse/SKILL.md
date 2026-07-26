@@ -15,9 +15,13 @@ War Thunder patche très souvent : BR, flight models et munitions bougent d'un p
 
 **Leçon apprise (et à ne pas répéter) :** la fiche statistique du wiki officiel (colonnes « Rate of Climb », « Max speed » condensées en une ligne de chiffres accolés) s'est révélée peu fiable pour la montée — jusqu'à deux fois inférieure aux mesures réelles en jeu (cas vérifié : D.520 affiché à 10,0 m/s sur la fiche, ~18 m/s en jeu, confirmé par mesure communautaire ET par le datamine). Ces chiffres condensés sont aussi ambigus à parser (quatre valeurs accolées sans séparateur clair). **Ne plus utiliser cette ligne de la fiche wiki comme source de montée/vitesse.** Les constantes structurelles de la même fiche (BR, armement, limites Vne/Mach/train) restent fiables.
 
-## Le script : `scripts/wt_datamine.py`
+## Récupération des données — déléguer à l'agent `datamine-digger`
 
-Ce skill embarque un script Python testé qui extrait les données directement depuis le dépôt `gszabi99/War-Thunder-Datamine` sur GitHub. Il gère lui-même le clonage léger (arborescence seule, sans télécharger tout le dépôt), la résolution de noms, et le calcul des tables de performance.
+Ce skill embarque un script Python testé, `scripts/wt_datamine.py`, qui extrait les données directement depuis le dépôt `gszabi99/War-Thunder-Datamine` sur GitHub (clonage léger, résolution de noms, calcul des tables de performance). **Ne pas exécuter ce script directement dans le contexte principal.** Déléguer chaque récupération de données à l'agent `datamine-digger` (fourni par ce même plugin) : il fait tourner le script dans son propre contexte et ne renvoie que les chiffres extraits, sans le bruit du clonage/parsing.
+
+Pour chaque avion à analyser, invoquer `datamine-digger` avec le nom (approximatif ou exact) de l'appareil et récupérer en retour son bloc compact : BR (AB/RB/SB), limites structurelles, table perf par altitude, homonymes éventuels, erreurs/données manquantes.
+
+Le script accepte, pour référence, ces commandes (c'est l'agent qui les exécute, pas ce skill) :
 
 ```
 python3 scripts/wt_datamine.py resolve <mot-clé>     # trouve le(s) nom(s) interne(s) d'un avion
@@ -26,9 +30,9 @@ python3 scripts/wt_datamine.py limits <nom_interne>  # limites structurelles, ma
 python3 scripts/wt_datamine.py br <nom_interne>      # BR AB/RB/SB, coûts économiques
 ```
 
-Le premier appel de la conversation clone le dépôt en mode « blobless » (arborescence des chemins seule, sans le contenu — rapide, quelques Mo). Les appels suivants dans la même conversation réutilisent ce cache (`~/wtdm_cache/`), y compris le fichier `wpcost.blkx` (30 Mo, téléchargé une seule fois par conversation puis mis en cache localement — pas de re-téléchargement à chaque avion demandé).
+Le premier appel clone le dépôt en mode « blobless » (arborescence des chemins seule, sans le contenu — rapide, quelques Mo). Les appels suivants réutilisent ce cache (`~/wtdm_cache/`), y compris le fichier `wpcost.blkx` (30 Mo, téléchargé une seule fois puis mis en cache).
 
-**Attention aux homonymes** : la commande `br` peut trouver plusieurs entrées pour un même nom de base (ex. `d_520` existe à la fois comme ancien avion premium britannique retiré du jeu et comme `d_520_france`, l'avion actuel de l'arbre français). Le script liste alors tous les candidats avec leur pays — toujours vérifier lequel correspond à la demande de Florian avant d'annoncer un chiffre.
+**Attention aux homonymes** : `datamine-digger` signale dans son bloc de sortie tous les candidats trouvés pour un même nom de base (ex. `d_520` existe à la fois comme ancien avion premium britannique retiré du jeu et comme `d_520_france`, l'avion actuel de l'arbre français). Toujours vérifier lequel correspond à la demande de Florian avant d'annoncer un chiffre.
 
 ## Le processus — à suivre à chaque demande
 
@@ -41,11 +45,9 @@ Identifier trois choses avant toute recherche :
 Si l'un des trois est ambigu, poser **une seule** question ciblée. Si tout est clair, enchaîner directement.
 
 ### Étape 2 — Résolution et récupération des données
-1. `resolve <nom approximatif>` pour trouver le nom interne exact (dossier `flightmodels/performance/`).
-2. `perf <nom_interne>` pour la table vitesse/montée par palier d'altitude (0 à plafond, tous les 1000 m).
-3. `limits <nom_interne>` pour les limites structurelles (Vne, Mach, train, volets), la masse à vide et le carburant.
-4. `br <nom_interne>` pour le BR exact (AB/RB/SB) et les coûts — vérifier les homonymes signalés.
-5. Pour l'**armement** (calibre, cadence, munitions, balistique) et le **temps de virage** : compléter avec la fiche wiki officielle (`wiki.warthunder.com/unit/<nom>`) et les forums, faute de source datamine directe et fiable pour ces deux points.
+1. Invoquer l'agent `datamine-digger` avec le nom (approximatif ou exact) de chaque appareil concerné — il renvoie un bloc par avion (BR, limites, table perf par altitude, homonymes, erreurs), voir plus bas.
+2. Vérifier les homonymes signalés dans ce bloc avant d'annoncer un chiffre.
+3. Pour l'**armement** (calibre, cadence, munitions, balistique) et le **temps de virage** : compléter avec la fiche wiki officielle (`wiki.warthunder.com/unit/<nom>`) et les forums, faute de source datamine directe et fiable pour ces deux points.
 
 ### Étape 3 — Croisement et signalement des divergences
 Comparer systématiquement les valeurs calculées par `wt_datamine.py` (vitesse, montée, limites, BR) à la fiche wiki :
