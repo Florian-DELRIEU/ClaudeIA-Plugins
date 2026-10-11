@@ -5,6 +5,12 @@ d'un sous-ensemble d'un ORBAT JSON (format orbat-mapper.app) avec une légende
 "CODE = Nx Désignation réelle", en Équipement/Personnel séparés, à partir
 d'une table de correspondance fournie — PAS déduite du catalogue racine.
 
+Format de sortie : le format canonique de `legends.py` (naming.md § 7.3) —
+`* **CODE : Désignation réelle**`, sans quantité par défaut. La prose déjà
+présente dans la description (phrase de contexte § 7.4) est CONSERVÉE ; seule
+l'ancienne légende est remplacée. `--avec-quantites` ajoute « Nx » devant la
+désignation (Règle 6 cas 2 — uniquement sur demande explicite de Florian).
+
 Complète `add_legends.py` (Tâche 4 point 6 du skill), qui reste l'outil par
 défaut quand un code catalogue a une désignation réelle univoque dans tout le
 fichier. Utiliser add_local_legends.py à la place dès que l'une de ces
@@ -13,10 +19,10 @@ conditions s'applique (voir naming.md Règle 6) :
   1. Code partagé entre plusieurs camps du même fichier (le nom réel diffère
      selon le camp — ne peut pas vivre dans le catalogue racine, voir naming.md
      Règle 5 "piège codes partagés").
-  2. Besoin du COMPTE par ligne (`* MBT = 4x T-55`), pas juste le nom.
+  2. Besoin du COMPTE par ligne (option --avec-quantites), pas juste le nom.
   3. Besoin de sections Équipement / Personnel séparées plutôt qu'un seul bloc.
-  4. Hétérogénéité locale à une unité précise (`* VTT-LMG = 1x BTR-60PB / 1x
-     OT-64 SKOT`), impossible avec une désignation catalogue unique.
+  4. Hétérogénéité locale à une unité précise (`**VTT-LMG : BTR-60PB / OT-64
+     SKOT**`), impossible avec une désignation catalogue unique.
 
 Établi sur l'ORBAT « Arma 3 - Altis » (juillet 2026, FIA — matériel hétéroclite
 partagé avec France/AAF/CSAT sur plusieurs codes).
@@ -37,7 +43,7 @@ agrégation remontante gommerait cette information.
   "overrides": [
     {
       "path": ["Nom enfant niveau 1", "Nom enfant niveau 2", ..., "Nom unité cible"],
-      "equipment": {"CODE": "Nx Désignation réelle spécifique à cette unité"},
+      "equipment": {"CODE": "Désignation réelle spécifique à cette unité"},
       "personnel": {"CODE": "..."}
     }
   ],
@@ -54,41 +60,40 @@ conteneur. Ne touche jamais un nœud qui a du contenu propre ou une description
 qui contient autre chose que ce motif strict.
 
 Usage:
-    python3 add_local_legends.py <orbat.json> <spec.json> [--output OUT.json] [--dry-run]
+    python3 add_local_legends.py <orbat.json> <spec.json> [--output OUT.json]
+                                 [--dry-run] [--avec-quantites]
 
 Par défaut, écrase le fichier d'entrée.
 """
 import json
 import argparse
+import os
 import re
 import sys
 
-sys.path.insert(0, __file__.rsplit("/", 1)[0])
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import orbat_lib as ol
+import legends as lg
 
 LEGACY_LINE_RE = re.compile(r"^\* [A-Za-z0-9\-/]+ = [A-Za-z0-9\-/]+$")
 
 
-def build_desc(equip, pers, equip_models, pers_models, override):
-    """equip/pers : listes [{'name':code,'count':n}, ...] telles que sur l'unité."""
-    blocks = []
-    if equip:
-        lines = ["Équipement :"]
-        for e in equip:
-            code, n = e["name"], e["count"]
-            ov = (override or {}).get("equipment", {})
-            label = ov.get(code, f"{n}x {equip_models.get(code, '?')}")
-            lines.append(f"* {code} = {label}")
-        blocks.append("\n".join(lines))
-    if pers:
-        lines = ["Personnel :"]
-        for p in pers:
-            code, n = p["name"], p["count"]
-            ov = (override or {}).get("personnel", {})
-            label = ov.get(code, f"{n}x {pers_models.get(code, '?')}")
-            lines.append(f"* {code} = {label}")
-        blocks.append("\n".join(lines))
-    return "\n\n".join(blocks) if blocks else None
+def entries_for(items, models, override_kind, with_counts):
+    """items : [{'name':code,'count':n}, ...] tels que sur l'unité.
+    Renvoie [(code, libellé)] — codes inconnus omis (signalés par l'appelant)."""
+    out, seen = [], set()
+    for it in ol.merge_items(items):
+        code, n = it["name"], it.get("count", 0)
+        if code in seen:
+            continue
+        seen.add(code)
+        label = (override_kind or {}).get(code, models.get(code))
+        if label is None:
+            continue
+        if with_counts:
+            label = f"{n}x {label}"
+        out.append((code, label))
+    return out
 
 
 def is_pure_legacy_text(desc):
@@ -120,7 +125,8 @@ def build_override_index(overrides):
     return idx
 
 
-def walk(node, equip_models, pers_models, override_index, path, clean_legacy, log):
+def walk(node, equip_models, pers_models, override_index, path, clean_legacy, log,
+         with_counts=False, known=None):
     equip = node.get("equipment") or []
     pers = node.get("personnel") or []
     override = override_index.get(tuple(path))
@@ -133,7 +139,11 @@ def walk(node, equip_models, pers_models, override_index, path, clean_legacy, lo
             c in override.get("equipment", {}) or c in override.get("personnel", {})))]
         if missing:
             log.setdefault("missing_codes", []).append((node.get("name", "?"), missing))
-        node["description"] = build_desc(equip, pers, equip_models, pers_models, override)
+        ov = override or {}
+        lg.set_legend(node,
+                      entries_for(equip, equip_models, ov.get("equipment"), with_counts),
+                      entries_for(pers, pers_models, ov.get("personnel"), with_counts),
+                      known_codes=known)
         log.setdefault("annotated", []).append(node.get("name", "?"))
     elif clean_legacy and is_pure_legacy_text(node.get("description")):
         node.pop("description", None)
@@ -141,7 +151,7 @@ def walk(node, equip_models, pers_models, override_index, path, clean_legacy, lo
 
     for su in node.get("subUnits", []) or []:
         walk(su, equip_models, pers_models, override_index, path + [su.get("name", "?")],
-             clean_legacy, log)
+             clean_legacy, log, with_counts, known)
 
 
 def main():
@@ -150,6 +160,8 @@ def main():
     parser.add_argument("spec_file", help="JSON : root, equipment_models, personnel_models, overrides, clean_legacy_containers")
     parser.add_argument("--output", help="Fichier de sortie (par défaut : écrase orbat_file)")
     parser.add_argument("--dry-run", action="store_true")
+    parser.add_argument("--avec-quantites", action="store_true",
+                        help="préfixe « Nx » devant chaque désignation (Règle 6 cas 2, sur demande)")
     args = parser.parse_args()
 
     orbat = ol.load(args.orbat_file)
@@ -168,7 +180,9 @@ def main():
 
     log = {}
     # le nœud racine lui-même est traité avec path=[] (aucun override possible dessus)
-    walk(root, equip_models, pers_models, override_index, [], clean_legacy, log)
+    known = lg.catalog_codes(orbat) | set(equip_models) | set(pers_models)
+    walk(root, equip_models, pers_models, override_index, [], clean_legacy, log,
+         with_counts=args.avec_quantites, known=known)
 
     if log.get("annotated"):
         print(f"{len(log['annotated'])} unité(s) annotée(s) :")

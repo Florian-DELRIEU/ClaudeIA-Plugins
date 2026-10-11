@@ -2,7 +2,7 @@
 
 > ⚠️ **Fichier généré — ne pas éditer à la main.** Régénérer avec `python scripts/build_index.py`. Chaque code pointe vers le(s) fichier(s) où il apparaît (1re colonne des tables + clés de lexiques).
 
-Total : 694 codes.
+Total : 703 codes.
 
 | Code | Fichier(s) |
 |---|---|
@@ -57,6 +57,10 @@ Total : 694 codes.
 | `BI` | groupements.md |
 | `BI-TE` | lexique.json |
 | `BK` | structures.md |
+| `BL` | aeriens.md |
+| `BLB` | aeriens.md |
+| `BLC` | aeriens.md |
+| `BLM` | aeriens.md |
 | `BLR` | infanterie.md, terrestres.md |
 | `BLU` | structures.md |
 | `BM` | maritimes.md |
@@ -157,6 +161,7 @@ Total : 694 codes.
 | `DN` | maritimes.md |
 | `DP` | aeriens.md |
 | `DPTT` | aeriens.md |
+| `DR` | aeriens.md |
 | `DRG` | infanterie.md |
 | `E` | groupements.md, maritimes.md, structures.md |
 | `ECO` | structures.md |
@@ -179,12 +184,13 @@ Total : 694 codes.
 | `EXC` | groupements.md, structures.md |
 | `EXP` | maritimes.md |
 | `F` | aeriens.md, groupements.md, infanterie.md, maritimes.md, structures.md |
+| `FA` | infanterie.md |
 | `FAB` | structures.md |
 | `FAC` | structures.md |
-| `FAM` | infanterie.md |
 | `FAT` | infanterie.md |
 | `FB` | infanterie.md |
 | `FC` | aeriens.md |
+| `FCH` | aeriens.md |
 | `Fe` | materiaux.md |
 | `FF` | maritimes.md |
 | `FFAA` | maritimes.md |
@@ -193,7 +199,7 @@ Total : 694 codes.
 | `FFM` | infanterie.md |
 | `FFR` | maritimes.md |
 | `FG` | infanterie.md |
-| `FH` | aeriens.md |
+| `FH` | infanterie.md |
 | `FI` | aeriens.md |
 | `FIN` | structures.md |
 | `FIX` | terrestres.md |
@@ -205,11 +211,13 @@ Total : 694 codes.
 | `FM` | infanterie.md |
 | `FMA` | infanterie.md |
 | `FMG` | infanterie.md |
+| `FMH` | infanterie.md |
 | `FMJ` | infanterie.md |
 | `FND` | structures.md |
 | `FRAG` | infanterie.md |
 | `FRG` | infanterie.md |
 | `FRT` | structures.md |
+| `FS` | infanterie.md |
 | `FTE` | infanterie.md |
 | `FTP` | infanterie.md |
 | `FU` | infanterie.md |
@@ -217,6 +225,7 @@ Total : 694 codes.
 | `FUEL` | aeriens.md |
 | `FUS` | groupements.md, infanterie.md |
 | `Fusion` | infanterie.md |
+| `FV` | infanterie.md |
 | `FZD` | infanterie.md |
 | `G` | aeriens.md, terrestres.md |
 | `GAE` | aeriens.md |

@@ -70,10 +70,23 @@ def main():
         units = list(iter_units(orbat))
         scope = f"ORBAT complet << {orbat.get('name')} >> - {len(units)} unites"
 
+    if args.at:
+        from orbat_lib import parse_time
+        try:
+            parse_time(args.at)
+        except ValueError as e:
+            sys.exit(f"--at : {e}")
     temporal = args.final or args.at
     t = args.at if args.at else None
     if args.final or args.at:
         scope += f"  [etat {'au ' + args.at if args.at else 'final'}]"
+
+    if temporal:
+        from orbat_lib import unreadable_times
+        bad = unreadable_times(units)
+        if bad:
+            print(f"⚠️  {bad} horodatage(s) `t` illisible(s) dans les timelines : l'état rejoué "
+                  "peut être faux — lancer validate.py.", file=sys.stderr)
 
     kinds = list(RESOURCE_KINDS) if args.kind == "all" else [args.kind]
     result = {}

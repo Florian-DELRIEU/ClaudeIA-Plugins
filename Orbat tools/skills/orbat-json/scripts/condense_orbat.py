@@ -8,7 +8,13 @@ en deux passes :
    au niveau cible ou au-dessus. L'échelon d'une unité est lu sur son `sidc`
    (positions 9-10, voir skill orbat-json/references/sidc.md). Les échelons fusionnés
    disparaissent de l'arbre ; leurs equipment/personnel/supplies sont sommés
-   (par nom) dans l'ancêtre retenu.
+   (par nom) dans l'ancêtre retenu. Leur TIMELINE (state[]) n'est pas perdue :
+   chaque variation de quantité (update/diff) est transférée à l'ancêtre sous
+   forme de `diff` au même instant — les totaux à toute date restent exacts
+   (aggregate.py --at). Les positions/statuts propres aux unités fusionnées,
+   eux, ne sont pas représentables dans l'ancêtre : ils sont comptés et
+   signalés. Seul un sidc dont les positions 9-10 commencent par 1 ou 2 est lu
+   comme un échelon (3x/4x/5x = mobilité d'un matériel, cf. sidc.md).
 
 2. ÉLÉMENTARISATION DU PERSONNEL : convertit les effectifs bruts (comptés en
    têtes) en comptage par élément (escouade/groupe), selon une table de
@@ -27,6 +33,8 @@ squad_sizes.json :
   "I": {
     "elements": [
       {"code": "SQ-INF", "size": 10, "description": "Escouade de Guardsmen (10 hommes)"},
+      (la "description" est OBLIGATOIRE : elle devient l'entrée de catalogue,
+       qui doit nommer l'élément réel — naming.md Règle 5)
       {"code": "GRP-INF", "size": 5,  "description": "Groupe/demi-escouade de Guardsmen (5 hommes)"}
     ]
   }
@@ -42,31 +50,26 @@ racine du fichier de tailles).
 """
 import json
 import argparse
+import os
+import sys
 
-ECHELON_NAMES = {
-    "equipe": "11", "crew": "11",
-    "escouade": "12", "groupe": "12", "squad": "12",
-    "section": "13", "sec": "13",   # SEC = grosse escouade, elem. terminal (2026-08-09)
-    "peloton": "14", "platoon": "14", "plt": "14",   # PLT = conteneur, > SEC
-    "compagnie": "15", "batterie": "15", "escadron": "15", "company": "15",
-    "bataillon": "16", "battalion": "16",
-    "regiment": "17", "groupement": "17",
-    "brigade": "18",
-    "division": "21",
-    "corps": "22",
-    "armee": "23", "armée": "23",
-    "groupe_armees": "24",
-    "commandement": "26",
-}
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+import orbat_lib as ol
+
+# Table des échelons : orbat_lib.ECHELON (unique). Gardé pour compatibilité.
+ECHELON_NAMES = ol.ECHELON
 
 
 def echelon_of(node):
-    """Retourne le code échelon (str, 2 chiffres) d'un noeud, ou None si absent
-    (ex. le Group de tête, qui n'a pas de sidc)."""
-    sidc = node.get("sidc")
-    if not sidc or len(sidc) < 10:
-        return None
-    return sidc[8:10]
+    """Code échelon (2 chiffres) d'un noeud, ou None si son sidc n'en porte pas
+    (Group de tête sans sidc, ou pos 9-10 = mobilité 3x/4x/5x d'un matériel).
+    « 00 » (échelon non renseigné : élément isolé, véhicule suivi à part,
+    unité ODIN d'échelon inconnu) reste fusionnable au plus bas rang, comme
+    avant la 0.25.0."""
+    sidc = str(node.get("sidc") or "")
+    if len(sidc) == 20 and sidc.isdigit() and sidc[8:10] == "00":
+        return "00"
+    return ol.echelon_of(node)
 
 
 def echelon_rank(code):
@@ -79,12 +82,7 @@ def echelon_rank(code):
 
 
 def resolve_target(target_str):
-    key = target_str.strip().lower().replace(" ", "_").replace("é", "e")
-    if key in ECHELON_NAMES:
-        return ECHELON_NAMES[key]
-    if key.isdigit() and len(key) == 2:
-        return key
-    raise ValueError(f"Échelon cible inconnu : {target_str!r}")
+    return ol.echelon_code(target_str)
 
 
 def collect_all_quantities(node, totals):
@@ -114,17 +112,69 @@ def merge_totals_into(node, totals):
         node[key] = list(existing.values())
 
 
+def _states_to_diffs(node):
+    """Voir orbat_lib.states_to_diffs (update absolus -> diff, avant fusion)."""
+    ol.states_to_diffs(node)
+
+
+def _transfer_timeline(node, child, log):
+    """Transfère à `node` les variations de quantités de tout le sous-arbre de
+    `child` (sous forme de diff au même instant). Compte ce qui est perdu.
+    Un Group de tête (sans sidc) ne reçoit pas de timeline — format non
+    garanti à l'import : les variations sont alors signalées comme perdues."""
+    if not node.get("sidc"):
+        n = sum(1 for u in ol.subtree_units(child) for k in ol.RESOURCE_KINDS
+                for _, d in ol.resource_deltas(u, k) if d)
+        if n:
+            log.setdefault("timeline_vers_group", []).append((child.get("name", "?"), node.get("name", "?"), n))
+        return
+    moved, dropped = 0, 0
+    for u in ol.subtree_units(child):
+        for st in u.get("state", []) or []:
+            if any(k in st for k in ("location", "status", "sidc", "title")):
+                dropped += 1
+        for kind in ol.RESOURCE_KINDS:
+            for st, deltas in ol.resource_deltas(u, kind):
+                if not deltas:
+                    continue
+                t = st.get("t")
+                key = ol.parse_time(t)
+                target = next((s for s in node.setdefault("state", [])
+                               if ol.parse_time(s.get("t")) == key), None)
+                if target is None:
+                    target = {"id": ol.gen_id(), "t": t}
+                    node["state"].append(target)
+                lst = target.setdefault("diff", {}).setdefault(kind, [])
+                for n, d in deltas.items():
+                    lst.append({"name": n, "onHand": d})
+                target["diff"][kind] = [{"name": it["name"], "onHand": it["count"]}
+                                        for it in ol.merge_items(
+                                            [{"name": i["name"], "count": i["onHand"]} for i in lst])]
+                moved += 1
+    if node.get("state"):
+        node["state"] = ol.sorted_states(node)
+    if moved:
+        log.setdefault("timelines_transferees", []).append((child.get("name", "?"), node.get("name", "?"), moved))
+    if dropped:
+        log.setdefault("etats_non_transferables", []).append((child.get("name", "?"), dropped))
+
+
 def condense(node, target_rank, log):
     """Fusionne récursivement les sous-arbres d'échelon < target_rank dans
     `node`. Modifie node['subUnits'] en place."""
     new_subunits = []
+    converted = False
     for child in node.get("subUnits", []) or []:
         child_ech = echelon_of(child)
         child_rank = echelon_rank(child_ech) if child_ech is not None else 9999
         if child_ech is not None and child_rank < target_rank:
+            if not converted:
+                _states_to_diffs(node)   # AVANT de toucher aux quantités de base
+                converted = True
             totals = {}
             collect_all_quantities(child, totals)
             merge_totals_into(node, totals)
+            _transfer_timeline(node, child, log)
             log.setdefault("fusions", []).append((child.get("name", "?"), node.get("name", "?")))
         else:
             condense(child, target_rank, log)
@@ -204,8 +254,16 @@ def elementize_tree(node, sizes_config, new_catalog_entries, log):
         cg_cfg = sizes_config.get("_command_group")
         if cg_cfg:
             node["personnel"] = merge_command_group(node["personnel"], cg_cfg, new_catalog_entries, log)
+        node["personnel"] = ol.merge_items(node["personnel"])   # jamais deux lignes du même code
     if "equipment" in node:
         node["equipment"] = elementize_counts(node["equipment"], sizes_config, "equipment", new_catalog_entries, log)
+        node["equipment"] = ol.merge_items(node["equipment"])
+    touched = {k for k, v in sizes_config.items() if not k.startswith("_")}
+    for st in node.get("state", []) or []:
+        for blk in ("update", "diff"):
+            for kind in ("equipment", "personnel"):
+                if any(i.get("name") in touched for i in (st.get(blk) or {}).get(kind, []) or []):
+                    log.setdefault("timeline_non_elementarisee", set()).add(node.get("name", "?"))
     for child in node.get("subUnits", []) or []:
         elementize_tree(child, sizes_config, new_catalog_entries, log)
 
@@ -253,11 +311,21 @@ def main():
     parser.add_argument("--no-elementize", action="store_true", help="Ne pas élémentariser, seulement fusionner les échelons")
     args = parser.parse_args()
 
-    with open(args.orbat_file, "r", encoding="utf-8") as f:
-        orbat = json.load(f)
+    orbat = ol.load(args.orbat_file)
 
     with open(args.squad_sizes_file, "r", encoding="utf-8") as f:
         sizes_config = json.load(f)
+
+    if not args.no_elementize:
+        manquantes = [el.get("code", "?") for k, cfg in sizes_config.items() if not k.startswith("_")
+                      for el in cfg.get("elements", []) if not (el.get("description") or "").strip()]
+        cg = sizes_config.get("_command_group")
+        if cg and not (cg.get("description") or "").strip():
+            manquantes.append(cg.get("result_code", "_command_group"))
+        if manquantes:
+            sys.exit("❌ Description manquante dans squad_sizes.json pour : " + ", ".join(manquantes)
+                     + "\n   Elle devient l'entrée de catalogue et doit nommer l'élément réel "
+                       "(naming.md Règle 5). Rien n'a été écrit.")
 
     log = {}
 
@@ -270,6 +338,23 @@ def main():
             print(f"  {child_name!r} -> fusionné dans {parent_name!r}")
         if len(fusions) > 30:
             print(f"  ... et {len(fusions) - 30} de plus")
+        tl = log.get("timelines_transferees", [])
+        if tl:
+            print(f"\n{sum(n for *_, n in tl)} variation(s) de quantité de timeline transférée(s) "
+                  f"en diff vers l'ancêtre ({len(tl)} fusion(s) concernée(s)).")
+        tg = log.get("timeline_vers_group", [])
+        if tg:
+            print(f"\n⚠️  {sum(n for *_, n in tg)} variation(s) de quantité NON transférée(s) : l'ancêtre est "
+                  "un Group de tête (sans sidc), qui ne porte pas de timeline. Les quantités de base "
+                  "sont justes, pas l'historique :")
+            for c, g, n in tg[:30]:
+                print(f"  {c} -> {g} : {n}")
+        lost = log.get("etats_non_transferables", [])
+        if lost:
+            print(f"\n⚠️  {sum(n for _, n in lost)} entrée(s) de timeline portant position/statut/titre/"
+                  "symbole sur des unités fusionnées : non représentables dans l'ancêtre, perdues :")
+            for name, n in lost[:30]:
+                print(f"  {name} : {n} entrée(s)")
 
     if not args.no_elementize:
         elementize_sides(orbat, sizes_config, log)
@@ -291,14 +376,19 @@ def main():
                   "absorbés ensuite dans un groupe de commandement ci-dessus, le reste reste en comptage brut) :")
             for name, remaining in reliquats:
                 print(f"  {name} : {remaining} restant(s)")
+        ne = sorted(log.get("timeline_non_elementarisee", []))
+        if ne:
+            print(f"\n⚠️  {len(ne)} unité(s) dont la timeline compte encore en têtes un code "
+                  "élémentarisé (les deltas de state[] ne sont pas convertis en éléments) :")
+            for name in ne[:30]:
+                print(f"  {name}")
 
     if args.dry_run:
         print("\n[dry-run] Aucun fichier écrit.")
         return
 
     out_path = args.output or args.orbat_file
-    with open(out_path, "w", encoding="utf-8") as f:
-        json.dump(orbat, f, ensure_ascii=False, indent=2)
+    ol.save(orbat, out_path)
     print(f"\nÉcrit dans {out_path}")
 
 

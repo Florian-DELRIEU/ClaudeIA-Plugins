@@ -1,20 +1,6 @@
 ---
 name: orbat-json
-description: >
-  Lecture, écriture, restructuration et analyse d'ORBAT (Order of Battle) au
-  format JSON orbat-mapper.app (`type: "ORBAT-mapper"`). Déclencher dès que
-  Florian tape /orbat-json, /orbat, /orbat_maker ou /orbat-compact (anciens
-  alias), fournit un fichier ORBAT `.json` ou une image d'ORBAT / de symboles
-  militaires (APP-6/2525C), ou demande de : créer/lire/comprendre un ORBAT,
-  compter ou sommer du matériel/personnel/ravitaillement, décoder un sidc,
-  convertir une image en JSON, lire un scénario temporel (positions, pertes,
-  consommations), condenser un ORBAT (fusion d'échelons, comptage par
-  élément), ou regrouper des unités sous un nouvel échelon. Déclencher aussi
-  pour des demandes courtes ("combien de chars ?", "lis cet ORBAT", "condense
-  au peloton", "regroupe ces compagnies en bataillons", "c'est quoi ce
-  symbole ?"). Pour un ORBAT au format tableur xlsx ODIN/JTDS (feuille
-  `UNIT INFO`), c'est le skill `orbat-xlsx` qu'il faut — les deux s'enchaînent
-  pour la conversion xlsx → JSON.
+description: "Lecture, écriture, restructuration et analyse d'ORBAT (Order of Battle) au format JSON orbat-mapper.app (`type: \"ORBAT-mapper\"`). Déclencher dès que Florian tape /orbat-json, /orbat, /orbat_maker ou /orbat-compact (anciens alias), fournit un fichier ORBAT `.json` ou une image d'ORBAT / de symboles militaires (APP-6/2525C), ou demande de : créer/lire/comprendre un ORBAT, compter ou sommer du matériel/personnel/ravitaillement, décoder un sidc, convertir une image en JSON, lire un scénario temporel (positions, pertes, consommations), condenser un ORBAT (fusion d'échelons, comptage par élément), ou regrouper des unités sous un nouvel échelon. Déclencher aussi pour des demandes courtes (\"combien de chars ?\", \"lis cet ORBAT\", \"condense au peloton\", \"regroupe ces compagnies en bataillons\", \"c'est quoi ce symbole ?\"). Pour un ORBAT au format tableur xlsx ODIN/JTDS (feuille `UNIT INFO`), c'est le skill `orbat-xlsx` qu'il faut — les deux s'enchaînent pour la conversion xlsx → JSON.\n"
 ---
 
 # ORBAT JSON — lecture, écriture, restructuration (format orbat-mapper.app)
@@ -85,7 +71,11 @@ Les fichiers réels peuvent être volumineux (jusqu'à des dizaines de Mo, 30 00
 
 ## Outils fournis (`scripts/`)
 
-Lancer avec `python3` ; ils sont autonomes (juste la lib partagée `orbat_lib.py`).
+Lancer avec `python3` ; ils sont autonomes (lib partagée `orbat_lib.py`, + `legends.py`
+pour toute légende). Tous acceptent `--help`. Ces scripts sont **la seule copie** du
+plugin : `orbat-xlsx` et `orbat-acronymize` les importent d'ici (localisation
+automatique ; variable `ORBAT_TOOLS_ROOT` = racine du plugin, en repli seulement). Tests de
+non-régression : `python3 -m unittest discover -s tests` depuis la racine du plugin.
 
 - **`aggregate.py`** — somme équipement, personnel et/ou **supplies**.
   - tout : `python3 scripts/aggregate.py ORBAT.json`
@@ -96,7 +86,8 @@ Lancer avec `python3` ; ils sont autonomes (juste la lib partagée `orbat_lib.py
   unité (`--unit`), positions, titres narratifs, changements. `--events` pour les jalons seuls.
 - **`validate.py`** — vérifie qu'un fichier est sain et réimportable (ids uniques, sidc
   20 chiffres, codes présents aux catalogues, **unicité de chaque code dans une même
-  liste et dans les catalogues racine**, entrées `state` horodatées).
+  liste et dans les catalogues racine**, entrées `state` horodatées et lisibles,
+  WARN sur toute description de catalogue vide).
   `python3 scripts/validate.py ORBAT.json`
 - **`new_orbat.py`** — construit un ORBAT import-ready. En CLI : enveloppe vierge
   (`--name --out`). Comme **bibliothèque** quand on génère depuis une demande :
@@ -111,25 +102,28 @@ Lancer avec `python3` ; ils sont autonomes (juste la lib partagée `orbat_lib.py
   garde-fou, corriger l'appel.
 - **`add_legends.py`** — annote chaque échelon avec la légende (code → nom réel) de
   tout le matériel/personnel présent dans son sous-arbre (agrégée), déduite des
-  descriptions du catalogue racine, sans compte ni mapping externe. **Étape par défaut
-  en fin de Tâche 4** (voir point 6 ci-dessous) — mais voir `add_local_legends.py`
-  ci-dessous pour les cas où elle ne suffit pas.
+  descriptions du catalogue racine, sans mapping externe. Format canonique
+  `**CODE : Nom réel**`, blocs Équipement / Personnel séparés, **prose existante
+  conservée**. **Étape par défaut en fin de Tâche 4** (voir point 6 ci-dessous) — mais
+  voir `add_local_legends.py` ci-dessous pour les cas où elle ne suffit pas.
 - **`add_local_legends.py`** — variante locale (par unité feuille, pas agrégée), avec
-  **compte par ligne**, sections **Équipement/Personnel séparées**, et **overrides
-  d'hétérogénéité par unité**, à partir d'une table de correspondance fournie (pas du
-  catalogue racine). À utiliser à la place d'`add_legends.py` dès qu'un code est
-  **partagé entre plusieurs camps du même fichier**, ou que Florian veut le compte / la
-  séparation Équipement-Personnel / une hétérogénéité locale. Voir `references/naming.md`
-  Règle 6 pour le détail des critères, et la docstring du script pour le format de spec
-  et l'usage complet.
+  **overrides d'hétérogénéité par unité**, à partir d'une table de correspondance
+  fournie (pas du catalogue racine). Même format canonique, prose conservée ; quantité
+  par ligne seulement avec `--avec-quantites` (sur demande de Florian). À utiliser à la
+  place d'`add_legends.py` dès qu'un code est **partagé entre plusieurs camps du même
+  fichier**, ou qu'il faut une hétérogénéité locale. Voir `references/naming.md` Règle 6
+  et la docstring du script pour le format de spec.
+- **`legends.py`** — module (pas de CLI) : le **seul** endroit qui met en forme une
+  légende. Tout script qui écrit une légende passe par lui.
 - **`condense_orbat.py`** — condensation d'échelon + élémentarisation du personnel
-  (Tâche 7).
+  (Tâche 7). Transfère la timeline des unités fusionnées, fusionne les lignes de même
+  code, refuse une table d'éléments sans description.
 - **`group_units.py`** — regroupement d'unités-sœurs sous un nouvel échelon
-  intermédiaire (Tâche 8).
+  intermédiaire (Tâche 8). Identité/contexte du sidc repris des enfants.
 - **`apply_relative_visibility.py`** — visibilité cartographique par zoom, basée sur
   la profondeur relative de l'unité dans son propre camp (pas sur le type d'échelon).
   Voir `references/format.md` section `style.limitVisibility` pour la règle complète,
-  et Tâche 9 ci-dessous pour l'usage.
+  et Tâche 9 ci-dessous pour l'usage. `--dry-run` / `--output` disponibles.
 
 ## Tâche 1 — Lire / comprendre un ORBAT JSON
 
@@ -266,16 +260,16 @@ Le reste de la Tâche 4 (points 1 à 6 ci-dessous) s'applique par-dessus.
 6. **Légende de matériel par échelon — obligatoire.** Un ORBAT codé en acronymes v4 est
    illisible « en l'état » à l'échelle d'une unité si on ne peut retrouver le nom réel
    du matériel qu'en remontant au catalogue racine. Avant de livrer, choisir l'outil :
-   - **Cas par défaut** (un code = un seul matériel dans tout le fichier, pas besoin de
-     compte ni de séparation Équipement/Personnel) : `python3 scripts/add_legends.py
-     <fichier.json>` — il ajoute à la `description` de **chaque échelon** la liste des
-     codes présents dans son sous-arbre avec leur nom réel (`* CODE = Nom réel`), déduit
+   - **Cas par défaut** (un code = un seul matériel dans tout le fichier) :
+     `python3 scripts/add_legends.py <fichier.json>` — il ajoute à la `description` de
+     **chaque échelon** la légende des codes présents dans son sous-arbre
+     (`**CODE : Nom réel**`, Équipement / Personnel séparés, prose conservée), déduite
      directement des descriptions de catalogue (point 3). Ordre : après
      `mark_empty_subtrees` (point 4), avant `validate.py` (point 5). Script idempotent ;
      signale en warning tout code dont la description ne permet pas d'extraire un nom
      réel (à corriger côté catalogue plutôt qu'ignorer).
-   - **Dès qu'un code est partagé entre camps, ou que Florian veut le compte par ligne,
-     Équipement/Personnel séparés, ou une hétérogénéité locale** (naming.md Règle 6) :
+   - **Dès qu'un code est partagé entre camps, ou qu'il faut une hétérogénéité locale
+     ou (sur demande) le compte par ligne** (naming.md Règle 6) :
      `python3 scripts/add_local_legends.py <fichier.json> <spec.json>` à la place —
      légende par unité feuille (pas agrégée), avec table de correspondance fournie
      explicitement plutôt que déduite du catalogue racine.
@@ -301,20 +295,19 @@ Le reste de la Tâche 4 (points 1 à 6 ci-dessous) s'applique par-dessus.
    elle fait partie de la procédure par défaut** (Règle 7 § 7.4), avec priorité aux
    échelons les plus bas dont la composition n'est lisible nulle part ailleurs.
 
-   ⚠️ **Format de légende.** Le format canonique est désormais
-   `**CODE : Désignation réelle**` (une ligne par code, **sans quantité**, Règle 7
-   § 7.3). `add_legends.py` et `add_local_legends.py` produisent encore l'ancien
-   `* CODE = Nx Désignation` : reformater leur sortie avant de livrer, ou corriger
-   les scripts (non fait à ce jour, en attente d'un feu vert de Florian).
+   **Format de légende.** Le format canonique est `**CODE : Désignation réelle**`
+   (une ligne par code, **sans quantité**, Règle 7 § 7.3). Depuis octobre 2026, les
+   trois scripts de légende le produisent directement via `legends.py` et **conservent
+   la phrase de contexte** déjà écrite : écrire la phrase d'abord, poser la légende
+   ensuite (ou l'inverse), le résultat est le même. Plus aucun reformatage manuel.
 
 > ⚠️ **Renommer n'est pas fusionner.** Toute opération qui fait converger
-> plusieurs codes vers un seul (conversion `orbat-acronymize`, élémentarisation
-> de `condense_orbat.py`, correction de vocabulaire décidée dans `acronyme`)
-> peut laisser **deux lignes du même code** dans la même unité. Les totaux
-> restent justes — `aggregate()` somme par nom — donc l'anomalie ne se voit
-> nulle part sauf en lisant les listes brutes. Toujours relancer `validate.py`
-> après une passe de renommage, et fusionner les lignes convergentes en une
-> seule à somme cumulée plutôt que de les empiler.
+> plusieurs codes vers un seul peut laisser **deux lignes du même code** dans la
+> même unité — les totaux restent justes, l'anomalie ne se voit qu'en lisant les
+> listes brutes. `apply_rename_map.py` (orbat-acronymize) et `condense_orbat.py`
+> fusionnent désormais eux-mêmes (`orbat_lib.merge_items`) ; le risque subsiste pour
+> toute correction **faite à la main** ou par un script ad hoc : y appeler
+> `orbat_lib.merge_items`, et toujours relancer `validate.py`, qui le détecte.
 
 ## Tâche 5 — Lire un scénario temporel (positions, mouvements, ressources qui changent)
 
@@ -410,6 +403,10 @@ gros grain, sans perdre l'information de composition :
    reliquat d'un des codes listés dans `combine_with` — un officier seul
    sans reliquat n'est jamais transformé en `GRP-HQ`.
 
+   ⚠️ Chaque élément (et `_command_group`) **doit** avoir une `description`
+   nommant l'élément réel : elle devient l'entrée de catalogue (naming.md
+   Règle 5). Le script refuse une table incomplète, sans rien écrire.
+
 4. **Appliquer avec le script fourni** :
    ```
    python3 scripts/condense_orbat.py <orbat.json> <squad_sizes.json> --target peloton
@@ -420,7 +417,9 @@ gros grain, sans perdre l'information de composition :
    `--no-elementize` pour n'appliquer qu'une seule des deux passes.
 
 5. **Présenter le résumé** à Florian : nombre d'unités avant/après, nombre
-   d'échelons fusionnés, nouveaux codes de catalogue ajoutés (les éléments),
+   d'échelons fusionnés, variations de timeline transférées à l'ancêtre et
+   **entrées de timeline perdues** (positions/statuts des unités fusionnées, que
+   l'ancêtre ne peut pas porter), nouveaux codes de catalogue ajoutés (les éléments),
    et surtout la liste des **reliquats** (effectifs qui ne rentrent dans
    aucun palier d'élément) — ce sont typiquement des sections de commandement
    à effectif réduit (2-4 pax) plutôt qu'une vraie escouade ; à confirmer avec
@@ -483,7 +482,10 @@ compagnies à plat sous un régiment en 3 bataillons de 4 compagnies chacun.
    ```
    Chaque nouvelle unité reçoit un `sidc` cohérent : échelon demandé, entité
    héritée du premier enfant du groupe (composition homogène supposée par
-   défaut — passer `"entity"` explicitement dans la spec sinon). Les enfants
+   défaut — passer `"entity"` explicitement dans la spec sinon), et **identité
+   (ami/hostile…), contexte et symbol set repris des enfants** (avertissement si
+   ceux d'un même paquet divergent). `"new_short_names"` (liste) pose les
+   `shortName` (Règles 2 et 7.5) ; à défaut le script liste les groupes à compléter. Les enfants
    sélectionnés sont déplacés tels quels (avec tout leur sous-arbre) sous la
    nouvelle unité, à la place qu'occupait le premier d'entre eux ; les
    enfants non sélectionnés du parent restent inchangés à leur position.
@@ -505,7 +507,8 @@ et B de comblement) dans `references/format.md` section `style.limitVisibility`.
 
 1. `python3 scripts/apply_relative_visibility.py <orbat.json>` — traite chaque camp du
    fichier indépendamment avec sa propre profondeur `D`, applique `style.limitVisibility`
-   + `minZoom`/`maxZoom` à **toutes** les unités, écrase le fichier en place.
+   + `minZoom`/`maxZoom` à **toutes** les unités, écrase le fichier en place
+   (`--dry-run` pour voir les bandes d'abord, `--output` pour une copie).
 2. Toujours enchaîner avec `python3 scripts/validate.py <orbat.json>`.
 3. Livrer le fichier avec `present_files`, en rappelant les bandes obtenues par camp
    (le script les affiche sur stdout).

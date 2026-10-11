@@ -47,7 +47,7 @@ Ces décisions ont été explicitement validées et priment sur toute interprét
 | `GH` = Grenade à main | Officialisé le 2026-08-03. Libère `G`, qui reste commun à Gunship (aérien) et Canon/Obusier (terrestre) — faux conflit assumé |
 | `FZD` = Fuze Delay (munition à retard) | Officialisé le 2026-08-03. Libère `FUS`, qui reste l'alternatif de `F` = Fusil / Fusilier |
 | `PN` = Personnage générique | Officialisé le 2026-08-03. `P` reste alternatif dans le **bassin Type**. Le Chasseur (aérien) est désormais `FC` (2026-08-04) : `P` est libéré dans le bassin Rôle |
-| `FC` = Chasseur (Rôle aérien) | Officialisé le 2026-08-04, remplace `P` (libéré) — `F` collisionne avec Fusil/Fusilier. Famille `F*` : `FI` = Intercepteur, `FH` = Chasseur lourd. `P`/`F` restent alternatifs en lecture |
+| `FC` = Chasseur (Rôle aérien) | Officialisé le 2026-08-04, remplace `P` (libéré) — `F` collisionne avec Fusil/Fusilier. Famille `F*` : `FI` = Intercepteur, `FCH` = Chasseur lourd. `P`/`F` restent alternatifs en lecture |
 | `MA` = Soutien amphibie (Rôle naval) | Officialisé le 2026-08-03, remplace `SA`. Coexiste avec `MA`/`-MA` = Marines (Type/groupement), bassins différents. `SA` reste Space Plane/SSTO et Supériorité aérienne côté aérien, **non affectés** |
 | `AM` = Assistant munitions | Officialisé le 2026-08-03, `MUN` rétrogradé en alternatif. Résout le doublon Types/Rôles de `infanterie.md`. Sans rapport avec `MUN` = cargaison munitions (`terrestres.md`) |
 | `SPT` = Support (groupement) | Officialisé le 2026-08-03. L'ancien `SPT` = Assistant tireur (`infanterie.md`) est **supprimé** — remplacé selon le cas par `AM`, `GUN` ou un rôle existant comme `TEA` |
@@ -55,7 +55,7 @@ Ces décisions ont été explicitement validées et priment sur toute interprét
 | `I-CAV` = Cavalier | Pas de Type dédié : composition explicite Infanterie + Cavalerie. L'ancien Type `C` = Cavalier est retiré (voir `CAV`) |
 | `T` — Torpilleur vs Traçante | Aucun code créé : **désambiguïsation positionnelle** (voir § 3) |
 | `INF` = Infanterie (Type/groupement) | **Officialisé le 2026-08-04, confirmé le 2026-08-05.** Remplace `I` (collisionne avec Industriel/Incendiaire/Intercepteur). `I` reste lu Infanterie par défaut en position Type, mais n'est plus produit — voir § 6, revirement du 2026-08-05 |
-| Famille `F*` aérien : `FC`/`FI`/`FH` | Chasseur / Intercepteur / Chasseur lourd (2026-08-04). `FH` s'écrit avec `H` en suffixe collé. **Précision du 2026-08-09** : ce n'est pas une « exception de gabarit » — `FH` est un **acronyme atomique déclaré**, sans rapport avec le gabarit universel `.H` (un chasseur au gabarit lourd s'écrirait `FC.H`). Décision maintenue, sans lien avec la grammaire `V` supprimée |
+| Famille `F*` aérien : `FC`/`FI`/`FCH` | Chasseur / Intercepteur / Chasseur lourd. **Révision du 2026-08-30** : le Chasseur lourd passe de `FH` à `FCH` — `FH` est requis dans le bassin Armement pour le Fusil de calibre supérieur (`infanterie.md`), collision réelle entre deux officiels du même bassin. `FCH` est un acronyme atomique déclaré, sans rapport avec le gabarit universel `.H` (un chasseur au gabarit lourd s'écrirait `FC.H`). `FH`/`HF` restent lisibles sur les anciens fichiers, ne plus produire |
 | `IND` Industriel · `ARTS` Artistes · `MKT` Commercial | Officialisés le 2026-08-04 (`structures.md`). Libèrent `I` (→ Incendiaire, munition), `ART` (reste Artillerie) et `COM` (reste Communication aérien) |
 | `PLT` = Peloton · `PLR` = Planète tellurique | 2026-08-04. `PLT` prend Peloton (`groupements.md`) ; Planète tellurique bascule sur `PLR` (provisoire — voir § 5) |
 | `ASW` = Anti-sous-marin (Rôle naval) | Officialisé le 2026-08-04 (terme OTAN consacré), devant `K`/`HK` gardés en lecture |
@@ -67,6 +67,7 @@ Ces décisions ont été explicitement validées et priment sur toute interprét
 | `V` / `VB` — pas de collision | **Acté le 2026-08-09.** `V` = voiture blindée à roues · `VB` = véhicule blindé chenillé. Deux acronymes atomiques distincts, aucun lien de dérivation. L'ancienne note de collision de `chassis-types.md` reposait sur une lecture erronée de la grammaire supprimée : elle est retirée, sans mitigation de remplacement |
 | `V4L` / `V8CI` redéclarés | **Acté le 2026-08-09.** Ces deux codes n'existaient que comme exemples du § 1 supprimé de `grammaire.md`. Florian a choisi de les **conserver** : ils sont redéclarés comme acronymes atomiques dans `terrestres.md` (`V4L` = voiture légère 4 roues · `V8CI` = combat d'infanterie 8 roues) |
 | **Aucune réservation par contexte (époque, univers, thème)** | **Actée le 2026-08-16.** Un regroupement thématique (table, section, titre comme « Médiéval », « SF », « Cosmotter »…) n'est jamais une contrainte d'usage, seulement un classement de confort. Un acronyme est utilisable dans n'importe quel contexte dès lors que sa description correspond. Seule une mention explicite **dans la description elle-même** (`VOL` = « souvent 1800s », `CN` = « napoléonien / pré-industriel ») reste une indication de contexte typique, jamais un verrou — ces deux cas sont conservés tels quels sur confirmation de Florian. Nouvelle règle cardinale n°4 dans `SKILL.md`. Détail des fichiers concernés en § 6 |
+| `P` / `PS` / `PA` = Pistolet / semi-auto / auto | **Trois codes officiels distincts, pas un groupe d'alias.** Décidé le 2026-08-04, consigné le 2026-08-30. `P` = arme de poing sans précision de mécanisme, `PS` = un coup par pression, `PA` = capable de rafale. Écrire `P` quand la source ne précise pas le mécanisme : ne jamais « préciser » en `PS`/`PA` par défaut, ce serait inventer une information. `P` est officiel dans le bassin Armement ; ses autres occurrences restent des **alternatifs lisibles mais non produits** : `PLT / P` = Peloton (`groupements.md`), `PROD / P` = Production (`structures.md`), `FC / P / F` = Chasseurs (`aeriens.md`), `PN / P` = Personnage générique (bassin **Type**, voir la ligne `PN` ci-dessus). Aucune collision entre officiels |
 
 ---
 
@@ -139,7 +140,6 @@ Conflits **identifiés et assumés comme ouverts** : le sens listé garde provis
 
 | Code / plage | Sens en attente | Statut |
 |---|---|---|
-| `P` (bassin Rôle) | Pistolet (`P / PS / PA`) vs Production (`PROD / P`) | Non tranché — officiels `PS`/`PA` et `PROD` disponibles ; `P` reste alternatif des deux |
 | `SPHE` vs `SPG` | Chevauchement possible (obus HE générique vs obusier dédié) | À clarifier si besoin (`terrestres.md`) |
 | `BM` (naval) | Placement exact Type/Rôle | À confirmer (`maritimes.md`) |
 | `PLR` | Planète tellurique | Provisoire — pourra céder au futur système d'identification planétaire (`structures.md`) |
@@ -155,6 +155,32 @@ Conflits **identifiés et assumés comme ouverts** : le sens listé garde provis
 ---
 
 ## 6. Résolutions datées (chronologie)
+
+### 2026-09-16 (aérostats : familles `BL`/`DR`)
+
+Trou comblé : aucun code n'existait pour ballons et dirigeables (`aeriens.md`).
+
+- `BL` = Ballon, générique (nouveau Type aérien). Décliné par une lettre collée en suffixe, sur le patron déjà établi `SR`/`SRS`/`SRO`/`SRI`/`SRG` et `U`/`UE`/`UH`/`UV`.
+- Trois variantes officielles, **toutes sur le même axe** (mode de déploiement) : `BLC` captif (amarré/treuil), `BLB` barrage (fixe, obstacle), `BLM` mobile (vol libre, dérive au vent). `BLM` ne présume pas du type d'enveloppe (air chaud, hélium…) — écarté d'un premier jet où `M` codait spécifiquement « montgolfière », pour rester sur un seul axe de classification plutôt que de mélanger déploiement et type de gaz.
+- `MGF` (Montgolfière) reste un **alternatif de lecture uniquement**, pointant vers `BLM` — jamais produit en écriture.
+- `DR` = Dirigeable, générique (nouveau Type aérien). **Décision explicite : pas de sous-type pour l'instant.** Les variantes structurelles envisagées (rigide/zeppelin, souple, semi-rigide) ont été écartées : jugées redondantes avec le gabarit `.L`/`.M`/`.H`/`.SH` déjà existant plutôt que porteuses d'une information distincte. Si la distinction s'avère utile plus tard, l'option à privilégier est une précision entre parenthèses (`DR(R)`/`DR(S)`/`DR(M)`, sur le patron `A(J-SS)`) plutôt que des Types atomiques séparés.
+- `ZEP` (Zeppelin) reste un **alternatif de lecture uniquement**, pointant vers `DR` — jamais produit en écriture.
+- Gaz porteur (hélium/hydrogène/air chaud) explicitement mis de côté — non codé pour l'instant, à reprendre si besoin.
+
+### 2026-08-30 (armes personnelles : familles `F`/`FM`/`MG`, principe d'emploi, `FCH`)
+
+Session de cadrage de la taxonomie des armes personnelles d'infanterie, à partir d'un diagramme de synthèse de Florian.
+
+- **Principe fondateur acté** : dans les familles d'armes personnelles, le code décrit le **poste tenu**, pas le modèle. Une même arme change de code selon sa configuration (HK416 = `F` en standard, `FMG` avec chargeur de grande capacité).
+- **Deux axes** : rôle (standard `F` / suppression `FM`) × puissance (calibre standard / calibre supérieur, suffixe `H` collé).
+- `FH` = Fusil de calibre supérieur, `FMH` = FM de calibre supérieur. **Fusions atomiques déclarées**, rejoignant le moule préexistant `TEH`/`TEL`. Ne s'appliquent qu'aux génériques `F` et `FM` ; pour un `FV`/`FS`/`FA`/`FMG`, passer par `.H` ou la convention calibre (`FS.762`).
+- **`FCH` remplace `FH` = Chasseur lourd** (`aeriens.md`) : collision réelle entre deux officiels du bassin Rôles/Armements. Le côté aérien cède, code récent et peu diffusé.
+- `FMA` redéfini : arme d'assaut à cadence élevée, efficacité effondrée au-delà de ~100 m, redoutable en milieu clos. Catégorie devenue peu commune.
+- **`FAM` supprimé** — anagramme de `FMA` de sens quasi opposé, piège de lecture. Au mieux alternatif en lecture, jamais produit.
+- **`PM` et `SMG` séparés** : `PM` = machine pistol (Uzi, Škorpion), `SMG` = arme d'épaule à calibre pistolet (MP5, MP40, PPSh). `PA` recentré sur le pistolet de poing capable de rafale ; l'exemple « Uzi » qui l'illustrait dans le PDF V4 est erroné et retiré.
+- **`P` / `PS` / `PA` consignés comme trois codes distincts** (décision du 2026-08-04, jamais écrite jusqu'ici). Le format `| P / PS / PA |` de `infanterie.md` et la mention « `P` reste alternatif des deux » de `decisions.md` § 5 les traitaient à tort comme un groupe d'alias. `P` devient officiel dans le bassin Armement ; la ligne correspondante sort des codes non résolus.
+- `LMG`/`MMG`/`HMG` confirmés **fusions atomiques déclarées** (gabarit préfixé, exception assumée) ; leur définition intègre désormais la contrainte de servants (`MMG` → `AM` obligatoire, `HMG` → équipe dédiée).
+- La famille pistolet **n'est pas** rattachée à la famille `MG`, malgré leur adjacence sur l'axe calibre.
 
 ### 2026-08-18 (cavalerie : la diagonale seule — correction d'une icône livrée)
 
@@ -495,7 +521,7 @@ parseur automatique qui prenait « la première forme » comme canonique.
 
 ### 2026-08-04
 
-- `HF` = Chasseur lourd → **`FH`** (suit `FC`, `H` en suffixe).
+- `HF` = Chasseur lourd → **`FH`** (suit `FC`, `H` en suffixe). ⚠️ **Révisé le 2026-08-30 : ce code est devenu `FCH`** — `FH` est passé au Fusil de calibre supérieur (`infanterie.md`).
 - `CLC` / `CBW` → **supprimés**, remplacés par `CAV.LC` / `CAV.BW`.
 - Munition uniquement traçante → **`FMJ.T`** explicite.
 - `I` hors Intercepteur → `IND` prend Industriel et libère `I` pour Incendiaire ; Infanterie passe à `INF` ; Intercepteur devient `FI`.

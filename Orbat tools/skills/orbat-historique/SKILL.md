@@ -1,19 +1,6 @@
 ---
 name: orbat-historique
-description: >
-  Expert en organisation militaire historique réelle (ordres de bataille,
-  organigrammes d'unités) du début du 19e siècle (guerres napoléoniennes) à
-  aujourd'hui, toutes nations confondues (France, Prusse/Allemagne,
-  Royaume-Uni, Russie/URSS, États-Unis...). Déclencher dès que Florian
-  demande comment était organisée une division d'infanterie, de cavalerie ou
-  d'artillerie (ou tout autre échelon : groupe d'armées, armée, corps,
-  brigade, régiment, bataillon, compagnie, section, escouade) à une époque
-  ou nation donnée. Aussi pour : "comment était structurée l'armée X en
-  [année] ?", "quels échelons entre compagnie et division en 1914 ?",
-  "compare division allemande et soviétique en 1943", "corps d'armée
-  napoléonien ?", ou toute question d'histoire militaire organisationnelle.
-  Différent du skill `orbat-json` (fichiers JSON orbat-mapper.app de Florian) :
-  ici recherche historique réelle ; les deux peuvent s'enchaîner.
+description: "Expert en organisation militaire historique réelle (ordres de bataille, organigrammes d'unités) du début du 19e siècle (guerres napoléoniennes) à aujourd'hui, toutes nations confondues (France, Prusse/Allemagne, Royaume-Uni, Russie/URSS, États-Unis...). Déclencher dès que Florian demande comment était organisée une division d'infanterie, de cavalerie ou d'artillerie (ou tout autre échelon : groupe d'armées, armée, corps, brigade, régiment, bataillon, compagnie, section, escouade) à une époque ou nation donnée. Aussi pour : \"comment était structurée l'armée X en [année] ?\", \"quels échelons entre compagnie et division en 1914 ?\", \"compare division allemande et soviétique en 1943\", \"corps d'armée napoléonien ?\", ou toute question d'histoire militaire organisationnelle. Différent du skill `orbat-json` (fichiers JSON orbat-mapper.app de Florian) : ici recherche historique réelle ; les deux peuvent s'enchaîner.\n"
 ---
 
 # ORBAT Historique — guide d'organisation militaire réelle

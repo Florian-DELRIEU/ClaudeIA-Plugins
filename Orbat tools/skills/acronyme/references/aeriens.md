@@ -13,6 +13,11 @@ Format : `{Gabarit}-({Propulsion-Vitesse}) {Rôle1}-{Rôle2}`
 | AE | Carrier Airframe | Équipé porte-avions |
 | AV | Avion VTOL | Décollage vertical |
 | AS | Drop ship | VTOL avec capacité transport troupes/matériel, atterrissage tous terrains |
+| BL | Ballon | Aérostat générique, plus léger que l'air, sans propulsion propre. Décliné en `BLC`/`BLB`/`BLM`. `MGF` (Montgolfière) conservé en lecture, pointe vers `BLM` |
+| BLC | Ballon captif | Amarré au sol par un câble/treuil — observation, ancien usage d'artillerie |
+| BLB | Ballon de barrage | Fixe, déployé comme obstacle aérien passif |
+| BLM | Ballon mobile | Vol libre, dérive au vent — ne présume pas du type d'enveloppe (air chaud, hélium…) |
+| DR | Dirigeable | Aérostat propulsé et dirigeable. Pas de sous-type structurel pour l'instant (rigide/souple/semi-rigide non codé — voir `decisions.md`). `ZEP` (Zeppelin) conservé en lecture, pointe vers `DR` |
 | SR | Fusée (Space Rocket) | Générique |
 | SRS | Fusée suborbital | |
 | SRO | Fusée orbite basse | |
@@ -86,8 +91,8 @@ Format : `{Gabarit}-({Propulsion-Vitesse}) {Rôle1}-{Rôle2}`
 | NB | Bombardier naval | Cibles maritimes |
 | SA | Supériorité aérienne | Domination aérienne |
 | FC | Chasseur | **Officiel** (2026-08-04), remplace `P` (libéré) — `F` collisionne avec Fusil/Fusilier (`infanterie.md`). `P`/`F` restent alternatifs en lecture. Rapide et maniable |
-| FH | Chasseur lourd | **Officiel** (2026-08-04), suit `FC`. Exception gabarit-suffixe documentée (`F`+`H`, `H` en suffixe). Plus grand, meilleure autonomie. `HF` conservé en lecture |
-| FI | Intercepteur | **Officiel** (2026-08-04), suit `FC`/`FH`. Abattre bombardiers rapidement. `I` reste lu Infanterie par défaut (position Type) |
+| FCH | Chasseur lourd | **Officiel** (2026-08-30), remplace `FH` (libéré au profit de `FH` = Fusil de calibre supérieur, `infanterie.md` — collision réelle dans le bassin Rôles/Armements). Fusion atomique déclarée, sans rapport avec le gabarit universel `.H` : un chasseur au gabarit lourd s'écrirait `FC.H`. Plus grand, meilleure autonomie. `FH` et `HF` conservés en lecture |
+| FI | Intercepteur | **Officiel** (2026-08-04), suit `FC`/`FCH`. Abattre bombardiers rapidement. `I` reste lu Infanterie par défaut (position Type) |
 | MR | Multirôle | Chasse + bombardement léger + etc. |
 | REC | Reconnaissance | Surveillance / collecte info |
 | TR / TT | Transport / Transport troupes | |

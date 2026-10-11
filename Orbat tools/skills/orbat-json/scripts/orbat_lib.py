@@ -15,8 +15,201 @@ import json
 import random
 import string
 import datetime
+import re
+import unicodedata
 
 ID_ALPHABET = string.ascii_letters + string.digits
+
+
+# ---------------------------------------------------------------------------
+# Localisation des autres skills du plugin (orbat-tools)
+# ---------------------------------------------------------------------------
+def find_skill_dir(name, start=None):
+    """
+    Renvoie le dossier du skill `name` (ex. "acronyme", "orbat-json") du plugin.
+
+    Ordre de recherche :
+      1. remontée depuis `start` (par défaut ce fichier) : à chaque niveau on
+         teste `<niveau>/<name>` puis `<niveau>/skills/<name>` — le plugin
+         courant gagne toujours ;
+      2. à défaut seulement, variable d'environnement ORBAT_TOOLS_ROOT (racine
+         du plugin, ou son dossier skills/) — pour un script copié hors plugin.
+         Une variable restée pointée sur une vieille copie ne peut donc pas
+         masquer le plugin installé.
+    Lève FileNotFoundError avec la liste des chemins essayés — volontaire :
+    mieux vaut échouer bruyamment que travailler avec des codes périmés.
+    """
+    tried = []
+    d = os.path.dirname(os.path.abspath(start or __file__))
+    for _ in range(8):
+        tried += [os.path.join(d, name), os.path.join(d, "skills", name)]
+        parent = os.path.dirname(d)
+        if parent == d:
+            break
+        d = parent
+    env = os.environ.get("ORBAT_TOOLS_ROOT")
+    if env:
+        tried += [os.path.join(env, "skills", name), os.path.join(env, name)]
+    for c in tried:
+        if os.path.isdir(c):
+            return os.path.abspath(c)
+    raise FileNotFoundError(
+        "Skill `%s` introuvable. Chemins essayés :\n  %s\n"
+        "Définir ORBAT_TOOLS_ROOT sur la racine du plugin orbat-tools."
+        % (name, "\n  ".join(tried)))
+
+
+# ---------------------------------------------------------------------------
+# Temps (state[].t, events[].startTime)
+# ---------------------------------------------------------------------------
+def parse_time(value):
+    """
+    Convertit un horodatage du format orbat-mapper en datetime *aware* (UTC).
+
+    Accepte : chaîne ISO 8601 (« Z », décalage « +01:00 » ou « +0100 »,
+    fractions de seconde de toute longueur, ou sans fuseau — lue comme UTC),
+    nombre ou chaîne numérique (millisecondes epoch), ou datetime. Renvoie
+    None si `value` est vide. Lève ValueError, avec un message clair, sur
+    une valeur illisible (ex. une heure seule « 09:05Z » : la date manque).
+
+    ⚠️ Ne JAMAIS comparer les chaînes `t` directement : « 10:00+01:00 » vaut
+    09:00Z et doit passer AVANT « 09:30Z », ce que l'ordre alphabétique inverse.
+    """
+    if value is None or value == "":
+        return None
+    if isinstance(value, datetime.datetime):
+        dt = value
+    elif isinstance(value, (int, float)):
+        dt = datetime.datetime.fromtimestamp(value / 1000, datetime.timezone.utc)
+    else:
+        s = str(value).strip()
+        if re.fullmatch(r"-?\d{10,}(\.\d+)?", s):
+            return parse_time(float(s))
+        if s.endswith("Z") or s.endswith("z"):
+            s = s[:-1] + "+00:00"
+        s = re.sub(r"([+-]\d{2})(\d{2})$", r"\1:\2", s)             # +0100 -> +01:00
+        s = re.sub(r"(\.\d{6})\d+", r"\1", s)                         # > 6 décimales
+        try:
+            dt = datetime.datetime.fromisoformat(s)
+        except ValueError:
+            raise ValueError(
+                f"horodatage illisible : {value!r} — format attendu ISO 8601 complet, "
+                "ex. 2025-01-01T09:05:00Z ou 2025-01-01T10:05:00+01:00") from None
+    if dt.tzinfo is None:
+        dt = dt.replace(tzinfo=datetime.timezone.utc)
+    return dt.astimezone(datetime.timezone.utc)
+
+
+_TIME_MIN = datetime.datetime.min.replace(tzinfo=datetime.timezone.utc)
+
+
+def unreadable_times(units):
+    """Nombre d'entrées state[] dont `t` est illisible (placées en tête par le
+    tri : les quantités rejouées à une date donnée sont alors fausses)."""
+    n = 0
+    for u in units:
+        for st in u.get("state", []) or []:
+            try:
+                parse_time(st.get("t"))
+            except (ValueError, TypeError, OverflowError):
+                n += 1
+    return n
+
+
+def _time_key(value):
+    """Clé de tri chronologique ; une valeur illisible (signalée par
+    validate.py) est placée en tête au lieu de faire planter la lecture."""
+    try:
+        return parse_time(value) or _TIME_MIN
+    except (ValueError, TypeError, OverflowError):
+        return _TIME_MIN
+
+
+# ---------------------------------------------------------------------------
+# Échelons — TABLE UNIQUE pour tous les scripts (pos 9-10 du sidc, sidc.md)
+# ---------------------------------------------------------------------------
+ECHELON = {
+    "equipe": "11", "team": "11", "crew": "11",
+    "escouade": "12", "groupe": "12", "squad": "12",
+    "section": "13", "sec": "13", "section_us": "13",  # SEC = élément terminal (2026-08-09)
+    "peloton": "14", "platoon": "14", "plt": "14",     # PLT = conteneur, > SEC
+    "compagnie": "15", "company": "15", "batterie": "15", "battery": "15",
+    "escadron": "15",
+    "bataillon": "16", "battalion": "16",
+    "regiment": "17", "groupement": "17", "groupe_tactique": "17",
+    "brigade": "18",
+    "division": "21",
+    "corps": "22",
+    "armee": "23", "army": "23",
+    "groupe_armees": "24", "groupe_d_armees": "24", "army_group": "24",
+    "commandement": "26", "command": "26",
+}
+
+# Libellé français par code (pour nommer une unité créée par script).
+ECHELON_LABEL_FR = {
+    "11": "Équipe", "12": "Escouade", "13": "Section", "14": "Peloton",
+    "15": "Compagnie", "16": "Bataillon", "17": "Régiment", "18": "Brigade",
+    "21": "Division", "22": "Corps", "23": "Armée", "24": "Groupe d'armées",
+    "26": "Commandement",
+}
+
+
+def _norm_key(s):
+    s = unicodedata.normalize("NFKD", str(s)).encode("ascii", "ignore").decode()
+    return s.strip().lower().replace("'", "_").replace("-", "_").replace(" ", "_")
+
+
+def echelon_code(name_or_code):
+    """
+    Nom d'échelon (FR ou EN, accents/majuscules indifférents : « Armée »,
+    « groupe d'armées », « Platoon »…) ou code à 2 chiffres -> code sidc
+    (pos 9-10). Lève ValueError si inconnu.
+    """
+    raw = str(name_or_code).strip()
+    if raw.isdigit() and len(raw) == 2:
+        return raw
+    key = _norm_key(raw)
+    if key in ECHELON:
+        return ECHELON[key]
+    raise ValueError("Échelon inconnu : %r (connus : %s)"
+                     % (name_or_code, ", ".join(sorted(ECHELON))))
+
+
+def echelon_of(unit_or_sidc):
+    """
+    Code échelon (pos 9-10) d'une unité ou d'un sidc, ou None quand ce champ
+    n'encode PAS un échelon : sidc absent/mal formé, ou 1er chiffre différent
+    de 1/2 (3x/4x/5x = mobilité d'un matériel, cf. sidc.md).
+    """
+    sidc = unit_or_sidc.get("sidc") if isinstance(unit_or_sidc, dict) else unit_or_sidc
+    sidc = str(sidc or "")
+    if len(sidc) < 10 or not sidc[:10].isdigit():
+        return None
+    code = sidc[8:10]
+    return code if code[0] in "12" else None
+
+
+# ---------------------------------------------------------------------------
+# Lignes equipment / personnel / supplies
+# ---------------------------------------------------------------------------
+def merge_items(items):
+    """
+    Fusionne les lignes de même `name` d'une liste equipment/personnel/supplies
+    en sommant `count` (ordre de première apparition conservé ; les autres
+    champs de la première ligne sont gardés). Renvoie une NOUVELLE liste.
+    Indispensable après tout renommage qui fait converger plusieurs codes.
+    """
+    out, index = [], {}
+    for it in items or []:
+        name = it.get("name")
+        if name in index:
+            prev = index[name]
+            prev["count"] = (prev.get("count", 0) or 0) + (it.get("count", 0) or 0)
+        else:
+            cp = dict(it)
+            index[name] = cp
+            out.append(cp)
+    return out
 
 
 def load(path):
@@ -140,7 +333,7 @@ def base_resources(unit, kind):
 
 def sorted_states(unit):
     """Entrées de state triées chronologiquement par `t`."""
-    return sorted(unit.get("state", []) or [], key=lambda s: s.get("t", ""))
+    return sorted(unit.get("state", []) or [], key=lambda s: _time_key(s.get("t")))
 
 
 def resource_at(unit, kind, t=None):
@@ -148,10 +341,12 @@ def resource_at(unit, kind, t=None):
     Quantités d'une unité pour `kind` à l'instant `t` (ISO str) en rejouant la timeline.
     `update` pose des valeurs absolues (onHand), `diff` applique un delta.
     t=None -> état final. Renvoie {name: quantité}.
+    `t` accepte tout ce que parse_time accepte (ISO avec ou sans fuseau, « Z »).
     """
     cur = base_resources(unit, kind)
+    limit = parse_time(t) if t is not None else None
     for st in sorted_states(unit):
-        if t is not None and st.get("t", "") > t:
+        if limit is not None and _time_key(st.get("t")) > limit:
             break
         for it in (st.get("update", {}) or {}).get(kind, []) or []:
             cur[it["name"]] = it.get("onHand", 0)
@@ -160,11 +355,76 @@ def resource_at(unit, kind, t=None):
     return cur
 
 
+def resource_deltas(unit, kind):
+    """
+    Rejoue la timeline d'une unité pour `kind` et renvoie, pour chaque entrée
+    de state[] (ordre chronologique), la variation NETTE qu'elle produit :
+    [(state, {name: delta})]. Les `update` (valeurs absolues) sont ainsi
+    réexprimés en deltas, ce qui permet de transférer ou de fusionner des
+    timelines sans changer les quantités à aucun instant.
+    """
+    cur = base_resources(unit, kind)
+    out = []
+    for st in sorted_states(unit):
+        before = dict(cur)
+        for it in (st.get("update", {}) or {}).get(kind, []) or []:
+            cur[it["name"]] = it.get("onHand", 0)
+        for it in (st.get("diff", {}) or {}).get(kind, []) or []:
+            cur[it["name"]] = cur.get(it["name"], 0) + it.get("onHand", 0)
+        deltas = {}
+        for n in list(before) + [k for k in cur if k not in before]:
+            d = cur.get(n, 0) - before.get(n, 0)
+            if d:
+                deltas[n] = d
+        out.append((st, deltas))
+    return out
+
+
+def states_to_diffs(unit):
+    """
+    Réécrit EN PLACE les `update` (valeurs absolues) du state[] de `unit` en
+    `diff` (deltas), calculés sur ses quantités de base actuelles — quantités
+    identiques à tout instant. À faire AVANT toute opération qui change la base
+    ou fait converger des codes (fusion d'unités, renommage A+B -> C) : un
+    `update` absolu écraserait sinon la part apportée par l'autre source.
+    Les autres champs (location, title, status, sidc…) sont conservés.
+    Renvoie le nombre d'entrées réécrites.
+    """
+    if not unit.get("state"):
+        return 0
+    per_state = {}
+    for kind in RESOURCE_KINDS:
+        for st, deltas in resource_deltas(unit, kind):
+            per_state.setdefault(id(st), {})[kind] = deltas
+    changed = 0
+    for st in unit["state"]:
+        upd = st.get("update") or {}
+        res_upd = {k: v for k, v in upd.items() if k in RESOURCE_KINDS}
+        if not res_upd:
+            continue
+        changed += 1
+        rest = {k: v for k, v in upd.items() if k not in RESOURCE_KINDS}
+        if rest:
+            st["update"] = rest
+        else:
+            st.pop("update", None)
+        diff = {k: v for k, v in (st.get("diff") or {}).items() if k not in RESOURCE_KINDS}
+        for kind, deltas in per_state.get(id(st), {}).items():
+            if deltas:
+                diff[kind] = [{"name": n, "onHand": d} for n, d in deltas.items()]
+        if diff:
+            st["diff"] = diff
+        else:
+            st.pop("diff", None)
+    return changed
+
+
 def position_at(unit, t=None):
     """Dernière `location` [lng,lat] connue à l'instant t (ou finale si t=None). None si jamais positionnée."""
     pos = None
+    limit = parse_time(t) if t is not None else None
     for st in sorted_states(unit):
-        if t is not None and st.get("t", "") > t:
+        if limit is not None and _time_key(st.get("t")) > limit:
             break
         if "location" in st:
             pos = st["location"]
@@ -195,7 +455,7 @@ def unit_timeline(unit):
 def scenario_events(orbat):
     """Événements globaux triés : [(startTime, title)]."""
     return sorted(((e.get("startTime"), e.get("title")) for e in orbat.get("events", []) or []),
-                  key=lambda x: x[0] or "")
+                  key=lambda x: _time_key(x[0]))
 
 
 def vanished_elements(units):
@@ -309,13 +569,13 @@ EN_SOURCE_WORD_TO_ECHELON = [
     (r"\bBattery\b", "batterie"), (r"\bBty\b", "batterie"),
 ]
 
-DEFAULT_GROUPEMENTS_PATH = os.path.join(
-    os.path.dirname(os.path.abspath(__file__)),
-    "..", "..", "acronyme", "references", "groupements.md")
+def default_groupements_path():
+    """Chemin de `acronyme/references/groupements.md` (voir find_skill_dir)."""
+    return os.path.join(find_skill_dir("acronyme"), "references", "groupements.md")
 
 
 def load_echelon_codes(groupements_path=None):
-    """
+    r"""
     Lit `acronyme/references/groupements.md` § Échelons et renvoie
     {notion d'échelon en minuscules -> code v4 canonique}.
 
@@ -331,7 +591,7 @@ def load_echelon_codes(groupements_path=None):
     avec des codes périmés.
     """
     import re as _re
-    path = groupements_path or DEFAULT_GROUPEMENTS_PATH
+    path = groupements_path or default_groupements_path()
     if not os.path.exists(path):
         raise FileNotFoundError(
             "Table des échelons introuvable : %s\n"

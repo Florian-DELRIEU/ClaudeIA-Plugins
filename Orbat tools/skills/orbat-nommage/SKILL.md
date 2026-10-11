@@ -1,20 +1,6 @@
 ---
 name: orbat-nommage
-description: >
-  Conventions de NOMMAGE des formations militaires réelles (compagnie →
-  régiment → division) : Allemagne, États-Unis, Royaume-Uni, URSS-Russie,
-  France, du XIXᵉ siècle à aujourd'hui, plus la couche « organisation de
-  mission » (Kampfgruppe, Task Force, Battlegroup, BTG, GTIA). Déclencher
-  IMPÉRATIVEMENT dès que Florian tape /orbat-nommage ou /orbat-nom, ou
-  demande : comment nommer/numéroter une unité ou une sous-unité et dans quel
-  style d'armée, comment décoder une désignation (`3./IR 9`, `B/1-5 IN`,
-  `II./AR 155`, `1st Guards msp`, `501e RCC`, `TEILE/PIONIER-REGIMENT 2`),
-  pourquoi la lettre « J » est sautée, ce qu'est une « Abteilung », un
-  « squadron » US vs UK, un « escadron » français, ou comment construire une
-  nomenclature maison cohérente pour un ORBAT fictif. Différent de
-  `orbat-tools:acronyme` (codes maison de Florian) et de
-  `orbat-tools:orbat-historique` (structure et effectifs) : ici c'est le
-  LIBELLÉ de l'unité qui est l'objet — les trois s'enchaînent.
+description: "Conventions de NOMMAGE des formations militaires réelles (compagnie → régiment → division) : Allemagne, États-Unis, Royaume-Uni, URSS-Russie, France, du XIXᵉ siècle à aujourd'hui, plus la couche « organisation de mission » (Kampfgruppe, Task Force, Battlegroup, BTG, GTIA). Déclencher IMPÉRATIVEMENT dès que Florian tape /orbat-nommage ou /orbat-nom, ou demande : comment nommer/numéroter une unité ou une sous-unité et dans quel style d'armée, comment décoder une désignation (`3./IR 9`, `B/1-5 IN`, `II./AR 155`, `1st Guards msp`, `501e RCC`, `TEILE/PIONIER-REGIMENT 2`), pourquoi la lettre « J » est sautée, ce qu'est une « Abteilung », un « squadron » US vs UK, un « escadron » français, ou comment construire une nomenclature maison cohérente pour un ORBAT fictif. Différent de `orbat-tools:acronyme` (codes maison de Florian) et de `orbat-tools:orbat-historique` (structure et effectifs) : ici c'est le LIBELLÉ de l'unité qui est l'objet — les trois s'enchaînent.\n"
 ---
 
 # ORBAT Nommage — conventions de désignation des formations

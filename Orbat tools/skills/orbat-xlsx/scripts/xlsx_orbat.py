@@ -2,7 +2,8 @@
 # -*- coding: utf-8 -*-
 """
 xlsx_orbat.py — lecture / création / édition des ORBAT au format xlsx ODIN
-(TRADOC G2), l'équivalent tableur du XML JTDS OBSV4.2.
+(TRADOC G2), l'équivalent tableur du XML JTDS OBSV4.2. (Le XML JTDS
+lui-même n'est PAS lu par ce script : seulement le classeur xlsx.)
 
 Grammaire vérifiée à 100 % contre le XML de référence JRTC ARIANA-17 IFV DIV
 (3160 unités, 44010 entités, 5838 remorquées, 29195 personnels, 19474 crew,
@@ -30,6 +31,12 @@ CLI
     python xlsx_orbat.py agg      F.xlsx [--unit NOM] [--what equipment|personnel]
     python xlsx_orbat.py validate F.xlsx
     python xlsx_orbat.py tojson   F.xlsx SORTIE.json [--side NOM] [--identity 3]
+        (valide automatiquement le JSON produit — même contrôle que
+         orbat-json/scripts/validate.py ; code de sortie 1 s'il y a des erreurs)
+
+Les modules partagés (orbat_lib, new_orbat, validate) vivent dans le skill
+`orbat-json` du même plugin et sont localisés automatiquement (variable
+ORBAT_TOOLS_ROOT en repli si le plugin a été déplacé). Plus aucune copie locale.
 """
 from __future__ import annotations
 
@@ -44,7 +51,32 @@ try:
 except ImportError:  # pragma: no cover
     sys.exit("openpyxl requis : pip install openpyxl")
 
-sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+
+
+def _bootstrap_orbat_json():
+    """Rend importables orbat_lib / new_orbat / validate (skill orbat-json)."""
+    here = os.path.dirname(os.path.abspath(__file__))
+    tried = []
+    d = here
+    for _ in range(8):
+        tried += [os.path.join(d, "orbat-json", "scripts"),
+                  os.path.join(d, "skills", "orbat-json", "scripts")]
+        d = os.path.dirname(d)
+    env = os.environ.get("ORBAT_TOOLS_ROOT")   # repli seulement (plugin déplacé)
+    if env:
+        tried += [os.path.join(env, "skills", "orbat-json", "scripts"),
+                  os.path.join(env, "orbat-json", "scripts")]
+    for c in tried:
+        if os.path.isfile(os.path.join(c, "orbat_lib.py")):
+            while c in sys.path:
+                sys.path.remove(c)
+            sys.path.insert(0, c)   # toujours en tête : rien ne doit le masquer
+            return c
+    raise FileNotFoundError("Skill orbat-json introuvable (orbat_lib.py). Définir "
+                            "ORBAT_TOOLS_ROOT sur la racine du plugin orbat-tools.")
+
+
+_bootstrap_orbat_json()
 
 INFO_SHEET = "UNIT INFO"
 INFO_HEADER = ["TYPE", "NAME", "PARENT", "UIC", "ECHELON",
@@ -597,6 +629,9 @@ def validate(wb):
                                 f"« {r['role']} » invalide (attendu C ou P)")
             if k in KIND_ENTITY or k == "P":
                 seen.add(r["id"])
+                if r.get("cls") is None or not str(r.get("cls")).strip():
+                    errs.append(f"template « {name} » ligne {r['_row']} : {k} "
+                                f"id {r['id']!r} sans classe (colonne CLASS vide)")
     return errs
 
 
@@ -605,7 +640,9 @@ def validate(wb):
 # ---------------------------------------------------------------------------
 # Échelon ODIN (mot anglais) -> échelon APP-6D. Table sûre : le vocabulaire
 # ODIN est en anglais US, donc « Section » = section US (13) et « Platoon » =
-# peloton (14). ⚠ Ne pas confondre avec le français, où « Section » = 14.
+# peloton (14) — cohérent avec la table française depuis le 2026-08-09
+# (SEC = 13, PLT = 14). ⚠ Piège inverse : une « Section » du Commonwealth
+# (~8-10 hommes) est une escouade (12) — cf. orbat-json/references/sidc.md.
 ECHELON_MAP = {
     "Team": "11", "Crew": "11", "Squad": "12", "Section": "13",
     "Platoon": "14", "Detachment": "14", "Company": "15", "Battery": "15",
@@ -705,6 +742,11 @@ FUNCTION_MAP = {
 }
 DEFAULT_ENTITY = "000000"
 
+# Couleur de remplissage du camp selon l'identité (convention APP-6 : bleu
+# ami, rouge hostile, vert neutre, jaune inconnu).
+SIDE_FILL = {"0": "#ffff80", "1": "#ffff80", "2": "#80e0ff", "3": "#80e0ff",
+             "4": "#aaffaa", "5": "#ff8080", "6": "#ff8080"}
+
 
 def _sidc_from(unit, identity=None, report=None):
     """Construit un sidc APP-6D 20 chiffres depuis les champs ODIN."""
@@ -745,7 +787,15 @@ def to_mapper_json(wb, side_name=None, identity=None, name=None):
     """
     from new_orbat import make_unit, make_side, make_group, new_orbat
 
-    report = {"functions_non_mappees": Counter(), "echelons_inconnus": Counter()}
+    report = {"functions_non_mappees": Counter(), "echelons_inconnus": Counter(),
+              "classes_vides": 0}
+    EMPTY = "(classe vide)"
+
+    def _cls(e):
+        if e.cls is None or not str(e.cls).strip():
+            report["classes_vides"] += 1
+            return EMPTY
+        return str(e.cls)
     tree = expand(wb)
     roots = tree if isinstance(tree, list) else [tree]
 
@@ -756,9 +806,9 @@ def to_mapper_json(wb, side_name=None, identity=None, name=None):
         pe = Counter()
         for e in u.entities:
             if e.kind in KIND_ENTITY:
-                eq[e.cls] += 1
+                eq[_cls(e)] += 1
             else:
-                pe[e.cls] += 1
+                pe[_cls(e)] += 1
         eq_cat.update(eq)
         pe_cat.update(pe)
         desc = []
@@ -774,9 +824,9 @@ def to_mapper_json(wb, side_name=None, identity=None, name=None):
         if desc:
             kw["description"] = " · ".join(desc)
         if eq:
-            kw["equipment"] = sorted(eq.items())
+            kw["equipment"] = sorted(eq.items(), key=lambda kv: str(kv[0]))
         if pe:
-            kw["personnel"] = sorted(pe.items())
+            kw["personnel"] = sorted(pe.items(), key=lambda kv: str(kv[0]))
         # subUnits : toujours des Unit récursives avec sidc (jamais de Group
         # imbriqué — cf. references/format.md).
         return make_unit(u.name, "00", "000000",
@@ -784,15 +834,26 @@ def to_mapper_json(wb, side_name=None, identity=None, name=None):
                          sidc=_sidc_from(u, identity, report), **kw)
 
     units = [conv(r) for r in roots]
-    side = make_side(side_name or "ODIN", [make_group(name or "ORBAT", units)])
+    # Identité du camp : celle demandée, sinon l'identité majoritaire des
+    # unités racines (jamais « ami » par défaut sur un ORBAT hostile).
+    side_ident = identity
+    if side_ident is None:
+        votes = Counter(u["sidc"][3] for u in units if len(u.get("sidc", "")) == 20)
+        side_ident = votes.most_common(1)[0][0] if votes else "3"
+    report["identite_camp"] = side_ident
+    side = make_side(side_name or "ODIN", [make_group(name or "ORBAT", units)],
+                     identity=side_ident,
+                     fill=SIDE_FILL.get(str(side_ident), "#80e0ff"))
 
     orbat = new_orbat(
         name or (roots[0].name if roots else "ORBAT ODIN"),
         [side],
-        equipment=[(k, "Classe d'entité ODIN (plateforme / remorque / emport)")
-                   for k in sorted(eq_cat)],
-        personnel=[(k, "Classe de personnel ODIN (LifeForm)")
-                   for k in sorted(pe_cat)],
+        # Règle 5 (naming.md) : la désignation réelle OUVRE la description —
+        # la classe ODIN est le nom réel du matériel (ex. « BMP 2 »).
+        equipment=[(k, f"{k} — classe d'entité ODIN (plateforme / remorque / emport)")
+                   for k in sorted(eq_cat, key=str)],
+        personnel=[(k, f"{k} — classe de personnel ODIN (LifeForm)")
+                   for k in sorted(pe_cat, key=str)],
         description=(
             "Converti depuis un ORBAT ODIN (TRADOC G2) au format xlsx. "
             "Les quantités sont agrégées par classe au niveau de l'unité "
@@ -894,10 +955,14 @@ def main():
         sys.exit(1 if errs else 0)
 
     elif a.cmd == "tojson":
+        import orbat_lib
+        import validate as vd
         orbat, rep = to_mapper_json(wb, side_name=a.side, identity=a.identity, name=a.name)
-        with open(a.out, "w", encoding="utf-8") as f:
-            json.dump(orbat, f, ensure_ascii=False, indent=2)
-        print(f"Écrit {a.out}")
+        orbat_lib.save(orbat, a.out)
+        print(f"Écrit {a.out}  (identité du camp : {rep['identite_camp']})")
+        if rep["classes_vides"]:
+            print(f"\n⚠ {rep['classes_vides']} entité(s) sans classe -> code « (classe vide) » "
+                  "— corriger le classeur (voir `validate`).")
         if rep["functions_non_mappees"]:
             print("\n⚠ function ID 2525C non mappés -> entité générique 000000 :")
             for k, v in rep["functions_non_mappees"].most_common():
@@ -907,6 +972,10 @@ def main():
             print("\n⚠ échelons ODIN non reconnus :")
             for k, v in rep["echelons_inconnus"].most_common():
                 print(f"    {k!r}  ×{v}")
+        print("\n--- Validation du JSON produit (orbat-json/scripts/validate.py) ---")
+        errors, warns, n = vd.check(orbat)
+        vd.report(errors, warns, n)
+        sys.exit(1 if errors else 0)
 
 
 if __name__ == "__main__":

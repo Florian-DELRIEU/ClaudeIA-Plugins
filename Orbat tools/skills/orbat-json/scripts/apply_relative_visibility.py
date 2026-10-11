@@ -3,21 +3,25 @@
 Applique la regle de visibilite par profondeur relative (limitVisibility) sur
 un ORBAT JSON orbat-mapper.app, camp par camp.
 
-Regle (validee avec Florian, aout 2026) :
-  - Echelle de reference fixe : R = 5 bandes, bornes b = [0, 10, 13, 16, 18, 24].
+Regle (validee avec Florian, aout 2026 — references/format.md) :
+  - Echelle de reference fixe : R = 5 bandes, bornes B = [0, 10, 13, 16, 18, 24].
   - Pour un cote de profondeur reelle D (D = profondeur max de son arbre) :
       band_index(i) = round_half_up(i * R / D)   pour i = 1..D
-      bande naturelle de la profondeur i = [ b[band_index(i-1)], b[band_index(i)] ]
-      (band_index(0) = 0 force, band_index(D) = R force)
+      bande naturelle de la profondeur i = [ B[band_index(i) - 1], B[band_index(i)] ]
+      (band_index(D) = R force)
   - Regle A (comblement de bande sautee) : si D < R, certaines bandes sont
     sautees. On comble en prolongeant le MAX de la profondeur precedente
     jusqu'au MIN naturel de la profondeur suivante reellement utilisee (on
     n'avance jamais le debut de la profondeur suivante).
+  - Regle A' (racine, ajout 2026-10) : la profondeur 1 commence TOUJOURS a
+    B[0]. Sans cela, un camp de profondeur D <= 3 n'affiche rien a faible
+    zoom (D=1 -> [18,24], D=2 -> [13,18]). Sans effet pour D >= 4.
   - Regle B (feuilles) : toute unite qui est une feuille (pas de subUnits)
     voit son maxZoom force a la borne max globale (b[-1] = 24), quelle que
     soit sa profondeur naturelle, puisque rien de plus fin ne prendra le
     relais en dessous.
 """
+import argparse
 import json
 import sys
 from decimal import Decimal, ROUND_HALF_UP
@@ -47,6 +51,9 @@ def compute_side_bands(D):
         lo = B[bi - 1]
         hi = B[bi]
         natural.append([lo, hi])
+
+    # Regle A' : la racine est toujours visible des le zoom minimal.
+    natural[0][0] = B[0]
 
     # Regle A : combler les bandes sautees en etendant le max du niveau
     # precedent jusqu'au min naturel du niveau suivant.
@@ -106,11 +113,15 @@ def process_side(side):
 
 
 def main():
-    if len(sys.argv) != 2:
-        print("usage: apply_relative_visibility.py <orbat.json>")
-        sys.exit(1)
+    ap = argparse.ArgumentParser(
+        description="Applique la visibilité par profondeur relative (style.limitVisibility), "
+                    "camp par camp. Écrase le fichier sauf --output / --dry-run.")
+    ap.add_argument("orbat", help="fichier ORBAT JSON")
+    ap.add_argument("--output", help="fichier de sortie (défaut : écrase l'entrée)")
+    ap.add_argument("--dry-run", action="store_true", help="affiche les bandes sans rien écrire")
+    args = ap.parse_args()
 
-    path = sys.argv[1]
+    path = args.orbat
     with open(path, encoding="utf-8") as f:
         data = json.load(f)
 
@@ -124,10 +135,14 @@ def main():
         print(f"{side['name']}: D={D}, bandes={bands}, unites stylees={count}")
         total += count
 
-    with open(path, "w", encoding="utf-8") as f:
-        json.dump(data, f, ensure_ascii=False, indent=2)
-
     print(f"Total unites stylees: {total}")
+    if args.dry_run:
+        print("[dry-run] Aucun fichier écrit.")
+        return
+    out = args.output or path
+    with open(out, "w", encoding="utf-8") as f:
+        json.dump(data, f, ensure_ascii=False, indent=1)
+    print(f"Écrit dans {out}")
 
 
 if __name__ == "__main__":

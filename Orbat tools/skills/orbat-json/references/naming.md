@@ -210,8 +210,8 @@ tête de `description` avant de livrer un ORBAT.
 
 **Format de restitution :** dès que cette information ressort dans une
 `description` d'unité (légende par échelon), elle s'écrit dans la forme canonique
-`**CODE : Désignation réelle**` — voir Règle 7 § 7.3, qui prime sur tout ancien
-format `* CODE = ...` encore visible dans les fichiers ou les scripts.
+`**CODE : Désignation réelle**` — voir Règle 7 § 7.3. L'ancien format `* CODE = ...`
+peut subsister dans de vieux fichiers : relancer un script de légende le remplace.
 
 ### ⚠️ Piège confirmé — codes partagés entre plusieurs camps du même fichier
 
@@ -254,9 +254,9 @@ Il ne suffit plus dès que l'une de ces conditions s'applique :
    diffère selon le camp, donc il ne peut pas vivre dans le catalogue global.
 2. **Florian veut le compte par ligne** — cas devenu rare depuis la Règle 7 § 7.3
    qui fixe le format **sans quantité** (`**MBT : T-55**`) ; ne l'activer que sur
-   demande explicite, `add_legends.py` ne portant de toute façon pas de quantité.
-3. **Florian veut Équipement et Personnel séparés** en deux blocs distincts plutôt
-   qu'un seul bloc `Équipement :` fourre-tout (comportement actuel d'`add_legends.py`).
+   demande explicite (`add_local_legends.py --avec-quantites`).
+3. *(Caduc depuis octobre 2026 : `add_legends.py` sépare lui aussi Équipement et
+   Personnel en deux blocs.)*
 4. **Hétérogénéité locale à représenter** : un même code recouvre plusieurs modèles
    réels différents *au sein d'une même unité* (ex. `**VTT-LMG : BTR-60PB / OT-64
    SKOT**`) — impossible à exprimer avec une désignation catalogue unique.
@@ -274,8 +274,8 @@ Personnel :
 ```
 
 (Format canonique fixé par la Règle 7 § 7.3 — sans quantité. L'ancienne forme
-`* CODE = Nx Désignation` est abandonnée ; les scripts qui la produisent encore
-sont à corriger ou leur sortie à reformater avant livraison.)
+`* CODE = Nx Désignation` est abandonnée ; tous les scripts produisent le format
+canonique via `scripts/legends.py` et conservent la prose déjà présente.)
 
 à partir d'une table de correspondance fournie (`{code: "désignation réelle"}`,
 propre au camp traité) et d'overrides ponctuels par chemin d'unité pour
@@ -368,9 +368,10 @@ d'unité, à quelque échelon que ce soit**, s'écrit :
   quand les deux catégories coexistent (Règle 6).
 - Hétérogénéité locale (un code, plusieurs modèles réels dans la même unité) :
   `**VTT-LMG : BTR-60PB / OT-64 SKOT**`.
-- L'ancienne forme `* CODE = Nx Désignation réelle` est **abandonnée**.
-  ⚠️ `scripts/add_legends.py` et `scripts/add_local_legends.py` produisent encore
-  l'ancien format : reformater leur sortie (ou corriger les scripts) avant de livrer.
+- L'ancienne forme `* CODE = Nx Désignation réelle` est **abandonnée**. Les scripts
+  `add_legends.py`, `add_local_legends.py` et `apply_rename_map.py` produisent le format
+  canonique (module unique `scripts/legends.py`, octobre 2026) et remplacent toute
+  légende à l'ancien format en conservant la phrase de contexte.
 
 Cette forme ne dispense pas de la Règle 5 : le catalogue racine doit toujours
 porter la désignation réelle en tête de sa propre `description`.

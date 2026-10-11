@@ -1,21 +1,6 @@
 ---
 name: orbat-xlsx
-description: >
-  Lecture, écriture, analyse et conversion d'ORBAT (Order of Battle) au
-  format tableur **xlsx ODIN / JTDS** (TRADOC G2) : classeur avec feuille
-  `UNIT INFO` + feuilles template, équivalent tableur du XML JTDS OBSV4.2.
-  Déclencher dès que Florian tape /orbat-xlsx, fournit un `.xlsx` contenant
-  une feuille `UNIT INFO`, un XML **JTDS** (`OBSV4.2`), mentionne « ODIN »,
-  « TRADOC », « JTDS » ou un « ORBAT en tableur / Excel », ou demande de :
-  lire/analyser un ORBAT ODIN, compter le matériel ou le personnel d'une
-  unité d'un classeur, créer ou éditer un ORBAT au format xlsx (ajout/
-  suppression d'unité, feuille template), valider l'intégrité d'un classeur,
-  ou convertir un ORBAT ODIN vers le format JSON orbat-mapper.app.
-  Déclencher aussi pour des demandes courtes ("lis ce classeur ODIN",
-  "combien de BMP 2 dans la 171 IFV BDE ?", "ajoute un bataillon à ce
-  classeur", "convertis cet ORBAT ODIN pour orbat-mapper"). Pour un ORBAT
-  déjà au format JSON `type: "ORBAT-mapper"`, c'est le skill `orbat-json`
-  qu'il faut.
+description: "Lecture, écriture, analyse et conversion d'ORBAT (Order of Battle) au format tableur **xlsx ODIN / JTDS** (TRADOC G2) : classeur avec feuille `UNIT INFO` + feuilles template, équivalent tableur du XML JTDS OBSV4.2 (le XML lui-même n'est pas lu). Déclencher dès que Florian tape /orbat-xlsx, fournit un `.xlsx` contenant une feuille `UNIT INFO`, mentionne « ODIN », « TRADOC », « JTDS » ou un « ORBAT en tableur ODIN » (pas l'export xlsx du site orbat-mapper), ou demande de : lire/analyser un ORBAT ODIN, compter le matériel ou le personnel d'une unité d'un classeur, créer ou éditer un ORBAT xlsx (unités, feuilles template), valider un classeur, ou le convertir en JSON orbat-mapper.app. Déclencher aussi pour des demandes courtes (\"lis ce classeur ODIN\", \"combien de BMP 2 dans la 171 IFV BDE ?\", \"ajoute un bataillon à ce classeur\", \"convertis cet ORBAT ODIN pour orbat-mapper\"). Pour un ORBAT déjà au format JSON `type: \"ORBAT-mapper\"`, c'est le skill `orbat-json` qu'il faut.\n"
 ---
 
 # ORBAT xlsx ODIN — lecture, écriture, édition, conversion (format ODIN/JTDS)
@@ -44,11 +29,15 @@ En une phrase :
 - **`xlsx_orbat.py`** — **format xlsx ODIN** : `read`, `tree`, `agg`, `validate`,
   `tojson`. En bibliothèque : `load`, `expand`, `save`, `add_unit`, `remove_unit`,
   `TemplateBuilder`, `validate`, `to_mapper_json`.
-- **`orbat_lib.py`** — présent ici uniquement en support de la conversion
-  `tojson` (validation du JSON de sortie via `validate.py`, qui l'utilise
-  également). Pour tout travail sur un fichier déjà en JSON orbat-mapper une
-  fois converti, basculer sur le skill `orbat-json`, plus complet sur ce format.
-- **`validate.py`** — valide le JSON produit par `tojson` (0 erreur attendu).
+- **`validate.py`** — raccourci vers le validateur unique
+  `orbat-json/scripts/validate.py`, pour revalider un JSON retouché après
+  `tojson` (qui, lui, se valide déjà tout seul).
+- Les bibliothèques `orbat_lib.py` / `new_orbat.py` ne sont plus copiées ici
+  (octobre 2026) : `xlsx_orbat.py` les importe du skill `orbat-json` du même
+  plugin (variable `ORBAT_TOOLS_ROOT` si le plugin a été déplacé). Pour tout
+  travail sur le JSON une fois converti, basculer sur le skill `orbat-json`.
+- **Limite connue :** le XML JTDS (`OBSV4.2`) n'est **pas** lu — seulement le
+  classeur xlsx. Si Florian fournit le XML, le dire et demander l'xlsx.
 
 ### Deux pièges à erreurs silencieuses (détaillés dans `xlsx_format.md`)
 
@@ -95,8 +84,14 @@ des IDs, partagée entre `E`/`W`/`M`/`P`). **Toujours finir par `validate`**
 
 ```bash
 python3 scripts/xlsx_orbat.py tojson F.xlsx OUT.json --side "NOM"
-python3 scripts/validate.py OUT.json          # doit donner 0 erreur
+# valide le JSON produit dans la foulée (0 erreur attendue, code de sortie 1 sinon)
 ```
+
+Le camp reçoit l'identité **majoritaire des unités converties** (hostile pour un
+ORBAT OPFOR) sauf `--identity` explicite. Les entrées de catalogue commencent par la
+classe ODIN, qui est la désignation réelle (`BMP 2 IFV — classe d'entité ODIN…`,
+Règle 5) : `add_legends.py` fonctionne donc directement sur le résultat. Une entité
+sans classe est signalée par `validate` et convertie en `(classe vide)`.
 
 La conversion est **lossy par construction** : le rôle équipage/passager et les
 liens porteur→remorque ne sont pas représentables en orbat-mapper (le reste —
@@ -120,7 +115,7 @@ explicite de Florian.
 
 - « Lis ce classeur ODIN » / xlsx avec feuille `UNIT INFO` fourni → `xlsx_orbat.py read`.
 - « Combien de BMP 2 dans la 171 IFV BDE ? » (xlsx) → `agg --unit`.
-- « Convertis cet ORBAT ODIN pour orbat-mapper » → `tojson` + `validate.py`.
+- « Convertis cet ORBAT ODIN pour orbat-mapper » → `tojson` (validation incluse).
 - « Ajoute un bataillon à ce classeur » / « fais-moi un ORBAT ODIN en xlsx » →
   `add_unit`/`TemplateBuilder` + `validate`.
 - Un `.json` avec `type: "ORBAT-mapper"` → **ce n'est pas ce skill** — passer à

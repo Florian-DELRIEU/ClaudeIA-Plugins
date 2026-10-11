@@ -31,23 +31,10 @@ import sys
 import os
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-from orbat_lib import gen_id, now_iso, save
+from orbat_lib import gen_id, now_iso, save, echelon_code, ECHELON  # noqa: F401
 
-# Échelons fréquents (pos 9-10). FR entre parenthèses.
-ECHELON = {
-    "equipe": "11", "team": "11", "crew": "11",
-    "escouade": "12", "squad": "12",
-    "section_us": "13",
-    "section": "13", "sec": "13",   # SEC = grosse escouade, elem. terminal (2026-08-09)
-    "peloton": "14", "platoon": "14", "plt": "14",   # PLT = conteneur, > SEC
-    "compagnie": "15", "company": "15", "batterie": "15", "escadron": "15",
-    "bataillon": "16", "battalion": "16",
-    "regiment": "17", "groupe_tactique": "17",
-    "brigade": "18",
-    "division": "21",
-    "corps": "22",
-    "armee": "23",
-}
+# Table des échelons : UNIQUE, dans orbat_lib.ECHELON (réexportée ici pour
+# compatibilité). Ne jamais en redéfinir une copie locale.
 
 IDENTITY = {"pending": "0", "inconnu": "1", "ami_presume": "2",
             "ami": "3", "neutre": "4", "suspect": "5", "hostile": "6"}
@@ -55,11 +42,14 @@ IDENTITY = {"pending": "0", "inconnu": "1", "ami_presume": "2",
 
 def build_sidc(echelon, entity, identity="3", symset="10",
                context="0", status="0", hqtfd="0", mod1="00", mod2="00"):
-    ech = ECHELON.get(str(echelon).lower(), str(echelon))
+    ech = "00" if str(echelon) == "00" else echelon_code(echelon)
     iden = IDENTITY.get(str(identity).lower(), str(identity))
-    assert len(ech) == 2 and len(entity) == 6, "echelon=2 chiffres, entity=6 chiffres"
+    entity = str(entity)
+    if len(entity) != 6 or not entity.isdigit():
+        raise ValueError(f"entity doit faire 6 chiffres : {entity!r}")
     sidc = f"10{context}{iden}{symset}{status}{hqtfd}{ech}{entity}{mod1}{mod2}"
-    assert len(sidc) == 20, f"sidc != 20 chiffres : {sidc} ({len(sidc)})"
+    if len(sidc) != 20 or not sidc.isdigit():
+        raise ValueError(f"sidc invalide (20 chiffres attendus) : {sidc!r}")
     return sidc
 
 

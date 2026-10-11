@@ -103,7 +103,7 @@ Format : `{Échelon} {Type Unité}` ou `{Échelon} {Véhicule}`
 |----------|--------------|-------------|
 | TP | Tireur précision | Arme plus adaptée (longue etc.) — voir `infanterie.md` |
 | TE | Tireur élite | Fusil de précision. ⚠️ **Position Rôle uniquement** — `TE` isolé (position Type) se lit **Équipe**, alternatif de `EQP` (2026-08-09) |
-| F / FUS | Fusilier | `F` officiel, `FUS` alternatif. Arme de base — voir `infanterie.md` (⚠️ `F / FUS` y a aussi un second sens dans le bassin Armement : `F` = Fusil, `FV`/`FA`/`FS` selon le mécanisme) |
+| F / FUS | Fusilier | `F` officiel, `FUS` alternatif. Arme de base — voir `infanterie.md` (⚠️ `F / FUS` y a aussi un second sens dans le bassin Armement : `F` = Fusil, `FV`/`FA`/`FS` selon le mécanisme, `FH` = Fusil de calibre supérieur) |
 | ASS | Assaut | ⚠️ Absent de `infanterie.md` — ce code n'existe que dans cette table (à consolider) |
 | INF / I | Infanterie | `INF` officiel (2026-08-04), `I` alternatif — `I` collisionne avec Industriel / Incendiaire / Intercepteur. Voir `infanterie.md` |
 | MS | Démineur | Voir `infanterie.md` |

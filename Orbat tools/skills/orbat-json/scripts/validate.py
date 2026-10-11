@@ -12,25 +12,32 @@ Contrôles :
   - unicité de chaque code dans la liste equipment/personnel/supplies d'une
     unité (détecte les renommages en masse non fusionnés)
   - unicité de chaque code dans les catalogues racine
+  - description de catalogue non vide (WARN — naming.md Règle 5)
+  - horodatages `t` de state[] lisibles (ISO 8601 ou epoch ms)
 
 Usage : python validate.py ORBAT.json
 Code de sortie 0 si aucune ERREUR (les WARN ne bloquent pas).
+
+Bibliothèque : `check(orbat) -> (errors, warns, n_unites)`, réutilisée par les
+scripts qui écrivent un ORBAT (apply_rename_map.py, xlsx_orbat.py tojson…)
+pour valider leur propre sortie.
 """
+import argparse
 import sys
 import os
 import re
 from collections import Counter
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-from orbat_lib import load, iter_units, catalog_map
+from orbat_lib import load, iter_units, catalog_map, parse_time
 
 TOP_KEYS = ["type", "version", "name", "sides", "equipment",
             "personnel", "settings", "symbologyStandard"]
 SIDC_RE = re.compile(r"^\d{20}$")
 
 
-def main():
-    orbat = load(sys.argv[1])
+def check(orbat):
+    """Contrôle un ORBAT déjà chargé. Renvoie (errors, warns, n_unites)."""
     errors, warns = [], []
 
     for k in TOP_KEYS:
@@ -53,6 +60,11 @@ def main():
                     f"catalogue racine {kind} : {code!r} déclaré {k} fois — "
                     "catalog_map() n'en garde qu'un, la description des autres "
                     "est perdue")
+        for e in orbat.get(key, []) or []:
+            if not (e.get("description") or "").strip():
+                warns.append(
+                    f"catalogue racine {kind} : {e.get('name')!r} sans description "
+                    "— la désignation réelle doit ouvrir la description (naming.md Règle 5)")
 
     seen_ids = {}
     n = 0
@@ -104,16 +116,34 @@ def main():
         for st in u.get("state", []) or []:
             if not st.get("t"):
                 errors.append(f"[{loc}] entrée state sans horodatage `t`")
+                continue
+            try:
+                parse_time(st.get("t"))
+            except (ValueError, TypeError, OverflowError):
+                errors.append(f"[{loc}] horodatage `t` illisible : {st.get('t')!r}")
 
-    print(f"Unités analysées : {n}")
-    print(f"ERREURS : {len(errors)} | AVERTISSEMENTS : {len(warns)}\n")
+    return errors, warns, n
+
+
+def report(errors, warns, n, out=sys.stdout, max_warns=40):
+    print(f"Unités analysées : {n}", file=out)
+    print(f"ERREURS : {len(errors)} | AVERTISSEMENTS : {len(warns)}\n", file=out)
     for e in errors:
-        print("  ERREUR  ", e)
-    for w in warns[:40]:
-        print("  WARN    ", w)
-    if len(warns) > 40:
-        print(f"  ... (+{len(warns) - 40} autres warnings)")
+        print("  ERREUR  ", e, file=out)
+    for w in warns[:max_warns]:
+        print("  WARN    ", w, file=out)
+    if len(warns) > max_warns:
+        print(f"  ... (+{len(warns) - max_warns} autres warnings)", file=out)
 
+
+def main():
+    ap = argparse.ArgumentParser(
+        description="Vérifie qu'un ORBAT JSON est sain et réimportable dans orbat-mapper.app.")
+    ap.add_argument("orbat", help="fichier ORBAT JSON")
+    ap.add_argument("--max-warns", type=int, default=40, help="nombre de WARN affichés (défaut 40)")
+    args = ap.parse_args()
+    errors, warns, n = check(load(args.orbat))
+    report(errors, warns, n, max_warns=args.max_warns)
     sys.exit(1 if errors else 0)
 
 

@@ -42,46 +42,38 @@ l'ordre) :
   unités. Par défaut, hérité de l'entité (position 11-16) du premier enfant
   sélectionné de chaque groupe (suppose une composition homogène, cas
   standard). Passer une valeur explicite pour un groupe hétérogène.
+- `new_short_names` (optionnel) : `shortName` de chaque nouveau groupe, dans
+  l'ordre (naming.md Règles 2 et 7.5 — codes lus dans le skill acronyme).
+  Absent : le script le signale, Claude doit les poser avant livraison.
+
+L'IDENTITÉ (ami/hostile…, pos 4), le contexte (pos 3) et le symbol set
+(pos 5-6) du sidc des nouvelles unités sont REPRIS DES ENFANTS regroupés —
+jamais forcés à « ami ». Si les enfants d'un même paquet divergent, celle du
+premier est prise et un avertissement est émis.
 """
 import json
 import re
 import argparse
-import random
-import string
+import os
+import sys
 
-ECHELON = {
-    "equipe": "11", "team": "11", "crew": "11",
-    "escouade": "12", "groupe": "12", "squad": "12",
-    "section_us": "13",
-    "section": "13", "sec": "13",   # SEC = grosse escouade, elem. terminal (2026-08-09)
-    "peloton": "14", "platoon": "14", "plt": "14",   # PLT = conteneur, > SEC
-    "compagnie": "15", "company": "15", "batterie": "15", "escadron": "15",
-    "bataillon": "16", "battalion": "16",
-    "regiment": "17", "groupement": "17",
-    "brigade": "18",
-    "division": "21",
-    "corps": "22",
-    "armee": "23", "armée": "23",
-    "groupe_armees": "24",
-    "commandement": "26",
-}
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+import orbat_lib as ol
+from new_orbat import build_sidc as _build_sidc
 
+# Table des échelons : orbat_lib.ECHELON (unique). Gardé pour compatibilité.
+ECHELON = ol.ECHELON
+
+FEMININ = {"Équipe", "Escouade", "Section", "Compagnie", "Brigade", "Division", "Armée"}
 ORDINALS_FR = ["1er", "2e", "3e", "4e", "5e", "6e", "7e", "8e", "9e", "10e",
                "11e", "12e", "13e", "14e", "15e", "16e", "17e", "18e", "19e", "20e"]
 
 
-def gen_id(n=10):
-    alphabet = string.ascii_letters + string.digits
-    return "".join(random.choice(alphabet) for _ in range(n))
+gen_id = ol.gen_id
 
 
 def resolve_echelon(name):
-    key = name.strip().lower().replace(" ", "_").replace("é", "e")
-    if key in ECHELON:
-        return ECHELON[key]
-    if key.isdigit() and len(key) == 2:
-        return key
-    raise ValueError(f"Échelon inconnu : {name!r}")
+    return ol.echelon_code(name)
 
 
 def find_node_by_name(node, name_substr, path="root"):
@@ -114,23 +106,39 @@ def entity_of(unit):
     return "000000"
 
 
-def build_sidc(echelon_code, entity, identity="3"):
-    # pos: 1-2 version(10) 3 contexte(0) 4 identite 5-6 symbolset(10) 7 statut(0)
-    # 8 hq/tf/d(0) 9-10 echelon 11-16 entite 17-18 mod1(00) 19-20 mod2(00)
-    sidc = f"10" + "0" + identity + "10" + "0" + "0" + echelon_code + entity + "00" + "00"
-    assert len(sidc) == 20, f"sidc mal formé : {sidc!r} ({len(sidc)} car.)"
-    return sidc
+def sidc_traits(units):
+    """(contexte, identité, symbol set) repris des enfants, + liste des
+    divergences constatées. Défaut si aucun sidc lisible : réalité / ami / 10."""
+    traits = []
+    for u in units:
+        s = str(u.get("sidc") or "")
+        if len(s) == 20 and s.isdigit():
+            traits.append((s[2], s[3], s[4:6]))
+    if not traits:
+        return ("0", "3", "10"), []
+    first = traits[0]
+    divergent = sorted({t for t in traits if t != first})
+    return first, divergent
 
 
-def make_group_unit(name, echelon_code, entity, subunits):
-    return {
+def build_sidc(echelon_code, entity, identity="3", context="0", symset="10"):
+    return _build_sidc(echelon_code, entity, identity=identity, context=context, symset=symset)
+
+
+def make_group_unit(name, echelon_code, entity, subunits, short_name=None):
+    (context, identity, symset), _ = sidc_traits(subunits)
+    u = {
         "id": gen_id(),
         "name": name,
-        "sidc": build_sidc(echelon_code, entity),
+        "sidc": build_sidc(echelon_code, entity, identity=identity,
+                           context=context, symset=symset),
         "subUnits": subunits,
         "symbolOptions": {},
         "state": [],
     }
+    if short_name:
+        u["shortName"] = short_name
+    return u
 
 
 def apply_grouping(orbat, spec, log):
@@ -159,6 +167,8 @@ def apply_grouping(orbat, spec, log):
 
     echelon_code = resolve_echelon(spec["new_echelon"])
     new_names = spec.get("new_names", [])
+    new_short = spec.get("new_short_names", [])
+    label = ol.ECHELON_LABEL_FR.get(echelon_code, spec["new_echelon"].capitalize())
 
     chunks = [matched[i:i + group_size] for i in range(0, len(matched), group_size)]
     new_units = []
@@ -167,9 +177,19 @@ def apply_grouping(orbat, spec, log):
             name = new_names[i]
         else:
             ordinal = ORDINALS_FR[i] if i < len(ORDINALS_FR) else f"{i+1}e"
-            name = f"{ordinal} {spec['new_echelon'].capitalize()}"
+            if i == 0 and label in FEMININ:
+                ordinal = "1ère"
+            name = f"{ordinal} {label}"
         entity = spec.get("entity") or entity_of(chunk[0])
-        new_unit = make_group_unit(name, echelon_code, entity, chunk)
+        _, divergent = sidc_traits(chunk)
+        if divergent:
+            log.setdefault("avertissements", []).append(
+                f"{name} : enfants d'identité/contexte/symbol set différents {divergent} — "
+                "repris du premier enfant, à vérifier")
+        short = new_short[i] if i < len(new_short) else None
+        if not short:
+            log.setdefault("sans_shortname", []).append(name)
+        new_unit = make_group_unit(name, echelon_code, entity, chunk, short_name=short)
         new_units.append(new_unit)
         log.setdefault("groupes_crees", []).append(
             (name, [c.get("name", "?") for c in chunk])
@@ -200,8 +220,7 @@ def main():
     parser.add_argument("--dry-run", action="store_true")
     args = parser.parse_args()
 
-    with open(args.orbat_file, "r", encoding="utf-8") as f:
-        orbat = json.load(f)
+    orbat = ol.load(args.orbat_file)
 
     with open(args.grouping_spec_file, "r", encoding="utf-8") as f:
         specs = json.load(f)
@@ -219,14 +238,17 @@ def main():
     print(f"\n{len(groupes)} nouveau(x) groupe(s) créé(s) :")
     for name, members in groupes:
         print(f"  {name} <- {', '.join(members)}")
+    sans = log.get("sans_shortname", [])
+    if sans:
+        print(f"\n⚠️  {len(sans)} groupe(s) créé(s) sans shortName (naming.md Règles 2 et 7.5) — "
+              "passer `new_short_names` ou les poser avant livraison : " + ", ".join(sans))
 
     if args.dry_run:
         print("\n[dry-run] Aucun fichier écrit.")
         return
 
     out_path = args.output or args.orbat_file
-    with open(out_path, "w", encoding="utf-8") as f:
-        json.dump(orbat, f, ensure_ascii=False, indent=2)
+    ol.save(orbat, out_path)
     print(f"\nÉcrit dans {out_path}")
 
 

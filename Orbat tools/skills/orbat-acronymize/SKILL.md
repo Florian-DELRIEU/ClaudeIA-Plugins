@@ -1,17 +1,6 @@
 ---
 name: orbat-acronymize
-description: >
-  Convertit les noms de véhicules et de personnel d'un ORBAT JSON existant
-  (format orbat-mapper.app) en codes du système de nomenclature militaire
-  /acronyme (V4). Déclencher IMPÉRATIVEMENT dès que Florian tape
-  /orbat-acronymize, fournit un fichier ORBAT JSON et demande de renommer,
-  convertir, ou remplacer les noms de véhicules/troupes par leurs acronymes,
-  ou formule des demandes comme "convertis cet ORBAT en acronymes v4",
-  "remplace les noms de matériel par leurs codes", "acronymise ce fichier",
-  "renomme les unités de ce JSON avec le système d'acronymes". S'appuie sur
-  les skills orbat (structure du format JSON) et acronyme (système de codes
-  et méthode d'identification) — les deux doivent être consultés avant toute
-  conversion.
+description: "Convertit les noms de véhicules et de personnel d'un ORBAT JSON existant (format orbat-mapper.app) en codes du système de nomenclature militaire /acronyme (V4). Déclencher IMPÉRATIVEMENT dès que Florian tape /orbat-acronymize, fournit un fichier ORBAT JSON et demande de renommer, convertir, ou remplacer les noms de véhicules/troupes par leurs acronymes, ou formule des demandes comme \"convertis cet ORBAT en acronymes v4\", \"remplace les noms de matériel par leurs codes\", \"acronymise ce fichier\", \"renomme les unités de ce JSON avec le système d'acronymes\". S'appuie sur les skills orbat (structure du format JSON) et acronyme (système de codes et méthode d'identification) — les deux doivent être consultés avant toute conversion.\n"
 ---
 
 # Acronymisation d'un ORBAT existant
@@ -77,19 +66,25 @@ de Florian en ce sens.
    python3 scripts/apply_rename_map.py <orbat.json> <mapping.json>
    ```
    Écrire d'abord `mapping.json` (le mapping validé à l'étape 4) dans un
-   fichier temporaire, puis lancer le script. Il fait trois choses :
+   fichier temporaire, puis lancer le script. Il fait quatre choses :
 
-   a. **Renomme les entrées de catalogue** (en conservant l'ancien nom dans
-      leur `description` pour traçabilité) et propage le renommage à toutes
-      les références `equipment[].name` / `personnel[].name` dans tout
-      l'arbre d'unités (`sides[].groups[].subUnits`, récursif).
+   a. **Renomme les entrées de catalogue** (en conservant l'ancien nom en tête
+      de leur `description`, naming.md Règle 5) et propage le renommage à toutes
+      les références de l'arbre : `equipment[].name` / `personnel[].name` **et**
+      les `update`/`diff` des timelines `state[]`.
+      **Convergence gérée** : si plusieurs noms d'origine partent vers le même
+      code (deux camions → `VU-LOG`), le script fusionne lui-même — une entrée
+      de catalogue (`"Camion A / Camion B"`), une ligne par unité à quantité
+      cumulée, timelines réexprimées en deltas pour que les quantités restent
+      exactes à toute date. Il affiche la liste des codes fusionnés.
 
-   b. **Annote la `description` de chaque échelon** avec une légende de tous
-      les acronymes présents dans son sous-arbre, pour ne jamais perdre le
-      nom réel derrière un code — ex. `Équipement : MBT-105 = Char Leclerc ·
-      VTT = VAB`. Un échelon de tête (régiment, groupe) affichera ainsi la
-      légende complète de tout son matériel/personnel ; un échelon feuille
-      n'affichera que le sien.
+   b. **Annote la `description` de chaque échelon** avec la légende canonique
+      (`**CODE : Désignation réelle**`, Équipement / Personnel séparés, module
+      `orbat-json/scripts/legends.py`) des codes présents dans son sous-arbre.
+      Un échelon ne cite que les désignations **réellement présentes** chez lui :
+      un groupe qui n'a que des VAB affiche `**VBTT : VAB**`, même si `VBTT`
+      couvre aussi des VBL ailleurs. La phrase de contexte déjà présente dans la
+      `description` est conservée.
 
    c. **Enrichit le titre des échelons à composition de matériel non
       mixte** : si un échelon ne porte, EN PROPRE, qu'un seul type de
@@ -97,10 +92,18 @@ de Florian en ce sens.
       "Compagnie d'Infanterie de Fantassin" serait tautologique), son `name`
       est complété avec le nom réel du véhicule, ex. `"Escadron"` →
       `"Escadron de VAB"`. Sans effet sur un échelon mixte (plusieurs types
-      de matériel) ou purement organisationnel (sans matériel en propre).
+      de matériel, ou un code qui regroupe plusieurs désignations) ou purement
+      organisationnel (sans matériel en propre).
+
+   d. **Valide le résultat** (mêmes contrôles que `orbat-json/scripts/validate.py`)
+      et affiche le rapport ; code de sortie 1 s'il reste une erreur.
 
    Comportement idempotent : relancer le script sur un fichier déjà traité ne
    duplique ni les légendes ni les suffixes de titre.
+
+   Le script importe les modules partagés du skill `orbat-json` (même plugin),
+   localisés automatiquement ; si le plugin a été copié ailleurs, définir
+   `ORBAT_TOOLS_ROOT` sur sa racine.
 
    **Le script écrase le fichier d'origine par défaut** (comportement voulu :
    pas de copie séparée) — utiliser `--dry-run` d'abord si Florian veut un
@@ -114,23 +117,15 @@ de Florian en ce sens.
    paires désignation réelle ↔ code v4 nouvellement tranchées), pour que les
    prochains ORBAT réutilisent les mêmes codes (règle P5).
 
-7. **Valider le fichier résultant** avec le script du skill `orbat-json` :
-   ```
-   python3 ../orbat-json/scripts/validate.py <orbat.json>
-   ```
-   (adapter le chemin relatif selon l'emplacement des skills installés).
-   Corriger avant de considérer la tâche terminée si la validation échoue.
+7. **Lire le rapport de validation** affiché par le script (étape 5 d) : 0 erreur
+   attendue. Toute retouche manuelle ultérieure se revalide avec
+   `python3 ../orbat-json/scripts/validate.py <orbat.json>`.
 
-   > 🔴 **Cette passe n'est pas optionnelle depuis le 2026-08-10.** La conversion
-   > fait converger des désignations réelles distinctes vers un même code V4
-   > (deux modèles de camion différents → `VU-LOG`, deux types d'escouade →
-   > `SQ-INF`…). Quand les deux se trouvaient dans la **même unité**, le résultat
-   > est **deux lignes du même code** au lieu d'une seule — renommer n'est pas
-   > fusionner. Les totaux restent justes (`aggregate()` somme par nom), donc
-   > l'anomalie est invisible partout ailleurs ; seul `validate.py` la détecte,
-   > depuis le correctif `orbat-json` du 2026-08-10. Fusionner les lignes
-   > convergentes en cumulant les `count`. **Ne jamais livrer une conversion sans
-   > cette passe.**
+   > 🔴 **La convergence de codes reste le piège n°1** (deux modèles de camion →
+   > `VU-LOG`). Depuis octobre 2026, `apply_rename_map.py` fusionne lui-même les
+   > lignes et le catalogue ; mais une correction **à la main** après coup peut
+   > réintroduire deux lignes du même code — `validate.py` le détecte. **Ne
+   > jamais livrer une conversion sans rapport de validation à 0 erreur.**
 
 8. **Résumer** à Florian : nombre d'entrées renommées, nombre de références
    propagées, nouveaux codes ajoutés au lexique, résultat de la validation.

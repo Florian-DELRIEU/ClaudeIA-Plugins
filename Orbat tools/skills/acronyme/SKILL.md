@@ -1,15 +1,6 @@
 ---
 name: acronyme
-description: >
-  Système de nomenclature militaire modulaire V4 (et extensions V5 en cours).
-  Déclencher IMPÉRATIVEMENT dès que Florian tape /acronyme, ou dès que l'utilisateur
-  mentionne un acronyme militaire, un code de véhicule, une unité, un navire, un aéronef,
-  une structure, un personnage, ou demande de nommer / classifier / identifier / vérifier /
-  étendre un élément dans ce système — y compris à partir d'un matériel réel (nom de
-  véhicule, ORBAT à convertir). Également applicable au projet sci-fi Cosmotter pour la
-  classification de vaisseaux spatiaux. Utiliser même si la demande semble simple
-  (ex: "c'est quoi le code pour X ?", "est-ce que Y entre en conflit avec Z ?",
-  "comment noter un transport de troupes ?").
+description: "Système de nomenclature militaire modulaire V4 (et extensions V5 en cours). Déclencher IMPÉRATIVEMENT dès que Florian tape /acronyme, ou dès que l'utilisateur mentionne un acronyme militaire, un code de véhicule, une unité, un navire, un aéronef, une structure, un personnage, ou demande de nommer / classifier / identifier / vérifier / étendre un élément dans ce système — y compris à partir d'un matériel réel (nom de véhicule, ORBAT à convertir). Également applicable au projet sci-fi Cosmotter pour la classification de vaisseaux spatiaux. Utiliser même si la demande semble simple (ex: \"c'est quoi le code pour X ?\", \"est-ce que Y entre en conflit avec Z ?\", \"comment noter un transport de troupes ?\").\n"
 ---
 
 # Système de Nomenclature Militaire V4

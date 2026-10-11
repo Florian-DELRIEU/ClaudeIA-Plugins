@@ -18,7 +18,8 @@ import os
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from orbat_lib import (load, iter_units, find_unit, subtree_units, scenario_events,
-                       unit_timeline, sorted_states, vanished_elements, base_resources)
+                       unit_timeline, sorted_states, vanished_elements, base_resources,
+                       parse_time)
 
 
 def describe_vanished(orbat, elements, root):
@@ -46,6 +47,11 @@ def main():
     ap.add_argument("--events", action="store_true", help="seulement les événements globaux")
     args = ap.parse_args()
     orbat = load(args.orbat)
+    from orbat_lib import unreadable_times
+    bad = unreadable_times(iter_units(orbat))
+    if bad:
+        print(f"⚠️  {bad} horodatage(s) `t` illisible(s) : ordre chronologique incertain — "
+              "lancer validate.py.\n", file=sys.stderr)
 
     print(f"# Scénario : {orbat.get('name')}  (départ {orbat.get('startTime')})\n")
 
@@ -82,7 +88,9 @@ def main():
         sts = sorted_states(u)
         if sts:
             active.append((sts[0]["t"], sts[-1]["t"], len(sts), u.get("name")))
-    active.sort()
+    active.sort(key=lambda r: (parse_time(r[0]) or parse_time("0001-01-01T00:00:00Z"),
+                               parse_time(r[1]) or parse_time("0001-01-01T00:00:00Z"),
+                               str(r[3])))
     print(f"## Unités avec timeline ({len(active)})")
     for t0, t1, n, name in active:
         print(f"  {name:<40} {n:>3} états  {t0} → {t1}")

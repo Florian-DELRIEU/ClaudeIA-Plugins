@@ -182,6 +182,11 @@ utilisé — on n'avance jamais le début du niveau suivant. Exemple réel (Fran
 `D=4`) : profondeur 1 sans correctif = `0–10`, profondeur 2 naturelle = `13–16` (la
 bande `10–13` n'est affectée à personne) → profondeur 1 corrigée = `0–13`.
 
+**Règle A' — la racine commence toujours au zoom minimal (octobre 2026).** La profondeur 1
+reçoit toujours `minZoom = B[0]` (= 0). Sans ce correctif, un camp peu profond n'affiche
+rien en vue d'ensemble : `D=1` donnait `18–24`, `D=2` donnait `13–18`. Sans effet pour
+`D ≥ 4` (l'exemple France ci-dessus est inchangé).
+
 **Règle B — feuilles toujours visibles jusqu'au zoom max.** Toute unité **feuille**
 (sans `subUnits`) voit son `maxZoom` forcé à la borne max globale (`B[-1]`, ici `24`),
 quelle que soit sa profondeur naturelle — sinon une branche qui se termine plus tôt
@@ -190,8 +195,8 @@ ne prenne le relais.
 
 **Pour appliquer/ré-appliquer cette mécanique sur un ORBAT :**
 `python3 scripts/apply_relative_visibility.py <orbat.json>` — traite tous les camps du
-fichier indépendamment (chacun avec son propre `D`), applique règles A et B, écrase le
-fichier en place. Toujours enchaîner avec `validate.py`. Ne changer l'échelle de
+fichier indépendamment (chacun avec son propre `D`), applique règles A, A' et B, écrase
+le fichier en place (`--dry-run` / `--output` disponibles). Toujours enchaîner avec `validate.py`. Ne changer l'échelle de
 référence (`R`, les bornes `B`) que sur demande explicite de Florian — c'est un
 paramètre de projet, pas une valeur à deviner par fichier.
 

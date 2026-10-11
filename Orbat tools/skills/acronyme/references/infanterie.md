@@ -137,14 +137,23 @@ individuelle est portée par `CAV` en position Type (voir SKILL.md § Décisions
 |---|---|---|
 | W | Armes personnelles | |
 | WSD | Armes silencieuses | |
-| F / FUS | Fusil | FV = verrou, FA = auto, FS = semi-auto |
-| FM / FMA / FAM / FMG | Fusil mitrailleur (variantes) | |
+| F / FUS | Fusil (générique) | Arme standard du fantassin de l'escouade, calibre standard. `FUS` alternatif en lecture. Précisable en `FV`/`FS`/`FA` selon le mécanisme |
+| FV | Fusil à verrou | Rechargement manuel par action de verrou, un coup par manipulation. Peu coûteux, précis, autorise un calibre important. Impose une manipulation après chaque tir |
+| FS | Fusil semi-automatique | Même emploi que `FV` mais plusieurs coups d'affilée sans manipulation |
+| FA | Fusil automatique | Dispose du tir automatique. Reste l'arme standard de l'escouade tant qu'il n'assure pas la suppression |
+| FH | Fusil de calibre supérieur | **Fusion atomique déclarée** (2026-08-30). Fonctionnement identique à `F`, calibre supérieur au standard de l'escouade → puissance de feu accrue sans capacité de suppression. Ex. HK417, G3, M14, FN FAL standard. Ne se décompose pas : `H` ne renvoie pas au gabarit `.H`. Alternatif en lecture : `F.H` |
+| FM | Fusil mitrailleur (générique) | Arme apportant à l'escouade une **capacité de suppression** par sa cadence et son alimentation, tout en conservant la mobilité du tireur. Trois variantes : `FMA`, `FMG`, `FMH` |
+| FMA | FM d'assaut | Cadence élevée, efficacité limitée au combat rapproché (au-delà de ~100 m la précision et la létalité s'effondrent). Redoutable en milieu clos, arme d'assaut quasi exclusive. Catégorie devenue peu commune. Ex. StG-44, Fedorov Avtomat, M2 Carbine |
+| FMG | FM à grand chargeur | Calibre standard de l'escouade, chargeur de grande capacité (souvent bipied et/ou viseur adapté) permettant un tir nourri immédiat. Partage les munitions du reste de l'escouade et peut agir comme `F`. Puissance limitée par le calibre, changement de chargeur imposé pour le tir soutenu, portée moyenne. Ex. HK416 à chargeur grande capacité, Minimi Para, FAMAS à tambour |
+| FMH | FM de calibre supérieur | **Fusion atomique déclarée** (2026-08-30). Cumule calibre supérieur et capacité de suppression. Mobilité conservée mais tir soutenu limité par la capacité du chargeur, peu efficace à courte portée. Ex. BAR, HK21, FN FALO, G3 à chargeur grande capacité. Ne se décompose pas. Alternatif en lecture : `FM.H` |
 | FTE | Fusil de sniper | |
 | FTP | Fusil à lunette | |
 | FG | Fusil avec lance-grenade | |
 | FAT | Fusil antichar | |
-| SMG | Pistolet-mitrailleur favorisant cadence | |
-| MG / LMG / MMG / HMG | Mitrailleuse L/M/H | |
+| MG | Mitrailleuse (générique) | Famille classée par calibre **et** par lourdeur de mise en œuvre. `LMG` / `MMG` / `HMG` sont des **fusions atomiques déclarées** : le gabarit y est préfixé, par exception à la règle universelle `.L/.M/.H`. Ne jamais produire `MG.L` en écriture |
+| LMG | Mitrailleuse légère | Calibre réduit (5,56, celui des `F`). Tireur seul et autonome : transporte ses propres munitions, conserve une bonne mobilité, peut tirer en mouvement ou debout même si ce n'est pas idéal |
+| MMG | Mitrailleuse moyenne | Calibre supérieur (7,62, 9). Tir quasi impossible en mouvement ou debout sans appui, idéal en position fixe. **Assistant munitions indispensable** (`AM`). Soutient une escouade contre véhicules légers ou à longue portée |
+| HMG | Mitrailleuse lourde | Gros calibre (12,7 et plus). **Impossible à mettre en œuvre seul : équipe dédiée requise.** Mise en œuvre lente, appui rapproché d'escouade quasi impossible. Rare en escouade d'infanterie (sauf équipe HMG constituée), souvent montée sur véhicule |
 | GMG | Lance-grenade automatique | |
 | GL | Lance-grenade unique | |
 | GF | Grenade à fusil | |
@@ -153,8 +162,11 @@ individuelle est portée par `CAV` en position Type (voir SKILL.md § Décisions
 | GFU / GFB | Grenade fumigène / flash | |
 | GGZ / GGS | Grenade gaz léthal / non-léthal | |
 | SG / SGA | Shotgun / automatique | |
-| P / PS / PA | Pistolet / semi-auto / auto | |
-| PM | Pistolet-mitrailleur | |
+| P | Pistolet (générique) | Arme de poing, mécanisme non précisé. **Code officiel autonome**, pas un alias de `PS`/`PA` — voir `decisions.md` § 1 |
+| PS | Pistolet semi-automatique | Un coup par pression de détente |
+| PA | Pistolet automatique | Pistolet de poing capable de tirer en rafale. Ex. Glock 18, Stechkin APS, Beretta 93R. ⚠️ L'exemple « Uzi » qui illustrait ce code dans le PDF de référence V4 est erroné : l'Uzi relève de `PM` |
+| PM | Machine pistol | Arme automatique compacte dérivée du format pistolet, tir à une main possible, calibre pistolet, portée très courte. Ex. Uzi, Škorpion vz.61, MAC-11 |
+| SMG | Pistolet-mitrailleur | Arme d'épaule à calibre pistolet : crosse, tir à deux mains, meilleure maîtrise et portée utile que `PM`. Ex. MP5, MP40, PPSh-41, Thompson |
 | PR | Revolver | |
 | RK / R / RKT | Roquette / Lance-roquette | |
 | MOR | Mortier | |
@@ -173,6 +185,34 @@ individuelle est portée par `CAV` en position Type (voir SKILL.md § Décisions
 | RTG / RTM | Canon rotatif / Minigun | |
 | RLG | Recoiless Gun | |
 | RNG | Combats à distance divers | |
+
+### Familles d'armes personnelles — le code décrit l'emploi, pas le modèle
+
+Les familles `F`, `FM`, `MG` et pistolet ne classent pas des modèles d'armes mais des **postes tenus dans l'escouade**. Un même modèle change de code selon sa configuration et son rôle.
+
+Deux axes indépendants :
+
+- **Axe rôle** — l'arme tient-elle le poste standard du fantassin (`F`), ou apporte-t-elle une capacité de **suppression** par sa cadence et son alimentation (`FM`) ?
+- **Axe puissance** — calibre standard de l'escouade, ou calibre supérieur (suffixe `H` collé, fusion atomique) ?
+
+| | Assaut / CQB (< 100 m) | Poste standard | Appui / suppression |
+|---|---|---|---|
+| **Calibre pistolet** | `PM` / `SMG` | — | — |
+| **Calibre standard** | `FMA` | `F` (`FV`/`FS`/`FA`) | `FMG` |
+| **Calibre supérieur** | — (compromis intenable) | `FH` | `FMH` |
+
+**Exemple de référence (à ne pas modifier, il fixe la doctrine) :**
+
+- HK416 en 5,56, arme standard du fusilier → `F`
+- la même HK416 dotée d'un chargeur de grande capacité, capable de longues rafales et de tir de suppression → `FMG`
+- HK417, identique à la 416 hors calibre (7,62) → `FH` : fonctionnement identique, puissance accrue, pas de suppression
+- G3 en 7,62 → `FH` ; le même G3 doté d'un chargeur de grande capacité → `FMH`
+
+**Règle de précision du calibre.** `FH` et `FMH` ne s'appliquent qu'aux **génériques** `F` et `FM`. Pour préciser le calibre d'un `FV`, `FS`, `FA` ou `FMG`, utiliser la fusion gabarit ou la convention calibre : `FS.H`, `FA.762`, `FMG.762`.
+
+**Pas de cumul gabarit + calibre** (`SKILL.md`, gabarit littéral et calibre mutuellement exclusifs) : écrire `FH` **ou** `F.762`, jamais `FH.762`.
+
+**Le suffixe `H` n'est pas génératif.** `FH`, `FMH`, `TEH`, `TEL` sont des atomes déclarés. Ne pas en dériver `FML`, `PH`, `SGH` ou tout autre code non déclaré. `FL` est indisponible (= Fléau, arme de corps-à-corps) : un fusil de calibre réduit s'écrit `F.L` ou `F.556`.
 
 ---
 
