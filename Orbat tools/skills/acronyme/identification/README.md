@@ -9,9 +9,11 @@ véhicule ou élément de personnel, toute nation, toute époque.
 - `lexique.json` — registre `désignation réelle ↔ code v4` pour le **matériel réel**
   (toutes nations/époques), amorcé depuis ORBAT 2023, enrichi à chaque cas résolu
   (garantit la cohérence inter-fichiers).
-- `lexique-40k.json` — registre équivalent **dédié aux univers fictifs** (Warhammer
-  40,000, Cosmotter…), où certains codes prennent un sens différent du monde réel.
-  À consulter et enrichir en priorité dès que la source est un univers fictif.
+- `lexique-40k.json` — registre équivalent pour le matériel des **univers fictifs**
+  (Warhammer 40,000, Cosmotter…). Simple outil de recherche par contexte de matériel :
+  un code y a **exactement le même sens** que partout ailleurs (règle cardinale n°4,
+  `SKILL.md`) ; seul le matériel répertorié change. À consulter en priorité dès que la
+  source est un univers fictif.
 - `entrainement.md` — protocole du mode d'entraînement (Florian donne un nom, on
   identifie l'acronyme avec raisonnement détaillé, il note sur 5, on journalise les cas
   validés dans `lexique.json`).
@@ -45,7 +47,7 @@ fusionnée par point — ces codes étaient écrits collés `CA20`/`MOR80` jusqu
 > Industriel/Incendiaire/Intercepteur) et propagée le 2026-08-05. Les entrées converties
 > en `*-I` doivent donc **repasser en `*-INF`** (`SQ-I`→`SQ-INF`, `GRP-I`→`GRP-INF`).
 > Le tableau ci-dessus est conservé tel quel comme trace de l'état de juillet ; c'est
-> `decisions.md` § 6 qui fait foi pour l'état courant.
+> `decisions.md` qui fait foi pour l'état courant (historique : `chronologie.md`).
 
 **Méthode de re-audit** (reproductible) : pour chaque entrée de lexique, vérifier que
 chaque élément de `parts` existe dans une table de `references/*.md` ou

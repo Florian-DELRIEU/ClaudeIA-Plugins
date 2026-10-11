@@ -124,7 +124,7 @@
       "MOR",
       "H"
     ],
-    "note_florian": "Mortier de 105mm environ Renommé depuis `MOR-H` le 2026-08-10 : le gabarit `L/M/H` se fusionne avec `.`, jamais avec `-` qui est le séparateur de rôle (SKILL.md § Gabarits universels, même règle que `CH.L`).",
+    "note_florian": "Mortier de 105mm environ Renommé depuis `MOR-H` le 2026-08-10 : le gabarit `L/M/H` se fusionne avec `.`, jamais avec `-` qui est le séparateur de rôle (references/grammaire.md § Gabarits, même règle que `CH.L`).",
     "materiel_reel": []
   },
   "MOR.M": {
@@ -133,7 +133,7 @@
       "MOR",
       "M"
     ],
-    "note_florian": "Mortier env. 80mm Renommé depuis `MOR-M` le 2026-08-10 : le gabarit `L/M/H` se fusionne avec `.`, jamais avec `-` qui est le séparateur de rôle (SKILL.md § Gabarits universels, même règle que `CH.L`).",
+    "note_florian": "Mortier env. 80mm Renommé depuis `MOR-M` le 2026-08-10 : le gabarit `L/M/H` se fusionne avec `.`, jamais avec `-` qui est le séparateur de rôle (references/grammaire.md § Gabarits, même règle que `CH.L`).",
     "materiel_reel": []
   },
   "REM-FUEL": {
@@ -162,17 +162,6 @@
     ],
     "note_florian": "",
     "materiel_reel": []
-  },
-  "SP-AACA": {
-    "kind": "equipment",
-    "parts": [
-      "SP",
-      "AACA"
-    ],
-    "note_florian": "Anti Air type Guépard",
-    "materiel_reel": [
-      "Guépard"
-    ]
   },
   "SQ-AT": {
     "kind": "personnel",
@@ -366,6 +355,18 @@
       "Crotale"
     ]
   },
+  "VB-2AACA": {
+    "kind": "equipment",
+    "parts": [
+      "VB",
+      "AACA"
+    ],
+    "note_florian": "Anti Air type Guépard. Code aligné le 2026-10-10 : ancien `SP-AACA` (ORBAT 2023) → `VB-2AACA` (châssis chenillé + 2 canons automatiques AA, notation `#ACR` = nombre de tubes), conformément à decisions.md § 4 (collectifs AA du 2026-08-02 : « Gepard = VB-2AACA »). `SP` = automoteur sans tourelle ne convenait pas ; seul le collectif `SPAA` admet la tourelle. `SP-AACA` reste lisible sur les anciens fichiers.",
+    "materiel_reel": [
+      "Guépard",
+      "Gepard"
+    ]
+  },
   "VB-ATGM": {
     "kind": "equipment",
     "parts": [
@@ -526,9 +527,10 @@
     "kind": "equipment",
     "parts": [
       "VTT",
-      "CA.20"
+      "CA",
+      "20"
     ],
-    "note_florian": "Renommé depuis `VTT-CA20` le 2026-08-10 : la convention de calibre passe de la forme collée à la forme fusionnée par point (`ACR.#`), conformément à SKILL.md § Notation numérique où `ACR#` désigne un nombre physique (roues, pattes).",
+    "note_florian": "Renommé depuis `VTT-CA20` le 2026-08-10 : la convention de calibre passe de la forme collée à la forme fusionnée par point (`ACR.#`), conformément à references/grammaire.md § Notation numérique où `ACR#` désigne un nombre physique (roues, pattes). [maj 2026-10-10 : parts décomposées comme les autres entrées (calibre = composant numérique).]",
     "materiel_reel": []
   },
   "VTT-GEN": {
@@ -575,9 +577,10 @@
     "kind": "equipment",
     "parts": [
       "VTT",
-      "MOR.80"
+      "MOR",
+      "80"
     ],
-    "note_florian": "VAB mortier 80mm Renommé depuis `VTT-MOR80` le 2026-08-10 : la convention de calibre passe de la forme collée à la forme fusionnée par point (`ACR.#`), conformément à SKILL.md § Notation numérique où `ACR#` désigne un nombre physique (roues, pattes).",
+    "note_florian": "VAB mortier 80mm Renommé depuis `VTT-MOR80` le 2026-08-10 : la convention de calibre passe de la forme collée à la forme fusionnée par point (`ACR.#`), conformément à references/grammaire.md § Notation numérique où `ACR#` désigne un nombre physique (roues, pattes). [maj 2026-10-10 : parts décomposées comme les autres entrées (calibre = composant numérique).]",
     "materiel_reel": [
       "VAB"
     ]
@@ -680,9 +683,10 @@
   "VUTT": {
     "kind": "equipment",
     "parts": [
-      "VUTT"
+      "VU",
+      "TT"
     ],
-    "note_florian": "Pour transports d'infanterie et pièces lourdes",
+    "note_florian": "Pour transports d'infanterie et pièces lourdes [maj 2026-10-10 : parts ['VUTT'] → ['VU','TT'] — `VUTT` est l'alias compact de `VU-TT` (terrestres.md, ligne APC), pas un code de table.]",
     "materiel_reel": []
   },
   "WM": {

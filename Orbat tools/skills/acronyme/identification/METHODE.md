@@ -36,8 +36,8 @@ voir corollaire ci-dessous). À signaler, jamais à supposer.
 2. **Rôle/armement primaire → 1ᵉʳ suffixe**, par importance opérationnelle décroissante.
 3. **Rôle/armement secondaire(s) → suffixes suivants.**
 4. **Notation numérique / gabarit** : calibre `.NN`, roues `#`, tubes `#ACR`, variante `(#)`
-   (voir SKILL.md « Notation numérique »).
-5. **Fusions prédéfinies, anti-doublon, décisions établies** (SKILL.md).
+   (voir `references/grammaire.md` § Notation numérique).
+5. **Fusions prédéfinies, anti-doublon, décisions établies** (`references/grammaire.md`, `decisions.md`).
 6. **Canonicaliser** (« le plus évident », ci-dessous), **vérifier**, **journaliser** au lexique.
 
 ---
@@ -70,8 +70,8 @@ tranche, l'artillerie n'est que le rôle.
 | CAESAR (155 sur camion) | camion | `VU` | artillerie | **`VU-ART`** |
 | GCT / AUF1 (155, tourelle, chenillé dédié) | automoteur dédié | `SP` | artillerie | **`SPART`** |
 
-Même leçon côté AA : un canon AA **tracté** (rôle sur affût) ≠ un `SP-AACA` (châssis
-automoteur dédié, type Guépard).
+Même leçon côté AA : un canon AA **tracté** (`AA`, pièce sans châssis) ≠ un AA automoteur
+sur châssis dédié, type Guépard/Gepard = `VB-2AACA` (collectif `SPAA`, `decisions.md` § 4).
 
 ### Corollaire — armement et protection réels, jamais silhouette
 

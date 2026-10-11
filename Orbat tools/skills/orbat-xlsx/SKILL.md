@@ -1,6 +1,6 @@
 ---
 name: orbat-xlsx
-description: "Lecture, écriture, analyse et conversion d'ORBAT (Order of Battle) au format tableur **xlsx ODIN / JTDS** (TRADOC G2) : classeur avec feuille `UNIT INFO` + feuilles template, équivalent tableur du XML JTDS OBSV4.2 (le XML lui-même n'est pas lu). Déclencher dès que Florian tape /orbat-xlsx, fournit un `.xlsx` contenant une feuille `UNIT INFO`, mentionne « ODIN », « TRADOC », « JTDS » ou un « ORBAT en tableur ODIN » (pas l'export xlsx du site orbat-mapper), ou demande de : lire/analyser un ORBAT ODIN, compter le matériel ou le personnel d'une unité d'un classeur, créer ou éditer un ORBAT xlsx (unités, feuilles template), valider un classeur, ou le convertir en JSON orbat-mapper.app. Déclencher aussi pour des demandes courtes (\"lis ce classeur ODIN\", \"combien de BMP 2 dans la 171 IFV BDE ?\", \"ajoute un bataillon à ce classeur\", \"convertis cet ORBAT ODIN pour orbat-mapper\"). Pour un ORBAT déjà au format JSON `type: \"ORBAT-mapper\"`, c'est le skill `orbat-json` qu'il faut.\n"
+description: "Lecture, écriture, analyse et conversion d'ORBAT au format tableur **xlsx ODIN / JTDS** (TRADOC G2) : classeur avec feuille `UNIT INFO` + feuilles template (le XML JTDS OBSV4.2 n'est pas lu). Déclencher dès que Florian tape /orbat-xlsx, fournit un `.xlsx` contenant une feuille `UNIT INFO`, mentionne « ODIN », « TRADOC », « JTDS » ou un « ORBAT en tableur ODIN », ou demande de : lire/analyser un ORBAT ODIN, compter le matériel ou le personnel d'une unité d'un classeur, créer ou éditer un ORBAT xlsx, valider un classeur, le convertir en JSON orbat-mapper.app. Aussi pour des demandes courtes (\"lis ce classeur ODIN\", \"combien de BMP 2 dans la 171 IFV BDE ?\", \"convertis cet ORBAT ODIN pour orbat-mapper\"). NE PAS déclencher pour l'export XLSX du site orbat-mapper.app (autre format, pas de feuille `UNIT INFO`) ni pour un ORBAT JSON `type: \"ORBAT-mapper\"` : c'est le skill `orbat-json`.\n"
 ---
 
 # ORBAT xlsx ODIN — lecture, écriture, édition, conversion (format ODIN/JTDS)
@@ -10,6 +10,11 @@ skills : **`orbat-xlsx`** (ce skill — format tableur ODIN/JTDS) et **`orbat-js
 (format JSON natif orbat-mapper.app de Florian). Si le fichier fourni est un
 `.json` avec `type: "ORBAT-mapper"`, ce n'est pas ce skill — passer à
 `orbat-json`.
+
+**L'export XLSX du site orbat-mapper.app n'est pas un classeur ODIN/JTDS** (pas de
+feuille `UNIT INFO`) : ce skill ne le lit pas — `xlsx_orbat.py load` lève alors
+`ValueError`. Pour ce cas, demander à Florian l'export JSON du site et passer à
+`orbat-json` (questions sur les exports du site : `orbat-app`).
 
 ## Avant tout : connaître le format
 
@@ -99,17 +104,12 @@ UIC, unit class, 2525C, échelon ODIN — part en `description`). `tojson` **lis
 les function ID 2525C qu'il n'a pas su mapper** (entité générique `000000`) : les
 signaler à Florian plutôt que de les passer sous silence, et compléter
 `FUNCTION_MAP` s'il donne le code. Sur le fichier de référence, la couverture est
-complète (56/56).
+complète (56/56) ; les chars (`UCA---`) vont sur l'entité `120500` (table et cas
+douteux : `references/xlsx_format.md` § 7).
 
 Une fois la conversion faite et validée, tout travail ultérieur sur le JSON
 résultant (agrégation, restructuration, timeline, légendes...) relève du skill
 `orbat-json`, pas de celui-ci.
-
-## Persistance des éditions du skill
-
-Comme pour ses autres skills, les modifications de ce dossier ne survivent pas entre
-sessions sans le cycle `/maj` → zip → ré-upload. Ne repackager le skill que sur demande
-explicite de Florian.
 
 ## Exemples de déclenchement
 
@@ -120,3 +120,5 @@ explicite de Florian.
   `add_unit`/`TemplateBuilder` + `validate`.
 - Un `.json` avec `type: "ORBAT-mapper"` → **ce n'est pas ce skill** — passer à
   `orbat-json`.
+- Un `.xlsx` exporté depuis orbat-mapper.app (sans feuille `UNIT INFO`) → **ce n'est
+  pas ce skill** — demander l'export JSON, puis `orbat-json`.

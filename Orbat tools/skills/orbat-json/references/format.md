@@ -193,7 +193,8 @@ quelle que soit sa profondeur naturelle — sinon une branche qui se termine plu
 que la profondeur max de son camp disparaît en zoomant, sans qu'aucun enfant plus fin
 ne prenne le relais.
 
-**Pour appliquer/ré-appliquer cette mécanique sur un ORBAT :**
+**Pour appliquer/ré-appliquer cette mécanique sur un ORBAT** (procédure : SKILL.md
+Tâche 9, détail dans `restructuration.md`) **:**
 `python3 scripts/apply_relative_visibility.py <orbat.json>` — traite tous les camps du
 fichier indépendamment (chacun avec son propre `D`), applique règles A, A' et B, écrase
 le fichier en place (`--dry-run` / `--output` disponibles). Toujours enchaîner avec `validate.py`. Ne changer l'échelle de

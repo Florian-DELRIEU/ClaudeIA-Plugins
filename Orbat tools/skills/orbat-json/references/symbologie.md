@@ -200,8 +200,8 @@ Relevées par Florian sur des ORBAT livrés :
 1. **Dater la source** (§ 3.3) — une fois pour l'ORBAT entier, avant de commencer.
 2. **Déterminer le rôle réel** de l'unité, pas son nom.
 3. **Chercher le SIDC dans `sidc_dictionary.json`** (499 entrées extraites des
-   ORBAT de Florian) — c'est la source de vérité empirique, cohérente avec
-   orbat-mapper.app. Un code déjà employé pour ce type d'unité se réutilise tel quel.
+   ORBAT de Florian) avec `scripts/sidc_lookup.py "<terme>"` ou `--code <entité>` —
+   c'est la source de vérité empirique, cohérente avec orbat-mapper.app. Un code déjà employé pour ce type d'unité se réutilise tel quel.
 4. **Décomposer en couches** (§ 1) : icône principale, puis secteur 1 (capacité),
    puis secteur 2 (mobilité), puis échelon.
 5. **Ne jamais inventer une entité.** Si aucun code du dictionnaire ne convient :
@@ -211,6 +211,9 @@ Relevées par Florian sur des ORBAT livrés :
 6. **Vérifier le rendu.** Un SIDC ne se valide pas sur le papier : il s'affiche.
    En cas de doute sur un code non attesté au dictionnaire, le dire dans le rapport
    de livraison (Règle 8, bloc 🔴) plutôt que de le présenter comme acquis.
+
+> Historique des décisions de symbologie (icône cavalerie, construction des icônes) :
+> `historique-decisions.md`.
 
 > ⚠️ **Limite connue de ce fichier.** Les codes d'entité des familles historiques
 > (cavalerie montée, artillerie hippomobile) ne sont pas attestés dans les sources

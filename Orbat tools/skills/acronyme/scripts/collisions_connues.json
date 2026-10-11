@@ -1,0 +1,229 @@
+{
+  "_comment": "Collisions d'officiels ARBITRÉES (même code, sens distincts, même bassin). Généré par `check.py --accepter-collisions` après décision de Florian — ne pas éditer pour faire taire une erreur. Tout sens absent d'ici fait échouer check.py.",
+  "collisions": [
+    {
+      "code": "AA",
+      "bassin": "roles",
+      "raison": "point ouvert (decisions.md § 5)",
+      "sens": [
+        "infanterie.md::specialiste aa",
+        "maritimes.md::anti-aerien",
+        "terrestres.md::anti-aerien"
+      ]
+    },
+    {
+      "code": "AT",
+      "bassin": "roles",
+      "raison": "point ouvert (decisions.md § 5)",
+      "sens": [
+        "infanterie.md::specialiste antichar",
+        "terrestres.md::anti-tank / chasseur de char"
+      ]
+    },
+    {
+      "code": "ATT",
+      "bassin": "roles",
+      "raison": "point ouvert (decisions.md § 5)",
+      "sens": [
+        "aeriens.md::avion d'attaque",
+        "terrestres.md::attaque / assaut"
+      ]
+    },
+    {
+      "code": "FM",
+      "bassin": "roles",
+      "raison": "point ouvert (decisions.md § 5)",
+      "sens": [
+        "infanterie.md::fusil mitrailleur",
+        "infanterie.md::fusilier mitrailleur"
+      ]
+    },
+    {
+      "code": "GL",
+      "bassin": "roles",
+      "raison": "point ouvert (decisions.md § 5)",
+      "sens": [
+        "infanterie.md::grenadier",
+        "infanterie.md::lance-grenade unique",
+        "terrestres.md::lance-grenade"
+      ]
+    },
+    {
+      "code": "HE",
+      "bassin": "roles",
+      "raison": "point ouvert (decisions.md § 5)",
+      "sens": [
+        "infanterie.md::explosif",
+        "terrestres.md::high explosives"
+      ]
+    },
+    {
+      "code": "MAIN",
+      "bassin": "roles",
+      "raison": "point ouvert (decisions.md § 5)",
+      "sens": [
+        "maritimes.md::reparateur",
+        "terrestres.md::maintenance"
+      ]
+    },
+    {
+      "code": "MED",
+      "bassin": "roles",
+      "raison": "point ouvert (decisions.md § 5)",
+      "sens": [
+        "infanterie.md::medecin",
+        "structures.md::medical",
+        "terrestres.md::medical / sanitaire"
+      ]
+    },
+    {
+      "code": "MIN",
+      "bassin": "roles",
+      "raison": "point ouvert (decisions.md § 5)",
+      "sens": [
+        "maritimes.md::mineur",
+        "structures.md::minage / exploitation"
+      ]
+    },
+    {
+      "code": "MS",
+      "bassin": "roles",
+      "raison": "cas confirmé sans conflit (decisions.md § 2)",
+      "sens": [
+        "groupements.md::demineur",
+        "infanterie.md::demineur",
+        "maritimes.md::dragueur de mines",
+        "terrestres.md::demineur"
+      ]
+    },
+    {
+      "code": "RK",
+      "bassin": "roles",
+      "raison": "point ouvert (decisions.md § 5)",
+      "sens": [
+        "infanterie.md::roquette / lance-roquette",
+        "terrestres.md::roquette non guidee"
+      ]
+    },
+    {
+      "code": "AA",
+      "bassin": "types",
+      "raison": "point ouvert (decisions.md § 5)",
+      "sens": [
+        "maritimes.md::anti-aerienne",
+        "terrestres.md::type collectif : batterie aa deployable, sans chassis. aa officiel . pendant veh"
+      ]
+    },
+    {
+      "code": "ART",
+      "bassin": "types",
+      "raison": "exception à la règle cardinale n°2 (SKILL.md)",
+      "sens": [
+        "groupements.md::artillerie",
+        "maritimes.md::bombardement cotier",
+        "terrestres.md::type collectif : piece d'artillerie deployable, sans chassis. art officiel . pen"
+      ]
+    },
+    {
+      "code": "CAV",
+      "bassin": "types",
+      "raison": "exception à la règle cardinale n°2 (SKILL.md)",
+      "sens": [
+        "groupements.md::cavalerie",
+        "terrestres.md::cheval / monture individuelle"
+      ]
+    },
+    {
+      "code": "CV",
+      "bassin": "types",
+      "raison": "point ouvert (decisions.md § 5)",
+      "sens": [
+        "maritimes.md::groupe porte-avion",
+        "maritimes.md::porte-avions"
+      ]
+    },
+    {
+      "code": "DC",
+      "bassin": "types",
+      "raison": "point ouvert (decisions.md § 5)",
+      "sens": [
+        "aeriens.md::surveillance des cotes — ma : casse normalisee le 2026-10-10",
+        "maritimes.md::defense cotiere"
+      ]
+    },
+    {
+      "code": "DEF",
+      "bassin": "types",
+      "raison": "point ouvert (decisions.md § 5)",
+      "sens": [
+        "groupements.md::defense",
+        "groupements.md::genie fortification"
+      ]
+    },
+    {
+      "code": "LOG",
+      "bassin": "types",
+      "raison": "cas confirmé sans conflit (decisions.md § 2)",
+      "sens": [
+        "aeriens.md::train aerien",
+        "groupements.md::logistique",
+        "maritimes.md::navire cargo"
+      ]
+    },
+    {
+      "code": "MA",
+      "bassin": "types",
+      "raison": "point ouvert (decisions.md § 5)",
+      "sens": [
+        "groupements.md::marines",
+        "maritimes.md::soutien invasion — casse normalisee le 2026-08-03"
+      ]
+    },
+    {
+      "code": "ML",
+      "bassin": "types",
+      "raison": "point ouvert (decisions.md § 5)",
+      "sens": [
+        "groupements.md::genie minage",
+        "maritimes.md::poseur de mines"
+      ]
+    },
+    {
+      "code": "PAR",
+      "bassin": "types",
+      "raison": "point ouvert (decisions.md § 5)",
+      "sens": [
+        "aeriens.md::soutien parachutage",
+        "groupements.md::parachutistes",
+        "infanterie.md::parachutiste"
+      ]
+    },
+    {
+      "code": "SA",
+      "bassin": "types",
+      "raison": "point ouvert (decisions.md § 5)",
+      "sens": [
+        "aeriens.md::space plane / ssto",
+        "aeriens.md::superiorite aerienne"
+      ]
+    },
+    {
+      "code": "SLE",
+      "bassin": "types",
+      "raison": "point ouvert (decisions.md § 5)",
+      "sens": [
+        "maritimes.md::meute de sous-marins lanceurs d'engins",
+        "maritimes.md::sous-marin lanceur d'engins"
+      ]
+    },
+    {
+      "code": "T",
+      "bassin": "types",
+      "raison": "point ouvert (decisions.md § 5)",
+      "sens": [
+        "maritimes.md::torpilleurs",
+        "terrestres.md::tank"
+      ]
+    }
+  ]
+}

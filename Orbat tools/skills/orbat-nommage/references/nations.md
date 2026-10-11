@@ -6,25 +6,62 @@ Les règles marquées **✚** ont été ajoutées après lecture directe des sou
 
 ---
 
-## 1. Vocabulaire des échelons (équivalences)
+## 1. Vocabulaire des échelons — table de référence unique
 
-Le nom d'une sous-unité **dépend de l'arme**. Table d'équivalence des unités
-élémentaires (~100–150 h, commandées par un capitaine) :
+> **Cette table fait foi pour tout le plugin** (arbitrage de Florian,
+> 2026-10-10). `orbat-tools:orbat-historique` n'a plus de table de libellés : il
+> y renvoie et ne garde que les **effectifs** et **commandants typiques** par
+> échelon. Toute correction de vocabulaire se fait ici, nulle part ailleurs.
 
-| Arme | France | Allemagne | Anglo-saxon (US/UK) |
-|------|--------|-----------|---------------------|
-| Infanterie / génie / transmissions | compagnie | Kompanie | company |
-| Cavalerie / blindés | escadron | Schwadron / (Abteilung au niveau bataillon) | troop (US) / squadron (UK) |
-| Artillerie | batterie | Batterie | battery |
+### 1.1 Échelle générale (libellés de l'infanterie, croissant)
 
-Échelle générale des échelons (croissant) : section/peloton (*Zug* / platoon) →
-compagnie/escadron/batterie → **bataillon**/groupe/(*Abteilung*/squadron US) →
-**régiment** → brigade → **division** → corps → armée → groupe d'armées.
+| Échelon (FR) | 🇺🇸 US | 🇬🇧 UK | 🇩🇪 DE | 🇷🇺 RU (translittération) |
+|---|---|---|---|---|
+| Groupe de combat / escouade | squad | **section** ✚ | Gruppe | отделение (otdelenie) |
+| Section (inf.) / peloton (cav., ABC) | platoon | platoon (cav./blindés : *troop*, cf. UK-4) | Zug | взвод (vzvod) |
+| Compagnie | company | company | Kompanie | рота (rota) |
+| Bataillon | battalion | battalion | Bataillon | батальон (batal'on) |
+| Régiment | regiment | regiment | Regiment | полк (polk) |
+| Brigade | brigade | brigade | Brigade | бригада (brigada) |
+| Division | division | division | Division | дивизия (diviziya) |
+| Corps d'armée | corps | corps | (Armee-)Korps | корпус (korpus) |
+| Armée | army | army | Armee | армия (armiya) |
+| Groupe d'armées | army group | army group | Heeresgruppe | фронт (front) — URSS en guerre |
+
+⚠️ **✚ Faux ami « section »** : la *section* française = un *platoon* ; la
+*section* britannique = un *squad* (~8 h). L'équivalent français de la section
+britannique est le **groupe de combat**.
+
+### 1.2 Variantes par arme (niveaux compagnie et bataillon)
+
+Le nom d'une sous-unité **dépend de l'arme**. Unité élémentaire = ~100–150 h,
+commandée par un capitaine.
+
+| Arme | Niveau | 🇫🇷 France | 🇩🇪 Allemagne | 🇺🇸 États-Unis | 🇬🇧 Royaume-Uni | 🇷🇺 URSS/Russie |
+|---|---|---|---|---|---|---|
+| Infanterie / génie / transmissions | compagnie | compagnie | Kompanie | company | company | рота (rota) |
+| Cavalerie / blindés | compagnie | escadron | ✚ **Eskadron** (armées prussienne et impériale) → **Schwadron** (Wehrmacht, terme germanisé) ; Bundeswehr : Kompanie | troop (cavalerie) · company (chars) | squadron | эскадрон (eskadron, cavalerie) · рота (chars) |
+| Artillerie | compagnie | batterie | Batterie | battery | battery | батарея (batareya) |
+| Cavalerie / blindés | bataillon | — (escadrons rattachés directement au régiment) | Abteilung (Wehrmacht) · Bataillon (Bundeswehr, cf. DE-8) | squadron (cavalerie) · battalion (chars) | regiment (taille bataillon) | ✚ дивизион (divizion, cavalerie : demi-régiment) · батальон (chars) |
+| Artillerie | bataillon | groupe | Abteilung (Wehrmacht) · Bataillon (Bundeswehr) | battalion | regiment (≈ bataillon ; ✚ appelé *brigade* avant 1938) | ✚ **дивизион** (divizion) |
+
+Notes de lecture :
+- **✚ Eskadron / Schwadron (🇩🇪)** : les deux sont justes, à des dates
+  différentes. *Eskadron* est le terme des armées prussienne et impériale ; la
+  Wehrmacht l'abandonne au profit du germanisé *Schwadron* (Reiterschwadron,
+  Radfahrschwadron, schwere Schwadron). La Bundeswehr, sans cavalerie, ne le
+  connaît plus officiellement (on parle encore officieusement de *Schwadron* dans
+  la Panzeraufklärungstruppe). Toujours **dater** avant de choisir.
+- **✚ Дивизион ≠ дивизия (🇷🇺)** : le *divizion* est un échelon **bataillon**
+  (artillerie, DCA, missiles ; demi-régiment dans l'ancienne cavalerie), pas une
+  division. Faux ami du même ordre que l'*Abteilung* allemande.
+- **🇺🇸** : *troop* / *squadron* sont propres à la **cavalerie** ; les unités de
+  chars (*armor*) gardent *company* / *battalion*.
 
 ⚠️ Le mot **« bataillon » n'est pas universel** : pour les armes « à cheval »
 (blindés, cavalerie, artillerie, reconnaissance), l'échelon équivalent porte un
 autre nom selon le pays (*Abteilung* en allemand, *squadron* dans la cavalerie US,
-*groupe* dans l'artillerie française).
+*groupe* dans l'artillerie française, *divizion* dans l'artillerie russe).
 
 ---
 
@@ -143,9 +180,22 @@ Bataillon **numéroté**, compagnie **lettrée**.
 - **US-10 — Régiment = cadre lignager (CARS/USARS), pas pion tactique.**
   Les brigades organiques d'une division sont numérotées en série à partir de « 1st ».
   Ex. « 1st Brigade, 1st Infantry Division ».
-- **US-11 ✚ — Ordinaux abrégés à la militaire : `2d` et `3d`**, jamais `2nd`/`3rd`.
-  `2d Field Artillery`, `3d Transportation Battalion`. (Voir aussi TR-1 pour les
-  armées en toutes lettres et les corps en romains.)
+- **US-11 ✚ — Ordinaux `2d` / `3d` : convention de la lignée officielle, pas
+  règle absolue.** Les désignations publiées d'après le Center of Military History
+  (lignées et honneurs) écrivent `2d`, `3d` : `2d Field Artillery`,
+  `3d Transportation Battalion`. Mais la communication officielle **actuelle** des
+  unités emploie couramment `2nd`/`3rd` : le site de Fort Stewart écrit
+  `3rd Infantry Division`, et une même page army.mil mêle `3d` (texte de lignée)
+  et `3rd` (signature des affaires publiques).
+  **Exception USMC** : la division s'écrit officiellement **`2nd Marine
+  Division`** (2nd MARDIV) sur son site, alors que l'historique du Corps a publié
+  *The 2d Marine Division and Its Regiments* et que le régiment reste **`2d
+  Marines`** sur la même page.
+  Règle pratique : `2d`/`3d` pour un registre **lignée / histoire de l'US Army** ;
+  `2nd`/`3rd` n'est pas une faute dans un texte contemporain et c'est la forme
+  courante pour les divisions USMC. Aucun règlement consulté (AR 25-50 compris)
+  n'impose `2d` pour les désignations d'unités. (Voir aussi TR-1 pour les armées
+  en toutes lettres et les corps en romains.)
 - **US-12 ✚ — Éléments scindés = « Detachment N ».** Quand une unité est
   fractionnée, les morceaux sont numérotés à partir de 1 :
   `Detachment 1, 169th Engineer Company` / `Detachment 2, 169th Engineer Company`.
@@ -230,6 +280,18 @@ Tout est **numéroté**, mais le nom complet **empile des titres d'honneur**.
   qui peut en aligner **deux au maximum**. Il se désigne donc par le bataillon ou
   la brigade mère, pas par un numéro de série autonome — d'où l'usage
   « BTG de la 200ᵉ brigade » plutôt que « 3ᵉ BTG ».
+- **RU-10 ✚ — Élément de commandement (axe A5) : pas d'équivalent de la HHC.**
+  Aux échelons soviétiques classiques, le commandement est une **cellule**, pas
+  une sous-unité numérotée : *управление* (upravlenie, « direction » — le terme
+  vaut jusqu'à la compagnie : *управление роты* = chef, adjoints, technicien,
+  sergent-major) et *штаб* (shtab, état-major). La sous-unité qui sert le
+  commandement est celle des **transmissions**, à la taille de l'échelon :
+  bataillon → peloton de transmissions, régiment → compagnie de transmissions,
+  division → bataillon de transmissions. Brigade russe actuelle : un
+  **bataillon de commandement (transmissions)** (ex. 37ᵉ brigade de fusiliers
+  motorisés de la Garde). Les intitulés russes des unités de transmissions
+  (взвод / рота / батальон связи) sont une traduction : les sources lues sont
+  en anglais.
 
 ---
 
@@ -246,8 +308,20 @@ Tout est **numéroté**, mais le nom complet **empile des titres d'honneur**.
   sautée : la logique du « J » américain n'existe pas ici.
 - **FR-4 — Nom de sous-unité selon l'arme.** compagnie (infanterie/génie/transmissions),
   escadron (blindés-cavalerie/train), batterie (artillerie).
-- **FR-5 — Notation fractionnaire des sous-unités.** bataillon/compagnie :
-  `18/1` = 18ᵉ bataillon, 1re compagnie (écho du slash allemand).
+- **FR-5 ✚ — Notation fractionnaire : génie de 1914-1918, pas règle générale.**
+  Les compagnies du génie se désignent `<n° de bataillon>/<rang dans le
+  bataillon>` : `18/1` = 1re compagnie du 18ᵉ bataillon (le bataillon portant en
+  général le numéro du corps d'armée). En 1914, au 18ᵉ CA : `18/1` → 35ᵉ DI,
+  `18/2` → 36ᵉ DI, `18/3`, `18/4` → troupes de corps. Rang à un chiffre =
+  divisions actives et corps ; rang à deux chiffres commençant par 1 (`4/13`) =
+  divisions de réserve ; compagnies auxiliaires `bis`, renumérotées en
+  septembre 1915 en ajoutant 50 (`3/1 bis` → `3/51`).
+  ⚠️ L'ordre est **grand/petit** (bataillon puis compagnie) : c'est l'**inverse**
+  du slash allemand `3./IR 9` (compagnie puis régiment), pas un écho.
+  ⚠️ D'autres « fractions » de la même époque n'obéissent pas à la même logique
+  (ambulances `1/18` = ambulance n° 1 du 18ᵉ CA ; `AD/36` = artillerie
+  divisionnaire de la 36ᵉ DI) : ne pas généraliser. Sources 🥉 (communautaires),
+  concordantes entre elles ; aucune source institutionnelle lue.
 - **FR-6 — Régiment = formation administrative (« corps de troupe »)**, porteur du
   drapeau et des traditions ; il n'est plus le pion tactique de base.
 - **FR-7 — Honneurs à l'ÉCART du nom d'usage.** Les batailles/décorations vivent sur

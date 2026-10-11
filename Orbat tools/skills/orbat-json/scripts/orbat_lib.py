@@ -159,6 +159,18 @@ def _norm_key(s):
     return s.strip().lower().replace("'", "_").replace("-", "_").replace(" ", "_")
 
 
+def fold(text):
+    """
+    Forme de comparaison d'un texte : sans accents, en minuscules (casefold),
+    apostrophe typographique ramenée à « ' ». Sert à toutes les recherches
+    « insensibles à la casse et aux accents » du plugin (sidc_lookup,
+    short_names, draft_mapping, conformite) — une seule logique.
+    """
+    s = unicodedata.normalize("NFKD", str(text or ""))
+    s = "".join(c for c in s if not unicodedata.combining(c))
+    return s.replace("’", "'").replace("‘", "'").casefold()
+
+
 def echelon_code(name_or_code):
     """
     Nom d'échelon (FR ou EN, accents/majuscules indifférents : « Armée »,
@@ -563,34 +575,63 @@ EN_SOURCE_WORD_TO_ECHELON = [
     (r"\bBattalion\b", "bataillon"), (r"\bBn\b", "bataillon"),
     (r"\bCompany\b", "compagnie"), (r"\bCoy\b", "compagnie"),
     (r"\bPlatoon\b", "peloton"), (r"\bPlt\b", "peloton"),
-    (r"\bTroop\b", "peloton"), (r"\bTp\b", "peloton"),
     (r"\bSection\b", "escouade"), (r"\bSect\b", "escouade"),
     (r"\bDetachment\b", "détachement"), (r"\bDet\b", "détachement"),
     (r"\bBattery\b", "batterie"), (r"\bBty\b", "batterie"),
 ]
+
+# Mots d'échelon dont le sens dépend de l'armée — JAMAIS mappés d'office
+# (orbat-nommage fait foi : nations.md US-6 / UK, pieges.md) :
+#   Troop    : compagnie de cavalerie aux US ; sous-unité ≈ peloton au UK ;
+#   Squadron : bataillon de cavalerie aux US ; compagnie au UK.
+# L'échelon se lit alors dans le sidc (positions 9-10) ; sans sidc, « à vérifier ».
+# (Jusqu'au 2026-10-10, Troop/Tp étaient mappés « peloton » : faux pour l'US.)
+EN_AMBIGUOUS_ECHELON_WORDS = [r"\bTroop\b", r"\bTp\b", r"\bSquadron\b", r"\bSqn\b"]
 
 def default_groupements_path():
     """Chemin de `acronyme/references/groupements.md` (voir find_skill_dir)."""
     return os.path.join(find_skill_dir("acronyme"), "references", "groupements.md")
 
 
+_TABLES_MOD = None
+
+
+def acronyme_tables():
+    """
+    Module `acronyme/scripts/tables.py` (lecteur unique des tables de codes du
+    skill acronyme : format « Officiel | Alternatifs » et ancien format `X / Y`).
+    Chargé une fois depuis le skill localisé par find_skill_dir — même logique de
+    lecture pour orbat-json, build_index.py et check.py.
+    """
+    global _TABLES_MOD
+    if _TABLES_MOD is None:
+        import importlib.util
+        path = os.path.join(find_skill_dir("acronyme"), "scripts", "tables.py")
+        if not os.path.exists(path):
+            raise FileNotFoundError("Lecteur de tables introuvable : %s" % path)
+        spec = importlib.util.spec_from_file_location("acronyme_tables", path)
+        mod = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(mod)
+        _TABLES_MOD = mod
+    return _TABLES_MOD
+
+
 def load_echelon_codes(groupements_path=None):
     r"""
     Lit `acronyme/references/groupements.md` § Échelons et renvoie
-    {notion d'échelon en minuscules -> code v4 canonique}.
+    {notion d'échelon en minuscules -> code v4 officiel}.
 
-    Choix du code, dans l'ordre (décision Florian du 2026-08-09) :
-      1. la forme explicitement annotée dans la colonne Note, motif ``\`XXX\` officiel``
-         (ex. Bataillon `BT / BN` + note "`BT` officiel" -> BT) ;
-      2. à défaut, le PREMIER code de la cellule « Acronyme ».
-    Supposer que la première forme est officielle était faux : `D / DIV` donnait `D`
-    alors que `DIV` est la forme officielle. L'annotation prime toujours.
+    Lecture déléguée à `acronyme/scripts/tables.py` (acronyme_tables), qui accepte :
+      * le format courant « | Officiel | Alternatifs | Signification | Note | » :
+        l'officiel est la 1re colonne ;
+      * l'ancien format « | Acronyme | Signification | Note | » où `X / Y` liste les
+        formes : la forme annotée ``\`XXX\` officiel`` prime (décision Florian du
+        2026-08-09 : `D / DIV` + « `DIV` officiel » -> DIV), sinon la première.
 
     Lève FileNotFoundError si le skill `acronyme` n'est pas installé à côté :
     c'est volontaire — mieux vaut échouer bruyamment que renommer un ORBAT entier
     avec des codes périmés.
     """
-    import re as _re
     path = groupements_path or default_groupements_path()
     if not os.path.exists(path):
         raise FileNotFoundError(
@@ -599,32 +640,17 @@ def load_echelon_codes(groupements_path=None):
             "l'installer/le localiser, ou passer groupements_path explicitement." % path)
     with open(path, encoding="utf-8") as fh:
         text = fh.read()
-    start = text.find("## Échelons")
-    if start == -1:
+    T = acronyme_tables()
+    block = T.section(text, "## Échelons")
+    if block is None:
         raise ValueError("Section '## Échelons' absente de %s" % path)
-    end = text.find("\n## ", start + 1)
-    block = text[start:end if end != -1 else len(text)]
-
     codes = {}
-    for line in block.splitlines():
-        line = line.strip()
-        if not line.startswith("|") or set(line) <= set("|- "):
-            continue
-        cells = [c.strip() for c in line.strip("|").split("|")]
-        if len(cells) < 2 or cells[0].lower() in ("acronyme", "code"):
-            continue
-        forms = [f.strip().strip("`") for f in cells[0].split("/") if f.strip()]
-        if not forms:
-            continue
-        code = forms[0]
-        note = cells[2] if len(cells) > 2 else ""
-        m = _re.search(r"`([^`]+)`\s+officiel", note)
-        if m and m.group(1).strip() in forms:
-            code = m.group(1).strip()
-        for meaning in cells[1].split("/"):
-            meaning = meaning.strip().lower()
-            if meaning and meaning not in codes:
-                codes[meaning] = code
+    for table in T.parse_text(block, path):
+        for row in table.rows:
+            for meaning in row.meaning.split("/"):
+                meaning = meaning.strip().lower()
+                if meaning and meaning not in codes:
+                    codes[meaning] = row.officiel
     if not codes:
         raise ValueError("Aucun échelon lu dans %s" % path)
     return codes

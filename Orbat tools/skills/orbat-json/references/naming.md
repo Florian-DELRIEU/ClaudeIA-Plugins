@@ -113,17 +113,33 @@ PDF source → marquées `Signals CIE Ø` / `Sig CIE Ø` etc. La `Pathfinder Com
 sœur de ces trois-là dans la même HQ Bn, n'est pas marquée (elle a du contenu) —
 et sa présence empêche aussi le parent (HQ Bn) d'être marqué.
 
-À utiliser en toute fin de construction (Tâche 4), après le nommage, juste avant
-`validate.py` : `orbat_lib.mark_empty_subtrees(orbat)`.
+À utiliser en toute fin de construction (Tâche 4, étape 5), après le nommage, avant
+les légendes et `validate.py` : `orbat_lib.mark_empty_subtrees(orbat)`.
 
-## Règle 4 — Traduire les mots d'échelon d'une source anglaise vers `/nomenclature-v4`
+## Règle 4 — Traduire les mots d'échelon d'une source anglaise vers les codes `acronyme`
 
 Établie sur l'ORBAT « Altis Forces Rearmed » (source PDF en anglais, convention
-britannique/OTAN). Quand Florian demande d'aligner les noms sur son système
-`/nomenclature-v4` plutôt que de garder les abréviations anglo-saxonnes brutes du
-document source, remplacer par mot entier (regex `\b...\b`, sur `name` **et**
-`shortName`, pas seulement `shortName`) en s'appuyant sur la table Échelons de
-`nomenclature-v4/references/groupements.md` :
+britannique/OTAN).
+
+> **Partage des rôles (arbitrage Florian, 2026-10-10).** Le **vocabulaire des
+> échelons réels** — ce que veut dire `Squadron`, `Troop`, `Abteilung` ou
+> « escadron » selon l'armée et l'époque, comment une unité réelle se libelle et se
+> numérote — relève du skill **`orbat-tools:orbat-nommage`**
+> (`../orbat-nommage/references/nations.md` § 1, `pieges.md`), qui fait foi. Pour
+> écrire un **libellé réel** (garder le style de l'armée source, traduire en
+> français lisible pour `name`), s'appuyer sur lui. Cette règle-ci ne couvre que
+> l'étape suivante : passer d'un mot d'échelon source au **code du système**
+> `acronyme`.
+
+Quand Florian demande d'aligner les noms sur son système `acronyme` plutôt que de
+garder les abréviations anglo-saxonnes brutes du document source, remplacer par mot
+entier (regex `\b...\b`) en s'appuyant sur la table Échelons de
+`../acronyme/references/groupements.md`, sur `name` **et** `shortName` : demander
+l'alignement des noms, c'est demander la forme codée dans `name` (§ 7.6, écriture 2,
+admise sur demande de Florian). Sans cette demande, `name` reste en mots français
+entiers et seul le `shortName` porte les codes (§ 7.5) — dans ce cas passer
+`fields=("shortName",)` à `orbat_lib.apply_word_substitutions`, qui agit par défaut
+sur les deux champs.
 
 **La table de correspondance ne vit pas ici.** Les cibles françaises
 (`Battalion`→ ?, `Company`→ ?, `Battery`→ ?…) se lisent dans
@@ -131,11 +147,12 @@ document source, remplacer par mot entier (regex `\b...\b`, sur `name` **et**
 Ce qui reste propre à `orbat-json`, c'est la cartographie des **formes sources
 anglaises vers la notion d'échelon** — jamais le code final :
 
-| Mot source (EN), formes pleines et abrégées | Échelon visé (→ code dans `groupements.md`) |
+| Mot source (EN), formes pleines et abrégées | Échelon visé (→ code dans `groupements.md`) — sens réel du mot : `orbat-nommage` |
 |---|---|
 | `Battalion` / `Bn` | Bataillon |
 | `Company` / `Coy` | Compagnie |
-| `Platoon` / `Plt`, `Troop` / `Tp` | Peloton |
+| `Platoon` / `Plt` | Peloton |
+| `Troop` / `Tp`, `Squadron` / `Sqn` | **Jamais mappés d'office** — sens selon l'armée (US : troop = compagnie, squadron = bataillon de cavalerie ; UK : troop ≈ peloton, squadron = compagnie ; `orbat-nommage` fait foi). Échelon lu dans le sidc, sinon « à vérifier » |
 | `Section` / `Sect` | **Escouade** — ⚠️ voir le piège FR/EN ci-dessous |
 | `Detachment` / `Det` | Détachement |
 | `Battery` / `Bty` | Batterie |
@@ -162,7 +179,7 @@ dans `SQ` (~7-15), pas dans `SEC` (~15+). Voir l'échelle complète dans
 `../acronyme/identification/personnel.md`.
 
 **⚠️ Corollaire — `SEC` n'est plus l'équivalent de `PLT`.** Ce paragraphe affirmait
-jusqu'ici que « la Section `/nomenclature-v4` désigne l'échelon peloton, comme
+jusqu'ici que « la Section du système `acronyme` désigne l'échelon peloton, comme
 `PLT` ». C'est **faux** : `PLT` est un échelon strictement supérieur, un conteneur
 qui regroupe plusieurs escouades/équipes/sections, alors que `SEC` est un élément
 terminal. Ne pas les traiter comme interchangeables.
@@ -188,7 +205,7 @@ source »). Garder le sigle verbatim en `shortName` reste possible, mais seuleme
 ## Règle 5 — Description de catalogue : toujours nommer le matériel réel
 
 Établie suite au retour de Florian sur l'ORBAT CSAT (juillet 2026, ORBAT codé
-directement en acronymes `/nomenclature-v4` sans jamais donner le nom réel du
+directement en acronymes `/acronyme` sans jamais donner le nom réel du
 véhicule à l'échelle de l'unité, seulement dans le catalogue racine — pas assez
 pour qu'il sache "de quel véhicule/matériel exact on parle").
 
@@ -204,7 +221,7 @@ véhicule (nom de plateforme réelle ou du jeu), éventuellement suivie de
 
 Une description qui ne mentionne pas le matériel réel (ex. juste un
 commentaire de contexte, ou vide) casse la traçabilité acronyme → matériel et
-empêche `scripts/add_legends.py` (Tâche 4 point 6) de générer
+empêche `scripts/add_legends.py` (SKILL.md Tâche 4, étape 6) de générer
 la légende par échelon — toujours vérifier que le nom réel est identifiable en
 tête de `description` avant de livrer un ORBAT.
 
@@ -218,7 +235,7 @@ peut subsister dans de vieux fichiers : relancer un script de légende le rempla
 Établi suite à l'ORBAT « Arma 3 - Altis » (juillet 2026, scénario multi-camps :
 France / FIA / AAF / CSAT dans un seul fichier). Le catalogue racine
 `equipment`/`personnel` est **global par nom de code, pas cloisonné par camp** :
-si deux camps réutilisent le même acronyme `/nomenclature-v4` (ex. `MBT` pour
+si deux camps réutilisent le même acronyme `/acronyme` (ex. `MBT` pour
 le char de bataille générique), il n'existe **qu'une seule entrée catalogue**
 pour ce code, partagée par tous les camps qui l'utilisent.
 
@@ -246,7 +263,7 @@ for u, path in orbat_lib.iter_units(orbat, with_path=True):
 ## Règle 6 — Légende locale par unité (codes partagés, comptes, hétérogénéité)
 
 Établie sur l'ORBAT « Arma 3 - Altis » (juillet 2026) en complément de la Règle 5
-et de `add_legends.py`. `add_legends.py` reste l'outil par défaut (Tâche 4 point 6)
+et de `add_legends.py`. `add_legends.py` reste l'outil par défaut (SKILL.md Tâche 4, étape 6)
 quand un code catalogue a une désignation réelle univoque dans tout le fichier.
 Il ne suffit plus dès que l'une de ces conditions s'applique :
 
@@ -327,7 +344,7 @@ attestés selon la grammaire documentée (suffixes de rôle/armement, notation n
 **n'est pas une invention** — c'est l'usage normal du système. Ce qui est interdit,
 c'est de créer un **élément de vocabulaire** nouveau (un Type, un rôle, un suffixe) qui
 n'existe nulle part. En revanche, un code composé à la volée mais absent des lexiques
-**doit être signalé comme tel** à Florian (`acronyme/SKILL.md` point 8 : « `X-Y` n'existe
+**doit être signalé comme tel** à Florian (`../acronyme/SKILL.md`, workflow de vérification, point 8 : « `X-Y` n'existe
 pas encore au lexique : composé à la volée, à journaliser si tu valides ») — il ne
 s'ajoute jamais aux lexiques sans sa validation.
 
@@ -340,7 +357,7 @@ Quand un matériel de la source ne correspond à aucun acronyme existant :
 2. **Faire l'identification AVANT de construire.** La génération d'un ORBAT commence
    toujours par une **passe d'identification du matériel** : lister tout le matériel
    et le personnel de la source, résoudre chaque ligne vers son acronyme via la
-   méthode `acronyme/identification/METHODE.md`, et isoler les cas non résolus.
+   méthode `../acronyme/identification/METHODE.md`, et isoler les cas non résolus.
 3. **Soumettre les cas litigieux à Florian et attendre son arbitrage.** Présenter une
    liste : matériel source → ce qui a été cherché → codes candidats éventuels →
    pourquoi aucun ne convient. Florian tranche (choix d'un code existant, création
@@ -371,7 +388,9 @@ d'unité, à quelque échelon que ce soit**, s'écrit :
 - L'ancienne forme `* CODE = Nx Désignation réelle` est **abandonnée**. Les scripts
   `add_legends.py`, `add_local_legends.py` et `apply_rename_map.py` produisent le format
   canonique (module unique `scripts/legends.py`, octobre 2026) et remplacent toute
-  légende à l'ancien format en conservant la phrase de contexte.
+  légende à l'ancien format en conservant la phrase de contexte. L'ordre est donc
+  indifférent : écrire la phrase puis poser la légende, ou l'inverse, donne le même
+  résultat — plus aucun reformatage manuel.
 
 Cette forme ne dispense pas de la Règle 5 : le catalogue racine doit toujours
 porter la désignation réelle en tête de sa propre `description`.
@@ -380,8 +399,9 @@ porter la désignation réelle en tête de sa propre `description`.
 
 Chaque unité reçoit, **avant** le bloc de légende et séparée par une ligne vide,
 **une à deux phrases** décrivant ce que la lecture de l'ORBAT ne montre pas.
-Généralise la « directive description narrative » de la Tâche 4 point 6, qui était
-jusqu'ici appliquée sur demande — elle est désormais le défaut.
+Généralise la « directive description narrative » (goût confirmé par Florian en août
+2026 sur le camp AAF de « Arma 3 - Altis »), jusqu'ici appliquée sur demande — elle
+est désormais le défaut.
 
 **Priorité aux échelons les plus bas** (escouade, groupe, section, compagnie) :
 ce sont eux qui n'ont pas de sous-échelons, donc leur composition interne n'est
@@ -399,6 +419,20 @@ Aux échelons supérieurs, une phrase de synthèse ou une exception notable
 de X ») — rien si la formation n'a aucune particularité connue. **Ne jamais inventer
 de contexte** : pas de phrase creuse générée pour remplir le champ, l'information
 vient de la source ou de Florian.
+
+Exemples tirés du camp AAF (« Arma 3 - Altis ») :
+
+- unité feuille (équipe/groupe) — composition en rôles et grades réels :
+  `"Section Commander (Sgt/Cpl), Lead Scout Mk 25, LMG Gunner Mk 23."` ;
+- unité intermédiaire — composition d'ensemble ou remarque de service :
+  `"Bataillon mixte infanterie blindée (MCV-10 Warrior) et chars (Leopard 2ALF),
+  mixte réguliers / réservistes."` ;
+- exception notable : `"La 3e Recce Section n'est armée qu'à la mobilisation
+  (réservistes)."`, `"Non constructible avec les groupes prédéfinis de l'éditeur
+  ArmA 3."`.
+
+La phrase vient **avant** le bloc légende (`Équipement :` / `Personnel :`), séparée
+par une ligne vide — elle ne le remplace pas.
 
 Mentionner ici, le cas échéant, les lignes de TOE laissées vides faute d'acronyme
 (§ 7.2), pour que le trou reste visible dans le fichier livré.
@@ -424,12 +458,14 @@ Structure : `{numéro ou lettre} {ÉCHELON}-{TYPE}`
   ne pas se fier à une liste mémorisée ni aux codes vus dans un ORBAT antérieur.
 - Une garnison éventuelle reste séparée par `" — "` (Règle 2).
 - Le suffixe `Ø` de la Règle 3 s'ajoute en fin, après tout le reste.
+- Génération : `python3 scripts/short_names.py <fichier.json>` (voir « Implémentation »
+  en fin de fichier).
 
 ⚠️ **Piège `BT` / `BAT` — tranché le 2026-08-09.** `BT` = **Bataillon** (forme
 officielle, `BN` valide en lecture) ; `BAT` = **Batterie** (`BTE` valide). Les
 premiers exemples fournis pour cette règle écrivaient `BAT-INF` pour un bataillon
 d'infanterie — c'était une erreur, corrigée ci-dessus. Ne jamais écrire `BAT` pour
-un bataillon. Voir `../acronyme/decisions.md` § 6, entrée 2026-08-09.
+un bataillon. Voir `../acronyme/chronologie.md`, entrée 2026-08-09.
 
 ⚠️ **Ne pas non plus recopier les codes de type depuis un vieil ORBAT :** `-B` pour
 blindé est déprécié (`ARM` officiel depuis le 2026-08-04, `-B` collisionne avec
@@ -480,16 +516,18 @@ DBA
 └─ 2e Cie DBA
 ```
 
-✅ À faire :
+✅ À faire (`name` en mots entiers, § 7.6 — l'abréviation `Cie` de l'ancien exemple
+n'est plus admise) :
 ```
 DBA
-├─ EM
-├─ 1ère Cie
-└─ 2e Cie
+├─ État-Major
+├─ 1ère Compagnie
+└─ 2e Compagnie
 ```
 
 Vaut pour `name` **et** `shortName`, à tous les niveaux (une section sous la 1ère
-compagnie ne reprend ni « 1ère Cie » ni « DBA »). Seule exception : si la source
+compagnie ne reprend ni « 1ère Compagnie » ni « DBA » ; son `shortName` ne reprend
+pas non plus le code de la compagnie). Seule exception : si la source
 elle-même désigne officiellement l'unité par un nom composé indissociable, le
 garder verbatim et expliquer pourquoi en `description`.
 
@@ -520,6 +558,12 @@ peut en casser une autre (typiquement un total parent recalculé).
 
 ### 8.2 — Quoi vérifier — table de réconciliation source ↔ fichier
 
+**Outil : `python3 scripts/conformite.py <fichier.json> [--source totaux.json] [--at DATE]
+[--unit ID]`** — produit le rapport de conformité (code de sortie 1 s'il trouve des
+écarts ; format de `totaux.json` : `--help`). Il automatise les contrôles chiffrés et
+mécaniques ; la confrontation ligne à ligne avec la source reste à faire, et le
+rapport livré à Florian suit toujours le § 8.4.
+
 Reprendre la **source** (document, PDF, tableau, message de Florian) et confronter
 ligne à ligne. Ne jamais contrôler le fichier « de mémoire » de ce qu'on croit avoir
 écrit : relire le JSON produit.
@@ -533,10 +577,11 @@ ligne à ligne. Ne jamais contrôler le fichier « de mémoire » de ce qu'on cr
 | 5 | **Échelons** | l'échelon attribué correspond à celui de la source (⚠️ piège FR/EN « Section », Règle 4) |
 | 6 | **Codes attestés** | tout code de `equipment`/`personnel` existe dans `orbat-tools:acronyme` (Règle 7 § 7.1) et dans le catalogue racine du fichier |
 | 7 | **Catalogues** | toute entrée de catalogue est réellement utilisée, et toute entrée utilisée est déclarée ; description commençant par la désignation réelle (Règle 5) |
-| 8 | **Nommage** | pas de parenthèses dans `name` (Règle 1), `shortName` présent partout (Règle 2), pas de répétition de la formation mère (§ 7.7) |
+| 8 | **Nommage** | pas de parenthèses dans `name` (Règle 1), `shortName` présent partout (Règle 2), pas de répétition de la formation mère (§ 7.7), suffixe `Ø` sur les sous-arbres sans TOE (Règle 3) |
 | 9 | **Lacunes assumées** | les lignes laissées vides faute d'acronyme (§ 7.2) sont bien mentionnées en `description` (§ 7.4) |
-| 10 | **Symboles (`sidc`)** | icône cohérente avec le **rôle réel** et l'**époque** de la source (`symbologie.md`) ; échelon du sidc = échelon de l'unité ; codes non attestés au `sidc_dictionary.json` signalés |
+| 10 | **Symboles (`sidc`)** | icône cohérente avec le **rôle réel** et l'**époque** de la source (`symbologie.md`) ; échelon du sidc = échelon de l'unité ; codes non attestés au `sidc_dictionary.json` signalés (`scripts/sidc_lookup.py --code`) |
 | 11 | **Structure** | `python3 scripts/validate.py <fichier.json>` → 0 erreur |
+| 12 | **Légendes** | chaque unité qui porte du matériel ou du personnel légende ses codes (§ 7.3 ; `scripts/add_legends.py`) |
 
 Quand la source **ne donne pas** un chiffre (TOE non détaillé, document partiel), ce
 n'est pas un écart : c'est une **lacune de source**, à distinguer explicitement d'une
@@ -576,12 +621,17 @@ Contrôle de conformité à la source
 - Si un bloc est vide, l'écrire quand même avec « néant » : l'absence de bloc est
   ambiguë, « néant » ne l'est pas.
 
-## Implémentation type
+## Implémentation — `scripts/short_names.py`
 
-Pour une génération programmatique (Python), dériver `shortName` en une passe
-finale sur l'arbre entier plutôt qu'en argument séparé à chaque appel de
-`make_unit` : une liste ordonnée de règles `(motif du nom complet → abrégé)`,
-appliquée du motif le plus spécifique au plus générique, avec extraction/
-réinjection préalable d'un éventuel suffixe " — garnison". Voir l'exemple
-`make_shortname()` / `apply_shortnames()` développé pour l'ORBAT France 1980
-(script `build_france_1980.py` et bibliothèque `templates_1980.py` de Florian).
+Le `shortName` se dérive en une passe finale sur l'arbre entier plutôt qu'en argument
+séparé à chaque appel de `make_unit` :
+
+```
+python3 scripts/short_names.py <fichier.json> [--all] [--dry-run] [--output OUT]
+```
+
+Le script applique la Règle 2, le § 7.5 (forme `{numéro} {ÉCHELON}-{TYPE}`, codes lus
+dans `acronyme`, garnison `" — "` et suffixe `Ø` préservés) et le § 7.7 (pas de
+répétition de la formation mère). Détail des options : `--help`. Il remplace l'ancien
+renvoi à `make_shortname()` / `apply_shortnames()` des scripts personnels de l'ORBAT
+France 1980, qui ne font pas partie du plugin.

@@ -178,7 +178,7 @@ conversion est **volontairement lossy** :
 
 | Élément ODIN | Devenir |
 |---|---|
-| unité | `Unit` récursive avec `sidc` APP-6D (jamais de `Group` imbriqué — cf. `format.md`) |
+| unité | `Unit` récursive avec `sidc` APP-6D (jamais de `Group` imbriqué — cf. `../orbat-json/references/format.md`) |
 | `E` / `W` / `M` | `equipment`, **agrégés par classe** sur l'unité porteuse |
 | `P` | `personnel`, agrégés par classe |
 | rôle `C` / `P` (équipage vs passager) | **perdu** — non représentable |
@@ -197,8 +197,8 @@ conversion est **volontairement lossy** :
 
 ### Function ID → entité APP-6D
 Table `FUNCTION_MAP` dans `xlsx_orbat.py`, **dérivée et non inventée** : entités
-documentées dans `sidc.md` (autorité) + concordance des noms d'unités ODIN avec
-les exemples de `sidc_dictionary.json`, en n'utilisant que les **noms non
+documentées dans `../orbat-json/references/sidc.md` (autorité) + concordance des noms d'unités ODIN avec
+les exemples de `../orbat-json/references/sidc_dictionary.json`, en n'utilisant que les **noms non
 ambigus** (les génériques `HQ`, `CMD SEC`, `1 PLT` polluent le vote et sont
 écartés).
 
@@ -206,6 +206,10 @@ Couverture : **56 familles sur 56** sur le fichier de référence — plus aucun
 retombée sur `000000`. Toute famille absente d'un futur fichier tombera sur
 l'entité générique `000000` et sera **listée dans le rapport de conversion** :
 la signaler à Florian plutôt que de deviner.
+
+**Chars : `UCA---` → `120500`** (blindés / chars, entité documentée dans `sidc.md`,
+qui fait autorité — arbitrage Florian du 2026-10-10). Ne pas confondre avec la
+cavalerie, qui prend `121300` (diagonale seule) et non `120500` : voir `sidc.md`.
 
 ⚠️ Deux mappings reposent sur une base plus faible que le reste, à confirmer :
 `UCAWW-` (*AMPHIB PLT* → `120300`, entité standard APP-6D absente du dictionnaire)

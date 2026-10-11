@@ -1,7 +1,8 @@
 # Pistes de recherche et types de sources
 
 Ce skill s'appuie principalement sur la **recherche web** (`web_search` /
-`web_fetch`) plutôt que sur des données mémorisées en dur. Quelques pistes
+`web_fetch`, ou leurs équivalents selon l'environnement) plutôt que sur des
+données mémorisées en dur. Quelques pistes
 pour des recherches efficaces.
 
 ## Formuler la recherche
@@ -22,18 +23,57 @@ les nations non francophones.
 
 ## Types de sources généralement fiables
 
+Marqueurs de consultation (octobre 2026) :
+**✅ lue** = fetchée et exploitée dans les fichiers de ce skill ·
+**🌐 répond** = page d'accueil vérifiée accessible, contenu non exploité ·
+**⛔** = refusée à l'outil de lecture automatique (robots.txt / autorisation) mais
+existence confirmée par une source tierce — à ouvrir manuellement ·
+(sans marqueur) = non revérifiée.
+
 - **Wikipedia** (et ses équivalents en langue d'origine — souvent plus
   détaillés que la version française pour un sujet national donné, ex.
   Wikipedia allemand pour la Wehrmacht, Wikipedia russe pour l'Armée
   rouge). Bon point de départ, à recouper si possible.
-- **Sites spécialisés en ordres de bataille** : sites dédiés aux OOB de la
-  Seconde Guerre mondiale et d'autres conflits (rechercher "[nation]
-  [conflit] order of battle site" pour trouver les références reconnues
-  par les passionnés/historiens amateurs sérieux du domaine).
-- **Services historiques officiels / archives nationales** : par exemple
-  le Service Historique de la Défense (SHD) pour la France, les archives
-  du Bundesarchiv pour l'Allemagne, etc. Plus rigoureux mais parfois moins
-  faciles d'accès en ligne.
+- **Sites spécialisés en ordres de bataille** (TO&E, OOB) :
+  - ⛔ **Niehorster** — *World War II Armed Forces: Orders of Battle and
+    Organizations* (L. Niehorster ; TO&E et OOB de toutes les nations
+    belligérantes, séries organisationnelles allemandes en PDF) :
+    https://www.niehorster.org/ (existence et contenu confirmés par
+    https://generalstab.org/news/world-war-ii-armed-forces-niehorster-org/)
+  - 🌐 **Lexikon der Wehrmacht** (unités, structures et notices de la
+    Wehrmacht, en allemand) : https://www.lexikon-der-wehrmacht.de/
+  - 🌐 **Bayonet Strength** (G. Kennedy ; évolution du bataillon d'infanterie
+    britannique, allemand, soviétique et américain 1939-45, avec PDF tirés de
+    documents d'époque) : https://www.bayonetstrength.uk/
+  - Pour d'autres conflits, rechercher "[nation] [conflit] order of battle"
+    pour trouver les références reconnues par les passionnés/historiens
+    amateurs sérieux du domaine.
+- **Services historiques officiels / archives nationales** :
+  - 🌐 **US Army Center of Military History (CMH)** — lignées et honneurs,
+    histoire de la structure des forces, collection *Army Lineage Series* :
+    https://history.army.mil/
+  - 🌐 **Service historique de la Défense (SHD)** — inventaires en ligne,
+    archives numérisées (site parfois en maintenance) :
+    https://www.servicehistorique.sga.defense.gouv.fr/
+  - **Mémoire des hommes** (ministère des Armées ; journaux des marches et
+    opérations des unités 1914-18, registres) :
+    https://www.memoiredeshommes.sga.defense.gouv.fr/
+  - **Bundesarchiv** (archives fédérales allemandes) :
+    https://www.bundesarchiv.de/
+  Plus rigoureux mais parfois moins faciles d'accès en ligne.
+- **Études institutionnelles accessibles en ligne** :
+  - ✅ McGrath, J. J., *The Brigade: A History, Its Organization and
+    Employment in the US Army*, Combat Studies Institute Press, 2004, ch. 6
+    (brigade et réforme ROAD) :
+    https://www.vietnam.ttu.edu/exhibits/helicopter/other/Brigade-AHistory_clip.pdf
+  - ✅ Modern War Institute (West Point), « The Right Division for the
+    Fight: Force Design and Force Structure Lessons from the Cold War » :
+    https://mwi.westpoint.edu/the-right-division-for-the-fight-force-design-and-force-structure-lessons-from-the-cold-war/
+  - ✅ Ministère des Armées, *Chemins de mémoire* — A. Crépin, « Vers une
+    nouvelle triade République-Nation-Armée » (lois de 1872, 1873, 1875) :
+    https://www.defense.gouv.fr/chemins-memoire/histoire-memoires/ressources-historiques/1870-1871-guerre-franco-prussienne/nouvelle-triade
+  - ✅ Wikipedia — *Pentomic* (contexte de l'abandon de la brigade puis de
+    ROAD) : https://en.wikipedia.org/wiki/Pentomic
 - **Ouvrages de référence type "Osprey Publishing"** (collections Men-at-Arms,
   Battle Orders, Elite) : souvent cités/résumés en ligne, bonne base
   vulgarisée mais sourcée.
@@ -41,6 +81,10 @@ les nations non francophones.
   wargamers/reenactors sérieux) : à utiliser avec prudence, mais souvent
   de bonnes synthèses avec sources citées — vérifier la qualité des
   échanges et préférer les messages qui citent leurs sources.
+- **Vocabulaire des échelons** (noms dans chaque langue, variantes par arme) :
+  ne pas chercher ici — la table de référence et ses sources sont dans
+  `orbat-tools:orbat-nommage` (`references/nations.md` §1 et
+  `references/sources.md`).
 
 ## Prudence
 

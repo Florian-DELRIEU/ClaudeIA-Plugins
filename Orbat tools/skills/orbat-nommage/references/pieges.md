@@ -28,6 +28,15 @@
   des mortiers.
 - **« Armoured » ≠ « tank » (🇬🇧)** : distinction signifiante, contrairement à
   l'usage américain où *armored* couvre tout.
+- **« Section » (🇫🇷 ≠ 🇬🇧)** : la section française est un *platoon* ; la
+  section britannique est un *squad* (~8 h), équivalent de notre **groupe de
+  combat**.
+- **« Дивизион » (divizion, 🇷🇺) ≠ « дивизия » (division)** : le *divizion* est
+  un échelon **bataillon** (artillerie, DCA, missiles). Le traduire par
+  « division » multiplie la taille de l'unité par dix ou plus.
+- **« Eskadron » / « Schwadron » (🇩🇪)** : même échelon, deux époques —
+  *Eskadron* dans les armées prussienne et impériale, *Schwadron* (germanisé)
+  dans la Wehrmacht. Voir `nations.md` §1.2.
 
 ## 2. Pièges de lecture
 
@@ -39,8 +48,12 @@
   Staffeln de la Luftwaffe (`7./JG 26` est dans le III. Gruppe).
 - **Numéro APRÈS l'arme (🇩🇪) vs DEVANT (🇫🇷)** : `Panzerregiment 4` vs `501e RCC`.
   Une inversion d'ordre est la faute la plus visible dans un ORBAT fictif.
-- **Ordinaux militaires américains** : on écrit `2d` et `3d`, pas `2nd`/`3rd`.
-  Une désignation en `2nd` trahit un texte non militaire (ou britannique).
+- **Ordinaux militaires américains** : `2d` / `3d` est la forme des documents
+  de **lignée** de l'US Army (CMH) ; ce n'est **pas** une règle absolue. La
+  communication officielle actuelle écrit souvent `3rd Infantry Division`, et
+  l'**USMC** écrit officiellement `2nd Marine Division` (mais `2d Marines` pour
+  le régiment). Un `2nd` ne trahit donc pas à lui seul un texte non militaire —
+  voir US-11.
 - **Corps en chiffres romains / armées en toutes lettres** (usage anglo-saxon) :
   `XVIII Airborne Corps`, `First United States Army`. Écrire « 18th Corps » est
   une faute de registre.
@@ -66,6 +79,10 @@
   (US Army CMH via GlobalSecurity, page du 75th Ranger). Les explications par la
   sonorité, l'alphabet phonétique ou une superstition relèvent du **folklore de
   forum** — les mentionner comme telles, jamais comme la raison.
+- **`2d` ou `2nd` (🇺🇸)** : les documents de lignée (CMH) et l'historique de
+  l'USMC écrivent `2d`, les sites officiels actuels des unités écrivent souvent
+  `2nd`/`3rd` (`3rd Infantry Division`, `2nd Marine Division`). Ce n'est pas une
+  divergence de fait mais de **registre** : choisir selon le registre visé.
 - **Le libellé officiel d'un GTIA (🇫🇷)** : aucune source accessible ne le
   normalise. Deux usages coexistent (régiment noyau / nom de code) — présenter
   les deux.
@@ -99,5 +116,5 @@
 | `1 Guards msp` | 1er régiment de fusiliers motorisés de la Garde | 🇷🇺 |
 | `military unit 31135` | code v/ch — identifiant administratif parallèle au nom | 🇷🇺 |
 | `Nijmegen Company` | Compagnie incrémentale des Grenadier Guards (honneur de bataille) | 🇬🇧 |
-| `18/1` | 18ᵉ bataillon, 1re compagnie | 🇫🇷 |
+| `18/1` | 1re compagnie du 18ᵉ bataillon du **génie** (1914 : compagnie de la 35ᵉ DI) — notation propre au génie de 1914-18, voir FR-5 | 🇫🇷 |
 | `GTIA du 1er RIMa` | Groupement temporaire nommé d'après son régiment noyau | 🇫🇷 |

@@ -11,13 +11,14 @@ groupe, équipe, binôme), pas un soldat isolé. L'identification suit donc :
 Les effectifs sont **indicatifs, jamais normatifs** : ils décrivent l'usage courant,
 ils ne l'imposent pas.
 
-| Préfixe | Élément | Effectif indicatif |
-|---------|---------|--------------------|
-| `SEC` | Section — « grosse escouade », élément d'un seul tenant | ~15 et + |
-| `SQ` | Escouade | ~7-15 |
-| `GRP` | Groupe (demi-escouade, détachement réduit — y compris un groupe de commandement officier + escorte) | ~4-6 |
-| `EQP` | Équipe (fonction spécialisée distincte, pas une escouade réduite) — `EQU` et `TE` en alternatifs lisibles | ~3-4 |
-| `BI` | Binôme | 2 |
+<!-- bassin: types -->
+| Officiel | Alternatifs | Signification | Effectif indicatif |
+|---|---|---|---|
+| SEC | | Section — « grosse escouade », élément d'un seul tenant | ~15 et + |
+| SQ | | Escouade | ~7-15 |
+| GRP | | Groupe (demi-escouade, détachement réduit — y compris un groupe de commandement officier + escorte) | ~4-6 |
+| EQP | EQU, TE | Équipe (fonction spécialisée distincte, pas une escouade réduite) — `EQU` et `TE` en alternatifs lisibles | ~3-4 |
+| BI | | Binôme | 2 |
 
 > ⚠️ **Le chiffre ne tranche jamais, la nature si.** Les fourchettes se recoupent
 > volontairement (4 hommes = `EQP` ou `GRP` selon le cas) et il est parfaitement
@@ -52,6 +53,7 @@ ils ne l'imposent pas.
 
 ## Rôle dominant (exemples établis dans `ORBAT 2023`)
 
+<!-- bassin: aucun -->
 | Code | Élément |
 |------|---------|
 | `SQ-INF` | Escouade d'infanterie classique |
@@ -75,6 +77,7 @@ ils ne l'imposent pas.
 
 Trois rôles voisins, séparés par un critère unique :
 
+<!-- bassin: aucun -->
 | Rôle | Ce que c'est | Où est l'arme |
 |---|---|---|
 | `GUN` | **Les servants, nus.** Artilleurs au sens large — quiconque met en œuvre un système d'armes, y compris un tireur de mitrailleuse. | Sur la ligne `equipment` de l'unité, **pas** dans l'élément |
@@ -97,6 +100,7 @@ SQ-C.AT  ≡  C.AT   +  SQ-GUN
 Ils sont valides, mais **font perdre le compte des pièces** dès qu'on remonte
 au-dessus de l'élément. La forme éclatée est plus précise :
 
+<!-- bassin: aucun -->
 | Moins précis | Plus précis |
 |---|---|
 | `PLT-MOR` avec `3× EQP-MOR` | `PLT-GUN` avec `MOR ×3` en équipement et `3× EQP-GUN` en personnel |
@@ -122,7 +126,8 @@ de l'organigramme sans rien apporter.
 
 **Frontière `GUN` / `CRW`** — non tranché formellement : un servant de pièce
 tractée ou en position est `GUN` ; l'équipage d'un automoteur, qui conduit *et*
-sert la pièce, relève de `CRW`. À confirmer dès qu'un ORBAT contiendra des blindés.
+sert la pièce, relève de `CRW`. À confirmer dès qu'un ORBAT contiendra des blindés
+(point ouvert, `decisions.md` § 5).
 
 > ⚠️ **`AM` (assistant munitions) est un rôle *individuel*** : il qualifie la
 > composition d'un élément en `description`, il ne crée pas de ligne de

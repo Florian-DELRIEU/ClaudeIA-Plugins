@@ -24,18 +24,23 @@ JSON (format orbat-mapper.app) :
    dans son sous-arbre (un groupe qui n'a que des VAB n'affiche pas « VBL »).
    La prose existante (phrase de contexte § 7.4) est conservée.
 
-3. Quand un échelon ne porte, EN PROPRE, qu'un seul matériel (un seul code,
-   une seule désignation d'origine), enrichit son titre (`name`) avec le nom
-   réel, ex. "Escadron" -> "Escadron de VAB". Désactivable par --no-titles.
+3. Seulement avec --titres (opt-in, désactivé par défaut) : quand un échelon
+   ne porte, EN PROPRE, qu'un seul matériel (un seul code, une seule
+   désignation d'origine), enrichit son titre (`name`) avec le nom réel,
+   ex. "Escadron" -> "Escadron de VAB". `--no-titles` reste accepté, sans effet
+   (compatibilité avec les anciennes commandes).
 
 4. Valide le résultat (contrôles de `orbat-json/scripts/validate.py`) et
    affiche le rapport — code de sortie 1 s'il reste des ERREURS.
 
 Usage:
     python apply_rename_map.py <orbat.json> <mapping.json> [--output OUT.json]
-                                [--dry-run] [--no-legend] [--no-titles]
+                                [--dry-run] [--no-legend] [--titres]
 
 mapping.json : {"Nom original 1": "CODE-V4-1", "Nom original 2": "CODE-V4-2", ...}
+Les clés commençant par « _ » (métadonnées du brouillon de draft_mapping.py :
+`_a_valider`, `_candidats`) sont ignorées ; le script refuse toutefois de
+tourner tant que `_a_valider` n'est pas vide (noms encore sans code validé).
 
 Par défaut, écrase le fichier d'entrée. Idempotent : peut être relancé sans
 dupliquer légendes ou suffixes de titre déjà appliqués.
@@ -297,7 +302,10 @@ def enrich_titles(node, provenance, log):
     """Un seul code d'équipement porté en propre, d'une seule désignation
     d'origine -> « {name} de {désignation} ». Personnel exclu (tautologie)."""
     own = provenance.get(id(node), {}).get("equipment", {})
-    if len(own) == 1 and "name" in node:
+    # mixte = plusieurs lignes d'équipement en propre, renommées ou non (un VBL
+    # hors mapping à côté d'un VAB renommé rend l'échelon mixte)
+    single_line = len(node.get("equipment") or []) == 1
+    if len(own) == 1 and single_line and "name" in node:
         (names,) = own.values()
         if len(names) == 1:
             real_name = names[0]
@@ -311,6 +319,31 @@ def enrich_titles(node, provenance, log):
 
 
 # ---------------------------------------------------------------------------
+def load_mapping(raw):
+    """
+    Mapping utilisable depuis le JSON lu : les clés « _… » (métadonnées du
+    brouillon de draft_mapping.py) sont écartées ; quitte (code 2) si
+    `_a_valider` n'est pas vide ou si une valeur n'est pas un code (chaîne).
+    """
+    if not isinstance(raw, dict):
+        print("❌ mapping.json doit être un objet {ancien_nom: nouveau_code}.", file=sys.stderr)
+        sys.exit(2)
+    todo = raw.get("_a_valider") or []
+    if todo:
+        print(f"❌ Brouillon non finalisé : {len(todo)} nom(s) encore dans « _a_valider » "
+              f"({', '.join(map(repr, todo[:10]))}{' …' if len(todo) > 10 else ''}). "
+              "Les résoudre (skill acronyme), les faire valider par Florian, puis retirer "
+              "la clé avant d'appliquer.", file=sys.stderr)
+        sys.exit(2)
+    mapping = {k: v for k, v in raw.items() if not str(k).startswith("_")}
+    bad = [k for k, v in mapping.items() if not isinstance(v, str) or not v.strip()]
+    if bad:
+        print("❌ Valeur(s) de mapping invalide(s) (un code attendu) pour : "
+              + ", ".join(map(repr, bad)), file=sys.stderr)
+        sys.exit(2)
+    return mapping
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     parser.add_argument("orbat_file", help="Fichier ORBAT JSON à modifier")
@@ -318,12 +351,18 @@ def main():
     parser.add_argument("--output", help="Fichier de sortie (par défaut : écrase orbat_file)")
     parser.add_argument("--dry-run", action="store_true", help="N'écrit rien ; affiche le résumé et la validation")
     parser.add_argument("--no-legend", action="store_true", help="Ne pas poser la légende dans les descriptions d'échelon")
-    parser.add_argument("--no-titles", action="store_true", help="Ne pas enrichir les titres d'échelon à composition unique")
+    parser.add_argument("--titres", action="store_true",
+                        help="Enrichir le titre (name) des échelons à composition de matériel "
+                             "unique, ex. « Escadron » -> « Escadron de VAB » (désactivé par défaut)")
+    parser.add_argument("--no-titles", action="store_true",
+                        help="Obsolète, sans effet : les titres ne sont plus enrichis par défaut "
+                             "(voir --titres). Accepté pour compatibilité.")
     args = parser.parse_args()
 
     orbat = ol.load(args.orbat_file)
     with open(args.mapping_file, "r", encoding="utf-8") as f:
-        mapping = json.load(f)
+        raw = json.load(f)
+    mapping = load_mapping(raw)
 
     changes, per_kind = [], {}
     for key in KINDS:
@@ -365,7 +404,7 @@ def main():
     for root in roots_of(orbat):
         if not args.no_legend:
             annotate_units(root, provenance, log, known)
-        if not args.no_titles:
+        if args.titres:
             enrich_titles(root, provenance, log)
 
     if log.get("legends"):

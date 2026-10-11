@@ -1,5 +1,5 @@
 {
-  "_comment": "Lexique d'identification spécifique aux univers fictifs (Warhammer 40,000, Cosmotter, etc.) où le matériel n'a pas d'équivalent réel direct. Séparé du lexique.json généraliste (matériel réel) pour éviter toute confusion, notamment sur les codes réutilisés dans un sens différent selon le contexte roues/chenillé (voir chassis-types.md, décision « VBCI vs VB — rôle combattant vs soutien »). Un même code (ex. VB) peut ainsi coexister ici et dans lexique.json avec un sens distinct selon univers/contexte : toujours vérifier lequel des deux lexiques s'applique avant de réutiliser un code.",
+  "_comment": "Lexique d'identification du matériel des univers fictifs (Warhammer 40,000, Cosmotter, etc.) sans équivalent réel direct. Séparé de lexique.json (matériel réel) uniquement pour faciliter la recherche par contexte de matériel : ce n'est ni une définition concurrente ni une frontière de sens. Conformément à la règle cardinale n°4 (SKILL.md), un code a exactement le même sens ici et dans lexique.json (ex. VB = véhicule blindé chenillé partout) ; seule la doctrine d'emploi du matériel décrit peut conduire à choisir un Type plutôt qu'un autre (voir chassis-types.md, décision « VBCI vs VB — rôle combattant vs soutien »).",
   "VBCI": {
     "kind": "equipment",
     "parts": [
@@ -118,13 +118,13 @@
       "Officier"
     ]
   },
-  "I": {
+  "INF": {
     "kind": "personnel",
     "parts": [
       "INF"
     ],
     "univers": "Warhammer 40,000 — Astra Militarum",
-    "note_florian": "Guardsman — hommes du rang et sous-officiers, fantassin de base. Élémentarisé en SQ-I (escouade, 10) / GRP-I (groupe, 5) via orbat-compact ; les groupes de commandement (officier + escorte) sont codés GRP-HQ, pas SQ-I/GRP-I. Migré depuis INF le 2026-07-30 (INF déprécié au profit de I).",
+    "note_florian": "Guardsman — hommes du rang et sous-officiers, fantassin de base. Élémentarisé en SQ-INF (escouade, 10) / GRP-INF (groupe, 5) via orbat-compact ; les groupes de commandement (officier + escorte) sont codés GRP-HQ, pas SQ-INF/GRP-INF. Historique : clé migrée INF → I le 2026-07-30, puis revenue à INF le 2026-10-10 (INF officiel depuis le 2026-08-04, I simple alternatif de lecture).",
     "materiel_reel": [
       "Guardsman"
     ]
@@ -158,7 +158,7 @@
       "INF"
     ],
     "univers": "Warhammer 40,000 — Astra Militarum",
-    "note_florian": "Escouade de Guardsmen (10 hommes) — élément issu de l'élémentarisation orbat-compact, remplace l'ancien ESC-INF. Migré depuis SQ-INF le 2026-07-30 (INF déprécié au profit de I). [maj 2026-08-05 : SQ-I→SQ-INF (INF officiel, EQP officiel)]",
+    "note_florian": "Escouade de Guardsmen (10 hommes) — élément issu de l'élémentarisation orbat-compact, remplace l'ancien ESC-INF. Migré en SQ-I le 2026-07-30 (décision de juillet, depuis inversée). [maj 2026-08-05 : SQ-I→SQ-INF (INF officiel, EQP officiel)]",
     "materiel_reel": [
       "Guardsman"
     ]
@@ -170,7 +170,7 @@
       "INF"
     ],
     "univers": "Warhammer 40,000 — Astra Militarum",
-    "note_florian": "Groupe/demi-escouade de Guardsmen (5 hommes) — élément issu de l'élémentarisation orbat-compact. Migré depuis GRP-INF le 2026-07-30 (INF déprécié au profit de I). [maj 2026-08-05 : GRP-I→GRP-INF (INF officiel, EQP officiel)]",
+    "note_florian": "Groupe/demi-escouade de Guardsmen (5 hommes) — élément issu de l'élémentarisation orbat-compact. Migré en GRP-I le 2026-07-30 (décision de juillet, depuis inversée). [maj 2026-08-05 : GRP-I→GRP-INF (INF officiel, EQP officiel)]",
     "materiel_reel": [
       "Guardsman"
     ]

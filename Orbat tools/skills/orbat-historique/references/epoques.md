@@ -21,11 +21,16 @@ web. Les ruptures listées sont approximatives et varient selon les nations.
 - Chemin de fer et télégraphe transforment la mobilisation et le
   commandement (mobilisation prussienne de 1866 et 1870 souvent citée comme
   référence).
-- Réformes françaises post-défaite de 1870-71 (réorganisation profonde de
-  l'armée, service militaire universel, système de réserve à l'allemande).
 
 ## 1871–1914 — Avant-guerre, conscription de masse
 
+- **Réformes françaises après la défaite de 1870-71** : loi du 27 juillet
+  1872 sur le recrutement (fin du remplacement, service personnel
+  universel, réserve et armée territoriale), loi du 24 juillet 1873 sur
+  l'organisation (18 corps d'armée en métropole, adossés à 18 régions
+  militaires, l'Algérie formant le 19ᵉ), loi du 13 mars 1875 sur les cadres.
+  Source : ministère des Armées, *Chemins de mémoire* (A. Crépin), voir
+  `sources.md`.
 - Grandes armées de conscription en Europe continentale, corps d'armée
   régionaux permanents (recrutement territorial), réserve et armée active
   distinctes.
@@ -75,8 +80,11 @@ web. Les ruptures listées sont approximatives et varient selon les nations.
   **Pacte de Varsovie/soviétique** (division motorisée/blindée plus dense
   en effectifs bruts mais structure plus rigide, forte standardisation,
   armées de chars).
-- Brigade redevient un échelon de manœuvre courant (notamment armées
-  occidentales), parfois au détriment du régiment classique.
+- La brigade redevient un échelon de manœuvre courant **pendant** la
+  Guerre froide (notamment armées occidentales), parfois au détriment du
+  régiment classique. Repère sûr : aux États-Unis, la réforme **ROAD**
+  (approuvée en 1961, réorganisation 1961-1963) rétablit trois brigades par
+  division après l'intermède pentomique. Voir `echelons.md`.
 - Aéromobilité (hélicoptères) transforme la doctrine à partir des années
   1960-70 (ex. division aéromobile US au Vietnam).
 
@@ -84,7 +92,8 @@ web. Les ruptures listées sont approximatives et varient selon les nations.
 
 - Réductions d'effectifs généralisées après la Guerre froide, dissolution
   de nombreux corps d'armée permanents en Europe occidentale.
-- Montée en puissance de la **brigade interarmes autonome** comme grand
+- La brigade, déjà réintroduite pendant la Guerre froide, change de statut :
+  montée en puissance de la **brigade interarmes autonome** comme grand
   échelon de référence dans plusieurs armées occidentales (au lieu de la
   division).
 - Numérisation du champ de bataille, opérations expéditionnaires

@@ -241,7 +241,8 @@ def main():
     sans = log.get("sans_shortname", [])
     if sans:
         print(f"\n⚠️  {len(sans)} groupe(s) créé(s) sans shortName (naming.md Règles 2 et 7.5) — "
-              "passer `new_short_names` ou les poser avant livraison : " + ", ".join(sans))
+              "passer `new_short_names`, ou lancer ensuite short_names.py (dérivation "
+              "depuis les codes du skill acronyme) : " + ", ".join(sans))
 
     if args.dry_run:
         print("\n[dry-run] Aucun fichier écrit.")

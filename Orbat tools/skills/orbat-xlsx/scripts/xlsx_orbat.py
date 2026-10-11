@@ -665,18 +665,23 @@ AFFILIATION_MAP = {
 #   [dict]    déduites par concordance des noms d'unités ODIN avec les exemples
 #             de references/sidc_dictionary.json, en n'utilisant QUE les noms
 #             non ambigus (un nom générique comme « HQ » ou « CMD SEC » apparaît
-#             sous des dizaines de types et pollue le vote — il est écarté).
+#             sous des dizaines de types et pollue le vote — il est écarté) ;
+#   [APP-6D]  correspondance de la norme, non attestée au dictionnaire ;
+#   [famille] repli sur l'entité de la famille 2525C parente (noms génériques).
 #
 # Tout code absent d'ici est converti en entité générique 000000 ET listé dans
-# le rapport de conversion. Les familles délibérément NON mappées faute de
-# base fiable (à compléter par Florian plutôt qu'à deviner) :
-#   UCA--- blindé/char · UCAWW- · UCDML- · UCII-- · USXOM- · UUMRS-
-#   NB---- · NU---- (dimension non terrestre)
-# Le dictionnaire ne contient pas d'entité « char » distincte de l'état-major
-# (120500 = commandement), donc UCA--- reste volontairement non mappé.
+# le rapport de conversion (« functions non mappées ») : à compléter par
+# Florian plutôt qu'à deviner. Vérifier une entité : orbat-json/scripts/
+# sidc_lookup.py --code NNNNNN.
+#
+# 120500 = Blindés / chars (icône ellipse) d'après references/sidc.md, qui fait
+# autorité — PAS « commandement » (il n'existe pas d'entité état-major : un QG
+# hérite de l'entité de son unité et se marque en position 8). UCA--- (armor)
+# y est donc mappé. ⚠️ Jamais pour de la cavalerie : 121300 (sidc.md, encadré
+# « mauvais précédent »).
 FUNCTION_MAP = {
     # — manœuvre
-    "UCA---": "120500",   # [dict] TANK CO/BN/BDE — blindés / cavalerie
+    "UCA---": "120500",   # [sidc.md+dict] armor : blindés / chars (TANK CO/BN/BDE)
     "UCAWW-": "120300",   # [APP-6D] AMPHIB PLT — amphibie (non couvert par le dict)
     "UCIZ--": "121000",   # [sidc.md] infanterie mécanisée
     "UCII--": "121105",   # [dict] HQ 17 IFV DIV / HQ 171 IFV BDE — mécanisée sur IFV

@@ -4,18 +4,21 @@ On classe le **châssis** par archétype, ce qui fixe le **Type**. Les colonnes 
 sont volontairement multi-nations pour montrer la généralité. Les rôles/armements viennent
 ensuite en suffixes (voir `METHODE.md`).
 
-> Ce fichier est **extensible** : on l'enrichit à chaque nouveau cas résolu. Les entrées
-> marquées ⚑ sont des points d'idiolecte à confirmer par Florian (voir bas de page).
+> Ce fichier est **extensible** : on l'enrichit à chaque nouveau cas résolu. Les points
+> d'idiolecte confirmés par Florian sont en bas de page (§ Décisions actées) ; un cas encore
+> à confirmer va dans `decisions.md` § 5, jamais ici.
 
-> **`IFV` n'est pas un code du système** — c'est un terme générique d'identification qui
-> regroupe plusieurs codes existants selon le châssis : `VCI`, `VBCI`, `VTCI`, etc. Utile
-> pour reconnaître rapidement la famille d'un véhicule réel avant de choisir le Type
-> précis ci-dessous ; ne jamais l'écrire tel quel comme acronyme du système.
+> **`IFV` est un Type collectif** (2026-08-04, `decisions.md` § 4) : tout véhicule à rôle
+> `CI` de la famille `V` (`VCI`, `VBCI`, `VHCI` et leurs variantes ; `TCI`/`TVCI` exclus).
+> Utile pour reconnaître la famille d'un véhicule réel, ou pour désigner un groupement sans
+> préciser le châssis (ex. `-IB` = infanterie blindée avec IFV). Quand le châssis est connu,
+> écrire le Type précis ci-dessous (P3 « classe avant modèle », mais châssis avant collectif).
 
 ---
 
 ## Terrestres — chenillés
 
+<!-- bassin: aucun -->
 | Archétype de châssis | Discriminants | Type | Exemples (multi-nations) |
 |----------------------|---------------|------|--------------------------|
 | Char de bataille | tourelle, canon principal, protection lourde, doctrine MBT | `MBT` | Leclerc, AMX-30, Leopard 1/2, M1, T-72/80/90, Challenger, Merkava |
@@ -41,6 +44,7 @@ atomiques distincts, jamais interchangeables. Catégorie **transversale aux épo
 regroupe aussi bien les automitrailleuses lourdes de la Seconde Guerre mondiale que les
 engins modernes.
 
+<!-- bassin: aucun -->
 | Archétype de châssis | Discriminants | Type | Exemples (toutes époques) |
 |----------------------|---------------|------|----------------------------|
 | Char à roues (armement + protection niveau char léger) | roues, armement principal ET blindage comparables à un char léger de son époque | `TV` | AMX-10RC (105mm), ERC-90 Sagaie, AML-90, EBR-90, Sd.Kfz. 234 Puma (all., 39-45), M8 Greyhound (US, 39-45), Rooikat, Centauro |
@@ -55,6 +59,7 @@ engins modernes.
 
 ## Terrestres — roues souples / utilitaires
 
+<!-- bassin: aucun -->
 | Archétype | Discriminants | Type | Exemples |
 |-----------|---------------|------|----------|
 | Camion | roues, non blindé, logistique/porteur | `VU` (`VUL` léger) | Berliet, TRM-2000/4000, Kamaz, Ural, M35 |
@@ -68,14 +73,16 @@ Quatre familles se ressemblent visuellement (châssis automoteur, canon proémin
 répondent à des logiques différentes. **Le rôle voulu/employé prévaut sur l'armement
 exact** quand la frontière est floue (cas `SPAT` vs `SPC`).
 
-| Code | Nature | Tourelle | Doctrine | Exemples |
-|------|--------|----------|----------|----------|
-| `TAT` / `T{L/M/H}AT` | **Char anti-char** — reste un char à part entière (blindage tous azimuts, MG, mobilité, va au contact), armement orienté AT | ✅ | Combat blindé mobile, cherche l'affrontement | Sherman 76, Sherman SA50 |
-| `SPAT` | **Canon AT automoteur** — armement en casemate, blindage souvent renforcé à l'avant | ❌ | Évite le contact/manœuvre ; tient une position, embuscade, bloque un axe | Jagdpanzer, Jagdtiger, ASU-57/85 |
-| `SPG` | **Obusier automoteur** — armement HE/tir indirect, pas un canon AT | ❌ (généralement) | Appui-feu, destruction d'objectifs non blindés | StuH, SU-152 |
-| `SPC` | **Canon automoteur générique** — ni exclusivement AT ni exclusivement HE | ❌ | Polyvalent | StuG |
-| `SPART` | Artillerie automotrice — tir indirect longue portée | Variable | Appui-feu longue portée | Hummel |
-| **`TD` / `TDL` / `TDM` / `TDH`** | **Tank Destroyer — catégorie générique.** Regroupe tout véhicule conçu/employé pour détruire des chars, tourelle ou non. `SPAT` ⊂ `TD`, mais `TD` ⊄ `SPAT`. À utiliser pour les cas qui ne rentrent proprement ni dans `TAT` (blindage/mobilité insuffisants pour aller au contact) ni dans `SPAT` (a une tourelle). Gabarit `L/M/H` optionnel. | Variable | Destruction de chars, quelle que soit la config | M10 (tourelle mais rôle et mobilité de combat proches d'un SPAT), ELC bis |
+<!-- Table de clarification : ces codes sont définis dans references/terrestres.md, qui fait foi. -->
+<!-- bassin: aucun -->
+| Officiel | Alternatifs | Nature | Tourelle | Doctrine | Exemples |
+|---|---|---|---|---|---|
+| TAT | | **Char anti-char** (variantes de gabarit `TLAT`/`TMAT`/`THAT`) — reste un char à part entière (blindage tous azimuts, MG, mobilité, va au contact), armement orienté AT | ✅ | Combat blindé mobile, cherche l'affrontement | Sherman 76, Sherman SA50 |
+| SPAT | | **Canon AT automoteur** — armement en casemate, blindage souvent renforcé à l'avant | ❌ | Évite le contact/manœuvre ; tient une position, embuscade, bloque un axe | Jagdpanzer, Jagdtiger, ASU-57/85 |
+| SPG | | **Canon d'assaut / obusier automoteur en tir direct** — soutien-feu rapproché, pas un canon AT ni de l'artillerie (exclut `ART`) | ❌ (généralement) | Appui-feu **direct**, destruction d'objectifs non blindés au contact | StuH, SU-152, M44 |
+| SPC | | **Canon automoteur générique** — ni exclusivement AT ni exclusivement HE | ❌ | Polyvalent | StuG |
+| SPART | | Artillerie automotrice — tir indirect longue portée | Variable | Appui-feu longue portée | Hummel |
+| TD | | **Tank Destroyer — catégorie générique** (variantes `TDL`/`TDM`/`TDH`). Regroupe tout véhicule conçu/employé pour détruire des chars, tourelle ou non. `SPAT` ⊂ `TD`, mais `TD` ⊄ `SPAT`. À utiliser pour les cas qui ne rentrent proprement ni dans `TAT` (blindage/mobilité insuffisants pour aller au contact) ni dans `SPAT` (a une tourelle). Gabarit `L/M/H` optionnel. | Variable | Destruction de chars, quelle que soit la config | M10 (tourelle mais rôle et mobilité de combat proches d'un SPAT), ELC bis |
 
 **Règle d'arbitrage SPAT vs SPC** : quand la frontière semble subjective, catégoriser en
 `SPAT` dès que le véhicule est **conçu ou employé** en rôle anti-char, même avec un canon
@@ -90,24 +97,26 @@ infanterie) en fait un chasseur de char, pas un char léger polyvalent — d'où
 
 ## Artillerie & AA (le châssis tranche, cf. cas d'école)
 
+<!-- bassin: aucun -->
 | Archétype | Type | Exemples |
 |-----------|------|----------|
 | Canon sur camion | `VU-ART` | CAESAR |
 | Automoteur à tourelle dédié | `SPART` / `SPG` / `SPC` | GCT/AUF1, M109, PzH2000 |
 | Mortier (porté ou tracté) | `MOR.M` / `MOR.H` (ou `VTT-MOR` si porté VAB) | MO-81, MO-120-RT |
-| AA automoteur dédié | `SP-AACA` / `SP-AAGM` | Guépard, ZSU-23-4 Shilka, Gepard |
-| AA tracté | `START` + rôle AA / `AA` | Tarasque 20 mm |
+| AA automoteur dédié (collectif `SPAA`) | châssis + armement AA : `VB-2AACA` (canon) / `VB-AAGM` (missile) | Gepard/Guépard (`VB-2AACA`), ZSU-23-4 Shilka, Roland (`VB-AAGM`) |
+| AA tracté | `AA` (Type collectif, `STAA` variante) — `START` est l'artillerie, pas l'AA | Tarasque 20 mm |
 | SAM sur châssis | `V-AAGM` (léger) / châssis dédié + `AAGM` | VBL Mistral, Roland, Crotale (`V-RAD.AA`) |
 
 ## Hélicoptères
 
+<!-- bassin: aucun -->
 | Archétype | Type | Exemples |
 |-----------|------|----------|
 | Hélico d'attaque lourd | `CHG` | Tigre, AH-64 Apache, Mi-24/28 |
 | Hélico d'attaque léger | `CH.L-ATT` | Gazelle/HOT, OH-58D armé |
 | Reco léger | `CH-REC` | Gazelle-obs, Alouette III, OH-58 |
 | Transport léger | `CH.L-TT` | Alouette, Colibri |
-| Transport moyen/manœuvre | `CH-TT.MR` / `CH-T` | NH90, Puma/Super Puma, UH-60 |
+| Transport moyen/manœuvre | `CH-TT.MR` / `CH-TT` | NH90, Puma/Super Puma, UH-60 |
 
 ## Aériens (voilure fixe) — renvoi
 

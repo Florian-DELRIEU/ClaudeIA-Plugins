@@ -1,6 +1,6 @@
 # Carte des pages de documentation (docs.orbat-mapper.app)
 
-Utiliser cette liste pour cibler le `web_fetch` plutôt que de deviner une URL.
+Utiliser cette liste pour cibler le `WebFetch` plutôt que de deviner une URL.
 
 ## Introduction
 - https://docs.orbat-mapper.app/guide/about-orbat-mapper — présentation générale
@@ -14,7 +14,7 @@ Utiliser cette liste pour cibler le `web_fetch` plutôt que de deviner une URL.
 - https://docs.orbat-mapper.app/guide/map-edit-mode — détail du mode carte (navbar, panneaux, toolbar, timeline)
 - https://docs.orbat-mapper.app/guide/map-layers — calques de carte
 - https://docs.orbat-mapper.app/guide/custom-symbols — symboles personnalisés
-- https://docs.orbat-mapper.app/guide/offline-use — usage hors-ligne
+- https://docs.orbat-mapper.app/guide/offline-use — usage hors-ligne (3 niveaux de déploiement : self-hosted, archive PMTiles locale, fichier HTML autonome ; relief 3D hors-ligne ; limites)
 
 ## Import et export
 - https://docs.orbat-mapper.app/guide/import-data
@@ -25,7 +25,7 @@ Utiliser cette liste pour cibler le `web_fetch` plutôt que de deviner une URL.
 ## Autres
 - https://docs.orbat-mapper.app/resources/tools — autres outils recommandés par le projet (alternatives pro/C2IS)
 - https://docs.orbat-mapper.app/support — support/contact
-- Changelog (dépôt, PAS docs.orbat-mapper.app) : https://github.com/orbat-mapper/orbat-mapper/blob/main/CHANGELOG.md
+- Changelog (dépôt, PAS docs.orbat-mapper.app) — lire la version brute : https://raw.githubusercontent.com/orbat-mapper/orbat-mapper/main/CHANGELOG.md
 - Dépôt principal : https://github.com/orbat-mapper/orbat-mapper
 - Organisation GitHub complète (13 dépôts, dont msdllib, msdl-editor, convert-symbology) : https://github.com/orbat-mapper
 

@@ -1,6 +1,6 @@
 ---
 name: orbat-historique
-description: "Expert en organisation militaire historique réelle (ordres de bataille, organigrammes d'unités) du début du 19e siècle (guerres napoléoniennes) à aujourd'hui, toutes nations confondues (France, Prusse/Allemagne, Royaume-Uni, Russie/URSS, États-Unis...). Déclencher dès que Florian demande comment était organisée une division d'infanterie, de cavalerie ou d'artillerie (ou tout autre échelon : groupe d'armées, armée, corps, brigade, régiment, bataillon, compagnie, section, escouade) à une époque ou nation donnée. Aussi pour : \"comment était structurée l'armée X en [année] ?\", \"quels échelons entre compagnie et division en 1914 ?\", \"compare division allemande et soviétique en 1943\", \"corps d'armée napoléonien ?\", ou toute question d'histoire militaire organisationnelle. Différent du skill `orbat-json` (fichiers JSON orbat-mapper.app de Florian) : ici recherche historique réelle ; les deux peuvent s'enchaîner.\n"
+description: "Expert en organisation militaire historique réelle (ordres de bataille, organigrammes, effectifs) du début du 19e siècle à aujourd'hui, toutes nations (France, Prusse/Allemagne, Royaume-Uni, Russie/URSS, États-Unis...). Déclencher dès que Florian demande comment était organisée une division d'infanterie, de cavalerie ou d'artillerie (ou tout autre échelon : groupe d'armées, armée, corps, brigade, régiment, bataillon, compagnie, section, escouade) à une époque ou nation donnée. Aussi pour : \"comment était structurée l'armée X en [année] ?\", \"quels échelons entre compagnie et division en 1914 ?\", \"compare division allemande et soviétique en 1943\", \"corps d'armée napoléonien ?\", ou toute question d'histoire militaire organisationnelle. Libellé, numérotation ou décodage d'une désignation d'unité (`3./IR 9`, `B/1-5 IN`), nom d'un échelon dans une langue → `orbat-tools:orbat-nommage`. Fichiers JSON orbat-mapper.app → `orbat-tools:orbat-json` ; les skills s'enchaînent.\n"
 ---
 
 # ORBAT Historique — guide d'organisation militaire réelle
@@ -16,8 +16,10 @@ gravés dans le marbre.
 
 ## Principe de base : connaissances + recherche web
 
-- Une base de repères généraux est fournie dans `references/` (échelons,
-  grandes périodes, vocabulaire multilingue). Elle sert de **point de
+- Une base de repères généraux est fournie dans `references/` (effectifs et
+  commandants typiques par échelon, grandes périodes, sources). Le
+  **vocabulaire multilingue des échelons** n'est pas ici : il relève de
+  `orbat-tools:orbat-nommage`, qui fait foi. Elle sert de **point de
   départ rapide** et de garde-fou (cohérence des ordres de grandeur).
 - Mais pour toute question un tant soit peu précise (nation + époque +
   échelon donnés, composition exacte, unité historique nommée, dates de
@@ -42,24 +44,41 @@ gravés dans le marbre.
    courte plutôt que deviner (ex. "pied de paix ou pied de guerre ?",
    "France impériale ou Troisième République ?").
 2. **Repère rapide.** Utiliser `references/echelons.md` pour situer
-   l'échelon dans la hiérarchie générale (qui commande, ordre de grandeur,
-   nom dans la langue d'origine).
+   l'échelon dans la hiérarchie générale (qui commande, ordre de grandeur).
+   Pour le **nom dans la langue d'origine** et ses variantes par arme
+   (escadron, batterie, *Abteilung*, *Schwadron*, *divizion*…), lire la table
+   de référence de `orbat-tools:orbat-nommage` (`references/nations.md` §1).
 3. **Recherche ciblée.** Lancer une ou plusieurs recherches web précises
    (nation + année + échelon + arme, ex. "division d'infanterie française
    1914 composition régiments"). Préférer des sources spécialisées ou
    primaires (cf. `references/sources.md`) à des résumés vagues.
 4. **Restituer en guide lisible**, pas en JSON ni en tableau opaque sauf
    si Florian le demande. Pour chaque échelon traité, donner :
-   - le nom (langue d'origine + traduction si utile),
+   - le nom (langue d'origine + traduction si utile, d'après la table
+     d'`orbat-nommage`),
    - le grade/rang du commandant typique,
    - l'effectif approximatif (en précisant que c'est une fourchette),
    - sa composition en unités subordonnées (combien, de quel échelon),
    - 1-2 lignes de contexte/nuance historique (évolutions, exceptions,
      variantes nationales notables) si pertinent.
-5. **Assumer et signaler l'incertitude.** Dire explicitement quand une
+5. **Citer les sources lues, avec leur URL.** Chaque donnée précise
+   (effectif, date, composition) renvoie à une source effectivement
+   consultée, URL comprise. Pas d'URL inventée ou reconstituée de mémoire.
+6. **Paragraphe de concordance.** Terminer par un court paragraphe sur la
+   concordance ou la divergence des sources consultées : sur quoi elles
+   s'accordent, où elles divergent (date, pied de paix/guerre, effectifs
+   théoriques/réels…) et laquelle est retenue, et pourquoi.
+7. **Assumer et signaler l'incertitude.** Dire explicitement quand une
    donnée est une approximation, varie selon la source, ou n'a pas pu être
    vérifiée. Préférer "environ", "typiquement", "selon les sources" à des
    chiffres présentés comme définitifs.
+
+**Si l'outil de recherche web est indisponible** (non chargé, refusé,
+erreurs répétées) : le dire en tête de réponse, répondre à partir des
+repères de `references/` et des connaissances générales en marquant
+explicitement la réponse **« non vérifié »**, et proposer de relancer la
+vérification quand la recherche sera disponible. Ne jamais présenter une
+réponse de mémoire comme sourcée.
 
 ## Grandes périodes couvertes
 
@@ -75,10 +94,22 @@ contemporaine (réorganisations autour de la brigade interarmes).
 ## Vocabulaire et échelons
 
 `references/echelons.md` donne l'échelle générique (escouade → groupe
-d'armées) avec les équivalents de nom dans plusieurs langues/nations
-(français, anglais, allemand, russe) et les ordres de grandeur d'effectifs
-typiques par échelon — à ajuster systématiquement selon l'époque et la
+d'armées) avec le **commandant typique** et l'**ordre de grandeur
+d'effectifs** par échelon — à ajuster systématiquement selon l'époque et la
 nation réelle traitée via la recherche web.
+
+Les **libellés** (équivalents FR / US / UK / DE / RU, variantes par arme,
+faux amis) ne sont **pas** tenus ici : la table de référence unique est dans
+`orbat-tools:orbat-nommage` (`references/nations.md` §1), qui fait foi.
+
+## Lien avec le skill `orbat-nommage`
+
+Dès que la question porte sur le **libellé** plutôt que sur la structure —
+comment s'appelle ou se numérote une unité, décodage d'une désignation
+(`3./IR 9`, `B/1-5 IN`, `501e RCC`), nom d'un échelon dans une autre
+langue, nomenclature « à la manière de » une armée — passer la main à
+`orbat-tools:orbat-nommage`. Les deux s'enchaînent : ce skill donne la
+structure et les effectifs, `orbat-nommage` donne les noms.
 
 ## Lien avec le skill `orbat-json`
 

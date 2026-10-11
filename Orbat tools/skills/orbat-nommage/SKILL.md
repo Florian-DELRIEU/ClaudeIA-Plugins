@@ -1,6 +1,6 @@
 ---
 name: orbat-nommage
-description: "Conventions de NOMMAGE des formations militaires réelles (compagnie → régiment → division) : Allemagne, États-Unis, Royaume-Uni, URSS-Russie, France, du XIXᵉ siècle à aujourd'hui, plus la couche « organisation de mission » (Kampfgruppe, Task Force, Battlegroup, BTG, GTIA). Déclencher IMPÉRATIVEMENT dès que Florian tape /orbat-nommage ou /orbat-nom, ou demande : comment nommer/numéroter une unité ou une sous-unité et dans quel style d'armée, comment décoder une désignation (`3./IR 9`, `B/1-5 IN`, `II./AR 155`, `1st Guards msp`, `501e RCC`, `TEILE/PIONIER-REGIMENT 2`), pourquoi la lettre « J » est sautée, ce qu'est une « Abteilung », un « squadron » US vs UK, un « escadron » français, ou comment construire une nomenclature maison cohérente pour un ORBAT fictif. Différent de `orbat-tools:acronyme` (codes maison de Florian) et de `orbat-tools:orbat-historique` (structure et effectifs) : ici c'est le LIBELLÉ de l'unité qui est l'objet — les trois s'enchaînent.\n"
+description: "Conventions de NOMMAGE des formations militaires réelles : Allemagne, États-Unis, Royaume-Uni, URSS-Russie, France, XIXᵉ s. à aujourd'hui, couche « organisation de mission » (Kampfgruppe, Task Force, BTG, GTIA) et table de référence du vocabulaire des échelons. Déclencher IMPÉRATIVEMENT dès que Florian tape /orbat-nommage ou /orbat-nom, ou demande : comment nommer/numéroter une unité réelle ou dans le style d'une armée, comment décoder une désignation (`3./IR 9`, `B/1-5 IN`, `II./AR 155`, `501e RCC`, `TEILE/PIONIER-REGIMENT 2`), pourquoi le « J » est sauté, ce qu'est une « Abteilung », un « squadron » US vs UK, un « escadron », le nom d'un échelon dans une autre langue, ou comment bâtir une nomenclature maison pour un ORBAT fictif. NE PAS déclencher pour un code ou acronyme du système de Florian (`TM-REC.AA`, `VBTT`, /acronyme) → `orbat-tools:acronyme`. Structure et effectifs → `orbat-tools:orbat-historique`. Objet ici : le LIBELLÉ réel de l'unité.\n"
 ---
 
 # ORBAT Nommage — conventions de désignation des formations
@@ -41,8 +41,8 @@ face à une demande de nommage, répondre d'abord aux 6 axes, puis décliner.
 | **A1** Compagnie | 🔢 arabe | 🔤 lettre (J sauté) | 🔤 lettre / 🏷️ nom | 🔢 arabe | 🔢 arabe |
 | **A2** Numérotation cie | ➡️ continue (WWII/NVA) · 🔄 remise à 0 (RFA) | ➡️ continue | variable | 🔄 par unité | 🔄 remise à 0 · réserve continue |
 | **A3** Arme dans le nom | ✍️ oui, **après** n° | ✍️ oui | 🏷️ identité régimentaire | ✍️ oui | ✍️ **sigle**, ordinal **devant** |
-| **A4** Séparateur | `.` `/` | `-` `/` | virgule / « of » | virgule | fraction `/` · ordinal « e » |
-| **A5** Commandement | Stabskompanie (SK) | HHC/HHT/HHB | HQ Company | — | Cie/escadron de commandement |
+| **A4** Séparateur | `.` `/` | `-` `/` | virgule / « of » | virgule | ordinal « e » · fraction `/` (génie 1914-18, FR-5) |
+| **A5** Commandement | Stabskompanie (SK) | HHC/HHT/HHB | HQ Company | cellule *upravlenie*/*shtab* + unité de transmissions (RU-10) | Cie/escadron de commandement |
 | **A6** Couche mission | Kampfgruppe | Task Force / Team | Battlegroup | OMG / BTG | GTIA / SGTIA |
 | **Honneurs** | rare | surnoms d'unité | 🎖️ dans le nom | 🎖️ empilés dans le nom | 🎖️ sur le drapeau (hors nom) |
 
@@ -78,10 +78,11 @@ taille — voir `orbat-tools:orbat-json` (références sidc) pour l'encodage.
 
 Lire le fichier pertinent **avant de répondre**, plutôt que de citer de mémoire :
 
-- `references/nations.md` — vocabulaire des échelons (table d'équivalence par
-  arme), **règles typographiques transverses** (TR-1…TR-6 : forme du numéro
+- `references/nations.md` — **table de référence unique du vocabulaire des
+  échelons** pour tout le plugin (FR/US/UK/DE/RU, du groupe de combat au groupe
+  d'armées, variantes par arme ; `orbat-historique` y renvoie), **règles typographiques transverses** (TR-1…TR-6 : forme du numéro
   selon l'échelon, place de l'arme, termes non traduits) et **règles codées par
-  nation** (DE-1…DE-16, US-1…US-13, UK-1…UK-7, RU-1…RU-9, FR-1…FR-14), avec
+  nation** (DE-1…DE-16, US-1…US-13, UK-1…UK-7, RU-1…RU-10, FR-1…FR-14), avec
   exemples canoniques.
 - `references/pieges.md` — pièges, faux amis et collisions à connaître
   (« squadron » US ≠ UK, « troop » US ≠ UK, « Gruppe » à trois sens, « escadron »
@@ -118,7 +119,8 @@ marines ni aux forces aériennes modernes.
 2. Dérouler les 6 axes depuis le tableau de synthèse, puis appliquer les règles
    détaillées de la nation.
 3. Produire le nom **long officiel** et la **contraction d'usage** quand
-   l'école en a une (`3./IR 9`, `B/1-5 IN`, `18/1`).
+   l'école en a une (`3./IR 9`, `B/1-5 IN` ; `18/1` seulement pour le génie
+   français de 1914-18, cf. FR-5).
 4. Signaler toute collision créée (numéro déjà pris, lettre interdite).
 
 ### Construire une nomenclature maison (ORBAT fictif)
@@ -139,6 +141,15 @@ marines ni aux forces aériennes modernes.
 
 - Ne jamais affirmer une règle nationale de mémoire seule quand un détail
   précis est en jeu : ouvrir `references/nations.md`.
+- **Nation ou époque hors corpus** (Italie, Japon, Autriche-Hongrie, Pologne,
+  armées non européennes…, ou une période que les règles ne couvrent pas) :
+  **recherche web obligatoire** avant de répondre, en citant les URL lues et en
+  appliquant la grille des 6 axes au résultat. Si la recherche ne donne rien de
+  solide, ou si l'outil web est indisponible, le dire et donner une réponse
+  explicitement marquée **« non vérifié »** — jamais une extrapolation silencieuse
+  depuis une école voisine.
+- Un ORBAT **daté** se lit avec le vocabulaire de sa date (ex. *Eskadron* avant
+  la Wehrmacht, *Schwadron* ensuite ; *escadron* avant/après 1815).
 - **La mécanique** de chaque système est concordante entre toutes les sources ;
   les *justifications historiques* le sont beaucoup moins. Distinguer les deux
   et signaler quand une explication relève du folklore (cas type : le « J »

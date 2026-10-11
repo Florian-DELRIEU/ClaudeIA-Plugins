@@ -120,10 +120,20 @@ réservé aux regroupements sans arme dominante.
 La liste complète des entités est vaste. **Le dictionnaire réel extrait des ORBAT de
 Florian est dans `references/sidc_dictionary.json`** (499 entrées : `sidc` → échelon,
 entité, exemples de noms). C'est la première source à consulter pour réutiliser un code
-cohérent avec son univers. Pour un type non couvert, partir de l'entité la plus proche
+cohérent avec son univers — **par `scripts/sidc_lookup.py`, jamais en lisant le fichier
+entier** :
+
+```
+python3 scripts/sidc_lookup.py "hussards" [--set 10] [--limit 20]   # chercher par terme
+python3 scripts/sidc_lookup.py --code 121300 [--set 10]             # exemples d'une entité
+python3 scripts/sidc_lookup.py --decode 10031000151211005600        # décoder un sidc
+```
+ Pour un type non couvert, partir de l'entité la plus proche
 et n'ajuster que les modificateurs, ou demander confirmation à Florian.
 
 ## Lire un SIDC
+
+Décodage automatique : `scripts/sidc_lookup.py --decode <sidc>`. À la main :
 
 `10031000151211005600` :
 `10`·`0`·`3`·`10`·`0`·`0`·`15`·`121100`·`56`·`00`

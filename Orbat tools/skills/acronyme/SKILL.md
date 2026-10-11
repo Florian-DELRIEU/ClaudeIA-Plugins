@@ -1,19 +1,21 @@
 ---
 name: acronyme
-description: "Système de nomenclature militaire modulaire V4 (et extensions V5 en cours). Déclencher IMPÉRATIVEMENT dès que Florian tape /acronyme, ou dès que l'utilisateur mentionne un acronyme militaire, un code de véhicule, une unité, un navire, un aéronef, une structure, un personnage, ou demande de nommer / classifier / identifier / vérifier / étendre un élément dans ce système — y compris à partir d'un matériel réel (nom de véhicule, ORBAT à convertir). Également applicable au projet sci-fi Cosmotter pour la classification de vaisseaux spatiaux. Utiliser même si la demande semble simple (ex: \"c'est quoi le code pour X ?\", \"est-ce que Y entre en conflit avec Z ?\", \"comment noter un transport de troupes ?\").\n"
+description: "Système de nomenclature militaire modulaire V4 (et extensions V5 en cours) : les codes maison de Florian pour types, rôles et armements. Déclencher IMPÉRATIVEMENT dès que Florian tape /acronyme, ou dès que l'utilisateur mentionne un acronyme militaire, un code de véhicule, une unité, un navire, un aéronef, une structure, un personnage, ou demande de nommer / classifier / identifier / vérifier / étendre un élément dans ce système — y compris à partir d'un matériel réel (nom de véhicule). Également applicable au projet sci-fi Cosmotter pour la classification de vaisseaux spatiaux. Utiliser même si la demande semble simple (ex: \"c'est quoi le code pour X ?\", \"est-ce que Y entre en conflit avec Z ?\", \"comment noter un transport de troupes ?\"). Ne couvre pas les libellés d'unités d'armées réelles (3./IR 9, 501e RCC…) : c'est orbat-nommage ; la conversion d'un ORBAT JSON entier en codes relève d'orbat-acronymize.\n"
 ---
 
 # Système de Nomenclature Militaire V4
 
-*Dernière révision : 2026-08-16.*
+*Dernière révision : 2026-10-10.*
 
 ## Sommaire
 
-- **Gouvernance** : Principe général · Règles cardinales · Autorité de validation · Workflow de vérification
-- **Grammaire** : Séparateurs · Règles de duplication · Cas d'application `-`/`/`/`.` · Gabarits · Portée · Compétences · Notation numérique · Composition des fusions
-- **Renvois** : tables de référence · identification · journal des décisions · procédures · grammaire de composition
+- **Gouvernance** : Principe général · Règles cardinales (et exceptions de la règle 2) · Autorité de validation · Workflow de vérification
+- **Grammaire (résumé)** : séparateurs, gabarits, portée, calibre, fusions — détail dans `references/grammaire.md`
+- **Renvois** : tables de référence · identification · état des décisions · chronologie · procédures
 
-> ⚠️ **Avant toute proposition ou validation de code, lire `decisions.md`** (journal daté : décisions établies, cas confirmés sans conflit, codes non résolus, collectifs) **et appliquer `procedures.md`** (les 8 procédures de validation). Ne jamais rouvrir un cas déjà tranché ni reproduire un revirement.
+> ⚠️ **Avant toute proposition ou validation de code, lire `decisions.md`** (état courant compact : décisions établies, cas confirmés sans conflit, désambiguïsation positionnelle, collectifs, codes non résolus) **et appliquer `procedures.md`** (les 8 procédures de validation). Ne jamais rouvrir un cas déjà tranché ni reproduire un revirement.
+> **Outils obligatoires** : avant de proposer un code `X`, lancer `python scripts/check.py --code X` (existe-t-il ? sous quels sens ? doublon ?) ; après toute modification du skill, `python scripts/build_index.py` puis `python scripts/check.py` (0 erreur exigée).
+> L'historique daté est dans `chronologie.md` : **ne pas le lire en entier**, y chercher l'historique d'un code précis à la demande (`grep -n "CODE" chronologie.md`).
 
 ---
 
@@ -46,13 +48,32 @@ Tout Type et tout Rôle/Armement est combinable avec n'importe quel autre, **san
 Chaque acronyme ayant plusieurs notations valides doit avoir **UN SEUL officiel**.
 
 **Critères de désignation de l'officiel** (dans l'ordre) :
-1. **Strictement unique** dans son bassin (Types ou Rôles/Armements) — aucune collision de sens possible, même hors contexte. Critère **non négociable**.
+1. **Strictement unique** dans son bassin (Types ou Rôles/Armements) — aucune collision de sens possible, même hors contexte. Critère **non négociable**, sauf la liste fermée d'exceptions ci-dessous.
 2. **Le plus compact possible** parmi les candidats uniques. Départage par cohérence si ex-æquo.
 
 - **En lecture** (déchiffrer un code fourni) : accepter et décoder correctement l'officiel **et** toutes ses alternatives.
 - **En écriture** (produire/proposer un code) : n'utiliser **que** l'officiel, jamais une alternative.
 
 Les notations alternatives peuvent avoir des collisions entre elles, gérables par le contexte — **seul l'officiel doit rester rigoureusement sans ambiguïté.** (Conséquence pour la vérification : ne signaler que les collisions entre **officiels** ; une collision d'alternatives n'est pas un défaut — cf. `procedures.md` P2.)
+
+**Exceptions — liste fermée (actée le 2026-10-10).** Ces codes sont officiels pour plusieurs sens dans un même bassin, départagés par la **position** dans l'acronyme ou par le **Type porteur**. Ce ne sont pas des collisions : selon Florian, « ce sont plus une réécriture du même acronyme dans une section différente, mais ça signifie la même chose ». Ne pas les signaler en P2, ne pas les rouvrir, ne rien ajouter à cette liste sans décision de Florian. Détail : `decisions.md` § 2 et § 3.
+
+| Code | Sens départagés | Départage |
+|---|---|---|
+| `TA` | Tank amphibie (Type) · Observation artillerie (Rôle) · Acquisition (groupement) | Position |
+| `RAD` | Guidage `(RAD)` · Transmission `-RAD` (groupement) · Radar (Rôle naval) | Position |
+| `T` | Tank (Type) · Torpilleur (Rôle isolé) · Traçante (suffixe `.T`) | Position |
+| `MUN` | Cargaison de munitions (véhicule) · Élément d'approvisionnement (personnel) | Type porteur |
+| `CAV` | Monture (Type) · Cavalerie (Rôle/groupement) | Position |
+| `G` | Obusier (armement) · Gunship (rôle aérien) | Type porteur |
+| `F` | Fusil (armement) · Fusilier (rôle) | Type porteur |
+| `C` | Canon · Canonnier (Rôles) ; Croiseur (Type naval) | Position / Type porteur |
+| `ART` | Artillerie · Bombardement côtier | Type porteur |
+| `MA` | Marines (groupement) · Soutien amphibie (Rôle naval) | Domaine |
+| `EXC` | Extraction (groupement) · Exploitation-minage (structure) | Domaine |
+| `ESC` | Escadron (terrestre/maritime) · Escadrille (aérien) | Domaine |
+
+<!-- exceptions-regle-2: TA RAD T MUN CAV G F C ART MA EXC ESC -->
 
 > Convention de travail : `*` devant l'acronyme retenu comme officiel dans les listes de travail (ex. `-B / *ARM`), à retirer une fois l'officialisation terminée.
 
@@ -71,11 +92,11 @@ La structure de base est toujours `<Type>-<Rôle1>-<Rôle2>…` : le premier él
 
 Un regroupement thématique — table, section, titre comme « Médiéval », « SF », « Cosmotter »… — n'est **jamais** une contrainte d'usage, seulement un classement de confort pour naviguer le document. Un acronyme est utilisable dans **n'importe quel contexte** (n'importe quelle époque, n'importe quel univers) dès lors que ce qu'il décrit correspond — indépendamment de la table ou de la section où il est rangé.
 
-- Seule une restriction **écrite explicitement dans la description de l'acronyme lui-même** vaut indication de contexte (ex. `VOL` = « souvent 1800s », `terrestres.md`) — et même alors, elle reste une indication typique, pas un verrou.
+- Seule une restriction **écrite explicitement dans la description de l'acronyme lui-même** vaut indication de contexte (ex. `VOL` = « souvent 1800s », `infanterie.md`) — et même alors, elle reste une indication typique, pas un verrou.
 - Les univers fictifs (Warhammer 40K, Cosmotter…) sont des **occasions** ayant fait naître certains acronymes (notamment côté spatial) — ils ne les réservent pas à cet univers. Voir § Extensions spatiales.
-- Les lexiques d'identification séparés (`lexique.json` / `lexique-40k.json`) sont des **outils de recherche par contexte de matériel**, pas des définitions concurrentes ni des frontières de sens.
+- Les lexiques d'identification séparés (`lexique.json` / `lexique-40k.json`) sont des **outils de recherche par contexte de matériel**, pas des définitions concurrentes ni des frontières de sens : un code a le même sens dans les deux.
 
-> Actée le 2026-08-16 — voir `decisions.md` § 1 et § 6 pour le détail des fichiers concernés.
+> Actée le 2026-08-16 — voir `decisions.md` § 1 et `chronologie.md` (entrée du 2026-08-16).
 
 ---
 
@@ -92,7 +113,7 @@ Les étapes concrètes d'une validation sont dans **`procedures.md`** — la mis
 Quand l'utilisateur propose ou demande un acronyme :
 
 1. **Identifier la catégorie** (Type ? Rôle ? Armement ? Structure ?).
-2. **Vérifier l'absence de conflit** dans la même catégorie (pas de doublon d'officiels — `procedures.md` P2).
+2. **Vérifier l'absence de conflit** dans la même catégorie : `python scripts/check.py --code X` (pas de doublon d'officiels hors exceptions de la règle 2 — `procedures.md` P2).
 3. **Vérifier la cohérence positionnelle** (un même acronyme en Type et Rôle est OK).
 4. **Appliquer les décisions établies** (`decisions.md` § 1) ; vérifier cas confirmés (§ 2) et non résolus (§ 5).
 5. **Choisir le bon séparateur** : `-` reconditionnement · `/` coexistence distincte · `.` fusion.
@@ -102,169 +123,31 @@ Quand l'utilisateur propose ou demande un acronyme :
 
 ---
 
-## Séparateurs
+## Grammaire — résumé
 
-### Hiérarchie de disponibilité (Rôles & Armements)
+Règles complètes, exemples et cas limites : **`references/grammaire.md`** (à lire dès qu'on compose un code).
 
-Les trois séparateurs `-`, `/`, `.` encodent un seul critère : **la disponibilité simultanée en combat**.
-
-| Séparateur | Signification | Exemple | Interprétation |
-|---|---|---|---|
-| **`-`** | **Rupture de configuration** | `AA - CAS - REC` | Missions distinctes, reconditionnement **obligatoire** entre elles. Jamais deux à la fois. |
-| **`/`** | **Coexistence distincte** | `REC / MG` | Deux choses **séparées mais présentes simultanément**, sans reconditionnement. |
-| **`.`** | **Fusion** | `SW.PW` | **Un seul objet** aux deux propriétés fusionnées. |
-
-### Délimiteurs (structure générale)
-
-| Séparateur | Usage |
-|---|---|
-| `-` | Aussi : délimiteur Type↔Rôle, ou Rôle↔Armement |
-| `()` | **Précisions circonstancielles** (propulsion `(J)`, cargaison `(H₂O)`, variante `(6)`) |
-
-### Groupement
-
-- `/` sépare les **blocs**, `.` lie **à l'intérieur** d'un bloc.
-- Exemple : `AA.REC / CAS` = (chasse+reco ensemble) vs (bombardement seul).
-
-### Exemples fusionnés
-
-| Acronyme | Décomposition | Sens |
+| Séparateur | Sens | Exemple |
 |---|---|---|
-| `SW.PW` | Épée + Énergétique | Épée énergétique : un objet, deux natures |
-| `SW / PW` | Épée / Arme énergétique | Deux armes distinctes montées ensemble |
-| `SW - PW` | Épée - Arme énergétique | Épée OU arme énergétique, reconditionnement |
-| `CA.MG` | Canon auto + Mitrailleuse | Système de feu unique canon + coaxiale |
-| `LZ / SW.PW` | Laser / (Épée + Énergie) | Deux systèmes distincts montés ensemble |
+| `-` | Rupture de configuration (reconditionnement obligatoire) ; délimite aussi Type↔Rôle | `AA - CAS - REC` |
+| `/` | Coexistence distincte, simultanée | `REC / MG` |
+| `.` | Fusion : un seul objet, deux natures | `SW.PW` |
+| `()` | Précision circonstancielle (propulsion, cargaison, variante) | `A(J-SS)`, `TR(H₂O)` |
+
+- **Gabarits** : `.L` / `.M` / `.H` / `.SH` sont les seuls gabarits universels, fusionnés par `.` sur tout Type ou armement (`CH.L`, `C.H`, `V.H`). Les codes à lettre de gabarit collée (`VL`, `TL`, `LMG`…) sont des atomes déclarés, jamais un modèle.
+- **Calibre** : `ACR.#` avec point (`C.90`, `CA.20`) ; `ACR#` collé = nombre physique (roues, pattes) ; `#ACR` = nombre de tubes.
+- **Portée** : `___` (court, sans code) · `MRG` · `LRG` · `SLRG` · `XRG`.
+- **Fusions** : atomiques et non chaînables ; une fusion n'existe que si elle est déclarée ; non-redondance Type→Rôle (`TD-AT` est une faute) ; `SPG` et `ART` exclusifs.
+- **Doublons** : pas deux officiels identiques dans un bassin, hors exceptions de la règle 2 ; un code peut exister en Type et en Rôle, la position tranche.
+- **Pas de grammaire générative `V*`** (supprimée le 2026-08-09) : tout code `V*` est déclaré individuellement.
 
 ---
 
-## Règles de duplication
-
-- **Pas de doublon** au sein des Types · **pas de doublon** au sein des Rôles/Armements.
-- Un même acronyme **peut apparaître** dans Type ET Rôle/Armement — la **position** désambiguïse.
-
-### Non-redondance Type → Rôle
-
-Un **Type porte déjà un rôle implicite**, surtout s'il vient d'une fusion. Ne pas répéter dans la section Rôle un rôle que le Type contient déjà — c'est une **faute**.
-
-| Type | Rôle implicite | Ne pas écrire |
-|---|---|---|
-| `VBCI` | Combat d'infanterie | ~~`VBCI-CI`~~ → `VBCI` |
-| `TD` | Anti-char | ~~`TD-AT`~~ → `TD` |
-| `SPG` | Soutien-feu direct | ~~`SPG-ART`~~ → voir exclusion |
-| `SPART` | Tir indirect longue portée | ~~`SPART-ART`~~ → `SPART` |
-| `VCI` | Combat d'infanterie | ~~`VCI-CI`~~ → `VCI` |
-
-Le rôle n'est réécrit que s'il **précise ou nuance** ce que le Type ne dit pas.
-
-### Exclusion `SPG` ↔ `ART`
-
-`SPG` et `ART` sont **mutuellement exclusifs** :
-- **`SPG`** = canon d'assaut / soutien-feu **direct**, appui rapproché. *Ex. : StuH, M44.*
-- **`ART`** (ou `SP-ART` / `SPART`) = **tir indirect longue portée**. *Ex. : Hummel, M109, AuF1.*
-
-Un véhicule est l'un **ou** l'autre, jamais `SPG-ART`.
-
----
-
-## Cas d'application — Choisir entre `-`, `/`, `.`
-
-### Pour les rôles et missions
-
-- **`-`** : passage exigeant un reconditionnement ; rôles exclusifs à l'instant T. Ex. `AA - CAS - REC`.
-- **`/`** : rôles coexistant sans reconditionnement. Ex. `AA / REC`.
-- **`.`** : rôles fusionnés en un concept inséparable (rare).
-
-### Pour les armements
-
-- **`-`** : changer d'arme exige reconditionnement/démontage. Ex. `HCA - LM`.
-- **`/`** : deux armes simultanées, distinctes. Ex. `HC / CAC`, `LZ / SW.PW`.
-- **`.`** : un seul objet à deux propriétés fusionnées. Ex. `SW.PW`, `HCA.MG`.
-
-### Arbre de décision rapide
-
-```
-"Puis-je utiliser les deux simultanément sans modification ?"
-├─ Non, reconditionnement/démontage obligatoire → utiliser `-`
-├─ Oui, mais ce sont deux choses distinctes → utiliser `/`
-└─ Oui, c'est la même chose ayant deux natures → utiliser `.`
-```
-
----
-
-## Gabarits (modificateurs de taille)
-
-`L` Léger · `M` Moyen · `H` Lourd · `SH` Super-Lourd
-`2L / 2M / 2H` À deux mains (L/M/H)
-`U` Unnamed / Drone — véhicule sans équipage
-
-> **`.L` / `.M` / `.H` / `.SH` sont les seuls gabarits universels**, applicables à **tout Type** via le mécanisme de fusion `.` (voir § Séparateurs). Aucune famille de Types n'a de règle de gabarit propre : en particulier, il n'existe **aucune exception de gabarit pour la famille `V*`** (décision du 2026-08-09, voir `decisions.md`). Les codes qui portent une lettre de gabarit sans point (`VL`, `VBLTT`, `TL`, `TDM`…) sont des **acronymes atomiques déclarés**, pas le résultat d'une composition — ne jamais en dériver un nouveau par analogie.
-
----
-
-## Portée
-
-`___` Court *(à définir — voir decisions.md § 5)* · `MRG` Moyen · `LRG` Long · `SLRG` Super-long · `XRG` Extrême (quasi-illimité)
-
-> Échelle **commune à tout le système**, y compris aux missiles (notation à lettre unique `S`/`M`/`L`/`X` abandonnée le 2026-07-30, collision avec les gabarits).
-> ⚠️ Le cran « Court » n'a **plus de code** depuis le 2026-08-05 : `SRG` a été rendu à la fusée géostationnaire (`aeriens.md`). Placeholder `___` en attendant décision — ne pas produire de code court pour l'instant.
-
----
-
-## Compétences
-
-`-` Inférieur au standard · `+` Standard · `*` Supérieur au standard
-*(Une valeur numérique peut préciser davantage)*
-
----
-
-## Notation numérique
-
-Les chiffres précisent un acronyme selon leur position (mêmes règles que le gabarit).
-
-| Format | Signification | Exemple |
-|---|---|---|
-| `ACR#` | Nombre physique (roues, pattes…) collé | `VB6` = 6 roues · `MK6` = 6 pattes |
-| `ACR(#)` | Variante ou modèle | `VU(6)` = camion variante 6 |
-| `ACR.#t` | Poids en tonnes — remplace L/M/H | `VU.3t` = camion 3 t |
-| `ACR.#` | Calibre en mm (armes) | `CA.20` = canon auto 20mm |
-| `#ACR` | Nombre de tubes / canons jumelés (avant) | `2CA.20` = deux canons auto 20mm |
-
-**Ordre complet :** `{Type}{#roues}({variante})-{#tubes}{Armement}.{calibre}` — ex. `VB6(2)-2CA.20`.
-
-**Gabarit littéral vs calibre — mutuellement exclusifs** : `MCAA` (moyen approx.) vs `CAA.20` (exact) vs `2CAA.20`.
-
----
-
-## Règles de composition des fusions
-
-Les acronymes fusionnés (`TES`, `TEAT`, `VBCI`, `MCAA`…) sont des **unités atomiques** — non chaînables.
-
-> ❌ `TES.AT` interdit · ✅ une fusion comme base, puis suffixes : `TEAT.STH.SD`
-
-### Une variante n'a de sens que collée à sa racine
-
-Une lettre de composition (ex. `G`) n'a **pas de sens fixe indépendant** de sa racine : `SP`+`G` → obusier automoteur · `CH`+`G` → hélico gunship. Fonctionnement normal de la composition, pas une exception.
-
-### Une fusion n'existe que si explicitement déclarée
-
-Une suite de lettres qui *ressemble* à un assemblage n'a **aucun sens automatique**. Un composé n'existe que s'il a été posé et journalisé — jamais par découpage visuel a posteriori. Ex. : `BMG` non déclaré n'existe pas, même s'il « se lit » `BM`+`G`. S'articule avec le workflow étape 8.
-
-### Désambiguïsation positionnelle
-
-Certains conflits se règlent **sans créer de code**, par la seule position (`T` isolé = Torpilleur · `.T` suffixe = Traçante ; même mécanique que `CAV`, `TA`, `RAD`). Détail dans `decisions.md` § 3.
-
----
-
-## Liberté des rôles et armements cross-domaine
-
-Aucune restriction de domaine sur les rôles/armements (un rôle naval peut s'appliquer à un aéronef, etc.). Seuls les **Types** sont spécifiques à leur catégorie.
-
----
-
-## Sections détaillées — renvois
+## Renvois
 
 **Tables de référence** (décoder un code : sens de chaque acronyme) :
+- `references/INDEX.md` — index généré par bassin, officiels et alternatifs (`scripts/build_index.py`)
+- `scripts/check.py` — contrôle de cohérence (`--code X` : tous les sens d'un code) ; `scripts/tables.py` — lecteur des tables, partagé avec `orbat-json`
 - `references/terrestres.md` — Véhicules terrestres & hélicoptères
 - `references/aeriens.md` — Véhicules aériens
 - `references/maritimes.md` — Navires & vaisseaux spatiaux
@@ -272,25 +155,28 @@ Aucune restriction de domaine sur les rôles/armements (un rôle naval peut s'ap
 - `references/structures.md` — Bâtiments, zones, structures
 - `references/groupements.md` — Échelons, types d'unités
 - `references/materiaux.md` — Matériaux et ressources
-- `references/grammaire.md` — **Règles génératives** (composer : fusion `CH`, `C`/`CA`, calibre, `MCA.AA`/`MCAA`)
+- `references/grammaire.md` — **Règles de composition** (séparateurs, duplication, gabarits, portée, notation numérique, fusions, `C`/`CA`, calibre)
 
 **Identification** (attribuer un code à partir d'un matériel réel) :
 - `identification/METHODE.md` — raisonnement (châssis → Type, pipeline, arbitrage « plus évident »)
 - `identification/chassis-types.md` — table châssis → Type (multi-nations)
 - `identification/personnel.md` — codage des éléments de personnel
 - `identification/lexique.json` — registre `désignation réelle ↔ code v4` (réel), à consulter en premier
-- `identification/lexique-40k.json` — registre équivalent pour univers fictifs (40K, Cosmotter) — un simple outil de recherche par contexte, pas une frontière de sens (voir § Règles cardinales n°4)
+- `identification/lexique-40k.json` — registre équivalent pour univers fictifs (40K, Cosmotter) — un simple outil de recherche par contexte, pas une frontière de sens (règle cardinale n°4)
 - `identification/entrainement.md` — protocole du mode entraînement (noms → identification notée sur 5)
 
 **Gouvernance & mémoire du système** :
-- `decisions.md` — **journal daté** : décisions établies, cas confirmés sans conflit, désambiguïsation positionnelle, collectifs, codes non résolus, chronologie. **À lire avant toute proposition.**
+- `decisions.md` — **état courant compact** des décisions. **À lire avant toute proposition.**
+- `chronologie.md` — journal daté (motifs, revirements, fichiers touchés). Consulté seulement pour l'historique d'un code, par recherche.
 - `procedures.md` — **les 8 procédures de validation** à dérouler quand Florian acte une décision.
+
+**Hors périmètre** : libellés d'unités réelles → `orbat-nommage` (fait foi pour le vocabulaire des échelons réels) ; conversion d'un ORBAT entier → `orbat-acronymize` ; structure du JSON → `orbat-json`.
 
 ---
 
 ## Extensions spatiales (introduites via le projet Cosmotter)
 
-Le projet sci-fi Cosmotter a été l'**occasion** d'introduire ces acronymes liés au spatial — il ne les **réserve** pas à ce projet ni à un univers particulier. Utilisables partout où leur description correspond, comme tout le reste du système (cf. § Règles cardinales n°4).
+Le projet sci-fi Cosmotter a été l'**occasion** d'introduire ces acronymes liés au spatial — il ne les **réserve** pas à ce projet ni à un univers particulier (règle cardinale n°4).
 
 - Acronymes : `VG` Antigrav · `TG` Char antigrav · `SC` Spacecraft · `ORB` Orbiteur · `CS` Capital ship · `SF` Chantier naval.
 - Notes de transposition doctrinale naval → spatial (pas des acronymes, des logiques) : géographie côtière et menaces en environnement 2D ne se transposent **pas** telles quelles ; logique sous-marin → vaisseau furtif et hiérarchie d'escorte **se transposent**.
@@ -301,13 +187,5 @@ Le projet sci-fi Cosmotter a été l'**occasion** d'introduire ces acronymes li�
 
 > S'appuie sur la terminologie militaire existante quand c'est naturel (LMG, SPAA, MBT, BLR…), adapte ou remplace quand un acronyme est trop long, redondant ou mal intégrable. L'usage de sigles « bruts » non adaptés (ex. MEDEVAC) est **exceptionnel et localisé**.
 
-- **Concision** : sens implicite dans l'outil/type non répété (`BLR` implique breacher — pas de `BRH.BLR`).
+- **Concision** : sens implicite dans l'outil/type non répété (`BLR` implique breacher — pas de `BRH.BLR` ; famille BRH dans `references/grammaire.md`).
 - **Non-redondance** : rôle déjà porté par le Type non réécrit.
-
-### Famille BRH (Breacher)
-
-| Acronyme | Logique |
-|---|---|
-| `BRH` | Breacher générique |
-| `BRHE / BRHP / BRHG / BRHT` | BRH + cible (Explosif / Porte / Grillage / Tôle) |
-| `BLR` / `CSL` | L'outil (bélier / cisailles) implique le rôle → `BRH` omis |
