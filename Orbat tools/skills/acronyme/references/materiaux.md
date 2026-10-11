@@ -15,11 +15,4 @@ Utilisés pour désigner des matériaux de construction, des ressources de produ
 | WD | Bois |
 | PLSQ | Plastique |
 
----
-
-## Ressources fluides
-
-| Acronyme | Signification | Notes |
-|----------|--------------|-------|
-| K | Carburant | ⚠️ Aussi utilisé comme rôle transport carburant (`K` dans certains contextes) |
-| W | Eau | ⚠️ Aussi utilisé comme rôle transport eau |
+> **Ressources fluides supprimées (2026-08-04).** Les acronymes « contenu de contenant » (`K`=Carburant, `W`=Eau, et côté `terrestres.md` : `TRF`/`TRW`, `F`/`FUEL`, `W`, `CHEM`, `CTF`/`CTW`/`CTC`) sont retirés. Préservés : `CT`/`RCT` (citerne générique), `FUEL` = Ravitailleur (aérien), et la section Matériaux solides ci-dessus.

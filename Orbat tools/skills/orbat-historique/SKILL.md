@@ -12,7 +12,7 @@ description: >
   [année] ?", "quels échelons entre compagnie et division en 1914 ?",
   "compare division allemande et soviétique en 1943", "corps d'armée
   napoléonien ?", ou toute question d'histoire militaire organisationnelle.
-  Différent du skill `orbat` (fichiers JSON orbat-mapper.app de Florian) :
+  Différent du skill `orbat-json` (fichiers JSON orbat-mapper.app de Florian) :
   ici recherche historique réelle ; les deux peuvent s'enchaîner.
 ---
 
@@ -93,11 +93,11 @@ d'armées) avec les équivalents de nom dans plusieurs langues/nations
 typiques par échelon — à ajuster systématiquement selon l'époque et la
 nation réelle traitée via la recherche web.
 
-## Lien avec le skill `orbat`
+## Lien avec le skill `orbat-json`
 
 Si Florian veut, à partir d'une organisation historique reconstituée ici,
 **créer un fichier ORBAT JSON réimportable** dans orbat-mapper.app, passer
-la main au skill `orbat` (Tâche 4 — écrire/générer un ORBAT) en lui
+la main au skill `orbat-json` (Tâche 4 — écrire/générer un ORBAT) en lui
 fournissant la structure et les échelons déterminés ici.
 
 ## Exemples de déclenchement

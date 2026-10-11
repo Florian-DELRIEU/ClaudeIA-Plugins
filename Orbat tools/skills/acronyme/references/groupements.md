@@ -6,28 +6,29 @@ Format : `{Échelon} {Type Unité}` ou `{Échelon} {Véhicule}`
 
 ## Échelons
 
-| Signification | Acronyme |
-|--------------|---------|
-| Armée | ARM |
-| Corps d'armée | CRP |
-| Division | DIV / D |
-| Brigade | BGE / B |
-| Régiment | REG / R |
-| Bataillon | BN / BT |
-| Compagnie | CIE / C |
-| Peloton | P / PLT |
-| Section / Escadron | SEC / ESC / E |
-| Groupe | GRP |
-| Détachement | DET |
-| Batterie | BTE / BAT |
-| Task Force | TF |
-| Escouade | SQ |
-| Équipe | EQP / TE |
-| Binôme | BI |
-| Groupement Tactique Interarme | GTIA |
-| Légion | LEG |
-| Croisade | CRS |
-| Horde | HRD |
+| Acronyme | Signification | ⚠️ Note |
+|---|---|---|
+| ARM | Armée | |
+| CRP | Corps d'armée | |
+| DIV / D | Division | `DIV` officiel, `D` valide (2026-08-09) |
+| BGE / B | Brigade | |
+| REG / R | Régiment | |
+| BT / BN | Bataillon | `BT` officiel, `BN` valide (2026-08-09). ⚠️ Distinct de `BAT` = Batterie |
+| CIE / C | Compagnie | |
+| PLT / P | Peloton | **Conteneur** : regroupe plusieurs éléments (escouades, équipes, sections…). Strictement **au-dessus** de `SEC` — la différence est de nature, pas d'effectif (2026-08-09) |
+| SEC / E | Section | `SEC` officiel (2026-08-09). Ligne scindée de l'ancienne entrée fourre-tout `SEC / ESC / E`. **Élément terminal** (« grosse escouade », ~15+ hommes d'un seul tenant, sans sous-éléments) — strictement **sous** `PLT`. Échelle complète : `identification/personnel.md` |
+| ESC / E | Escadron | `ESC` officiel (2026-08-09) — escadron (terrestre/maritime) / escadrille (aérien), double sens contextuel (decisions.md § 2) |
+| GRP | Groupe | |
+| DET | Détachement | Officiel = Détachement (2026-08-05) |
+| BAT / BTE | Batterie | ⚠️ Distinct de `BT` = Bataillon (2026-08-09) |
+| TF | Task Force | |
+| SQ | Escouade | ~7-15. Échelle des petits éléments : `identification/personnel.md` |
+| EQP / EQU / TE | Équipe | `EQP` officiel ; `EQU` et `TE` alternatifs. `TE` réhabilité le 2026-08-09 : un acronyme isolé se lit comme un **Type** (SKILL.md § 3), donc `TE` seul = Équipe ; en position Rôle, `TE` = Tireur élite. Effectifs : `identification/personnel.md` |
+| BI | Binôme | 2 hommes |
+| GTIA | Groupement Tactique Interarme | |
+| LEG | Légion | |
+| CRS | Croisade | |
+| HRD | Horde | |
 
 ---
 
@@ -35,15 +36,15 @@ Format : `{Échelon} {Type Unité}` ou `{Échelon} {Véhicule}`
 
 | Désignation | Type | Description |
 |------------|------|-------------|
-| -B / ARM | Blindés | Force principale = chars de combat. ⚠️ Distinct de -MEC |
-| -I | Infanterie | Infanterie à pied |
-| -M / MOT | Motorisé | Infanterie avec transport assigné |
+| ARM / -B | Blindés | Force principale = chars de combat. `ARM` officiel (2026-08-04) — `-B` collisionne avec Bâtiment/Chenillé. ⚠️ Distinct de -MEC |
+| -INF / -I | Infanterie | Infanterie à pied. **Officiel** `INF` (2026-08-04) — `I` collisionne (Industriel/Incendiaire/Intercepteur), conservé en lecture. Intercepteur (aérien) désormais `FI` |
+| MOT / -M | Motorisé | Infanterie avec transport assigné. `MOT` officiel — `-M` collisionne (Grande ville/Militaire/Poseur de mines) |
 | -MEC | Mécanisé | Infanterie transportée par VBTT/véhicules blindés. ⚠️ Distinct de -B : pas de chars comme force principale |
-| -IB | Infanterie blindée | Avec VCI (moderne) |
+| -IB | Infanterie blindée | Avec IFV |
 | -IBH | Infanterie blindée lourde | Avec VBCI |
-| -ILEG / -IL | Infanterie légère | Terrain difficile |
-| -A / Art | Artillerie | |
-| -G / Gén | Génie | |
+| -IL / -ILEG | Infanterie légère | Terrain difficile. `-IL` officiel (plus compact) |
+| ART / -A | Artillerie | `ART` officiel (par ricochet : `AGR` libère `A`, `ART` déjà officiel Artillerie) |
+| GEN / -G | Génie | `GEN` officiel (casse normalisée, était `Gén`) — `-G` collisionne (Grenade/Canon-Obusier/Gunship) |
 | PNT / GEN.P | Génie pontonnier | |
 | / GEN.F | Génie franchissement | |
 | DEF / GEN.D | Génie fortification | |
@@ -51,7 +52,7 @@ Format : `{Échelon} {Type Unité}` ou `{Échelon} {Véhicule}`
 | ML / MS / GEN.M | Génie minage | |
 | -SAN / EVASAN | Sanitaire / évacuation | |
 | -RAD / SIG | Transmission / Signal | |
-| -PAR / P | Parachutistes | |
+| -PAR | Parachutistes | `P` libéré (2026-08-04) |
 | -ABN | Aéroportée / Airborne | Hélico/avion mais sans parachute |
 | -LOG | Logistique | |
 | -CH / H | Hélicoptère | Groupement d'hélicos |
@@ -62,12 +63,12 @@ Format : `{Échelon} {Type Unité}` ou `{Échelon} {Véhicule}`
 | -SD | Infiltration | |
 | -ADM | Administratif | |
 | -MAT | Matériel | Entretien et mécaniciens |
-| -Ma | Marines | |
-| -MTN / ALP / Mo | Montagne | |
-| -SF / SOF | Forces spéciales | |
-| -T / TRANS | Transport | Logistique et ravitaillement |
+| -MA | Marines | Casse normalisée le 2026-08-03 (était `-Ma`). Coexiste avec `MA` = Soutien amphibie (Rôle naval) : bassins différents |
+| MO / -MTN / ALP | Montagne | `MO` officiel, casse normalisée (`Mo`→`MO`) |
+| SOF / -SF | Forces spéciales | `SOF` officiel — `-SF` collisionne avec Chantier naval |
+| TRANS / -T | Transport | Logistique et ravitaillement. `TRANS` officiel — `-T` collisionne (Tank/Torpilleur/Traçante) |
 | -TT | Transport troupes | |
-| -Mi | Milice | |
+| -MI | Milice | Normalisé en majuscules le 2026-07-30 (était `-Mi`, seul code du système en casse mixte — cohérence avec `SQ-MI` employé dans les ORBAT). |
 | -GUE | Partisans | Civils armés |
 | -REC / R | Reconnaissance | |
 | -MP | Police militaire | |
@@ -81,7 +82,7 @@ Format : `{Échelon} {Type Unité}` ou `{Échelon} {Véhicule}`
 | -JNGL | Jungle | |
 | -ARTQ | Arctique | |
 | -DSR | Désert | |
-| -SPT | Support | Soutien divers |
+| -SPT | Support | Soutien divers. **Officiel** du code `SPT` (2026-08-03) — l'ancien `SPT` = Assistant tireur (`infanterie.md`) a été supprimé, voir les remplaçants `AM` / `GUN` / `TEA` |
 | -URB | Urbain | |
 | ASS | Assaut | |
 | DEF | Défense | |
@@ -92,13 +93,19 @@ Format : `{Échelon} {Type Unité}` ou `{Échelon} {Véhicule}`
 
 ## Types d'unités (petites unités)
 
+> **Source unique : `references/infanterie.md`.** Ces codes appartiennent au bassin
+> des rôles d'infanterie et y sont définis en détail ; la table ci-dessous n'est
+> qu'un **rappel d'aiguillage**, pas une définition concurrente. En cas d'écart,
+> `infanterie.md` fait foi. Aligné le 2026-08-10, après constat que les deux tables
+> avaient divergé.
+
 | Acronyme | Signification | Description |
 |----------|--------------|-------------|
-| TP | Tireur précision | Fusil d'assaut + lunette |
-| TE | Tireur élite | Fusil de précision |
-| FUS | Fusilier | |
-| ASS | Assaut | |
-| INF | Infanterie | |
-| MS | Démineur | |
-| UAV | Drone | |
-| HW | Armes lourdes | Escouade soutien feu |
+| TP | Tireur précision | Arme plus adaptée (longue etc.) — voir `infanterie.md` |
+| TE | Tireur élite | Fusil de précision. ⚠️ **Position Rôle uniquement** — `TE` isolé (position Type) se lit **Équipe**, alternatif de `EQP` (2026-08-09) |
+| F / FUS | Fusilier | `F` officiel, `FUS` alternatif. Arme de base — voir `infanterie.md` (⚠️ `F / FUS` y a aussi un second sens dans le bassin Armement : `F` = Fusil, `FV`/`FA`/`FS` selon le mécanisme) |
+| ASS | Assaut | ⚠️ Absent de `infanterie.md` — ce code n'existe que dans cette table (à consolider) |
+| INF / I | Infanterie | `INF` officiel (2026-08-04), `I` alternatif — `I` collisionne avec Industriel / Incendiaire / Intercepteur. Voir `infanterie.md` |
+| MS | Démineur | Voir `infanterie.md` |
+| UAV | Drone | ⚠️ **Divergence non tranchée (2026-08-10)** : `infanterie.md` lit `UAV` comme « **Technicien drone** » (l'opérateur), cette table comme « Drone » (l'engin). Les deux lectures sont défendables selon le bassin ; à arbitrer par Florian — voir `decisions.md` § 5 |
+| HW | Armes lourdes | Décrit l'**unité** articulée autour de l'emploi d'armes lourdes, pas le servant — un servant de mortier ou de MG est `GUN`. Définition de référence : `infanterie.md` § Rôles d'infanterie (2026-08-10) |

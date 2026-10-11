@@ -59,24 +59,29 @@ Le type est déterminé par la doctrine et l'indépendance opérationnelle, pas 
 | DN | Dreadnought | Canon gros calibre exclusivement |
 | AA | Anti-aérien | |
 | E | Escort | |
-| K / HK / ASW | Anti-sous-marins | |
-| T | Torpilleur | |
-| REC / RAD / SON | Reco / Radar / Sonar | |
-| M / ML | Poseur de mines | |
-| MS | Dragueur de mines | |
+| ASW / K / HK | Anti-sous-marins | `ASW` officiel (2026-08-04, terme OTAN consacré) — `K` collisionne avec Corvette |
+| T | Torpilleur | `T` **isolé**, attaché à un Type via `-` (ex. `K-T` = corvette-torpilleur). ⚠️ Distinct de `.T` en suffixe de munition = Traçante — voir SKILL.md § Désambiguïsation positionnelle |
+| REC | Reconnaissance | ⚠️ **3 capacités distinctes, pas des notations d'un même rôle** (ancienne écriture `REC / RAD / SON` corrigée le 2026-08-02) |
+| RAD | Radar | Capacité radar. ⚠️ `RAD` a 3 sens désambiguïsés par position/contexte (voir SKILL.md § Décisions établies) |
+| SON | Sonar | Capacité sonar |
+| ML | Poseur de mines | ⚠️ Distinct de `MS` (dragueur), pas un alias — cohérent terrestres/infanterie (2026-08-02). `M` = alias court en lecture |
+| MS | Dragueur de mines | ⚠️ Distinct de `ML` (poseur) |
 | CH | Avec hélicoptère | |
 | N | Nucléaire (propulsion) | Motorisation nucléaire |
 | NK | Nucléaire (armement) | Armement nucléaire (nuke) ⚠️ Distinct de N (propulsion) |
 | GM | Missile guidé | |
-| LE / BM | Lanceur d'engins | |
+| LE | Lanceur d'engins | Générique. `BM` dissocié (2026-08-04) — voir `BM` = Missile balistique ci-dessous |
+| BM | Missile balistique | Dissocié de `LE` (2026-08-04), cohérent avec `.BM` (section Missiles, `infanterie.md`). ⚠️ Décrit « Type naval » par Florian dans le devlog — placement exact Type/Rôle à confirmer |
 | L | Leader | |
-| SA | Soutien amphibie | |
+| MA | Soutien amphibie | **Officiel** (2026-08-03) — remplace `SA`, code abandonné en Rôle naval (`SA` reste Space Plane/SSTO et Supériorité aérienne côté aérien, non affectés). Coexiste avec `-MA` = Marines (Type/groupement) : bassins différents, pas de collision |
 | AN | Anti-navire de surface | ⚠️ Redondant si armement implique déjà la fonction |
-| TRD / COM | Commerce | |
+| TRD / COM | Commerce | `TRD` officiel — `COM` réservé à Communication (aérien) |
 
 ---
 
-## Rôles sci-fi (vaisseaux)
+## Rôles vaisseaux (missions spécialisées)
+
+> Regroupement thématique, sans restriction d'usage (SKILL.md § Règles cardinales n°4) — introduit à l'occasion du projet Cosmotter, utilisable dans n'importe quel contexte.
 
 | Acronyme | Signification |
 |----------|--------------|
@@ -107,7 +112,7 @@ Le type est déterminé par la doctrine et l'indépendance opérationnelle, pas 
 |----------|------|
 | -L / -M / -H | Flotte légère / moyenne / lourde |
 | CV | Groupe porte-avion |
-| Ma | Soutien invasion |
+| MA | Soutien invasion — casse normalisée le 2026-08-03 (était `Ma`) |
 | ART | Bombardement côtier |
 | AA / REC / T / E | AA, Reco, Torpilleurs, Escorts |
 | ASW | Anti-sous-marins |

@@ -27,6 +27,24 @@ phrase ne le formule pas explicitement (cf. l'usage établi dans cette conversat
    correction éventuelle appliquée) : désignation réelle, code retenu, décomposition,
    note de contexte si le cas est instructif (ambiguïté résolue, exception...).
 
+## Notes autres que 5/5 sans explication — ne pas relancer
+
+*Règle actée le 2026-07-30.*
+
+Si Florian donne une note différente de 5/5 **sans détailler la correction**, ne pas lui
+redemander d'expliquer sur le moment : il y reviendra plus tard pour la détailler.
+Enchaîner normalement (cas suivant, ou fin de session) et **mettre la note de côté** sans
+relance.
+
+Concrètement :
+- Ne pas poser de question du type « qu'est-ce qui n'allait pas ? » / « quel était le bon
+  code ? » après une note nue.
+- Ne pas journaliser le cas dans `lexique.json` tant que la correction n'est pas connue
+  (une note ≤3 sans correction ne valide aucun code — cf. règle de journalisation au
+  point 6 : seuls les cas notés 4-5 sont journalisés).
+- Conserver le cas en attente dans la réponse de fin de session (liste courte « notes à
+  détailler plus tard »), pour que Florian puisse y revenir quand il le souhaite.
+
 ## Barème (fourni par Florian)
 
 | Note | Signification |

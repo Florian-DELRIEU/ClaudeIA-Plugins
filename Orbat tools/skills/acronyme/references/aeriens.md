@@ -24,7 +24,7 @@ Format : `{Gabarit}-({Propulsion-Vitesse}) {Rôle1}-{Rôle2}`
 | PSV | Planetary Space Vessel | SV restant dans l'influence d'une même planète |
 | SSV | Stellar Space Vessel | SV pour missions au sein d'un système solaire (production requise, habitat long terme 1–10 ans) |
 | ISV / SVI | Interstellar Space Vessel | SV destiné à sortir du système solaire (équipage permanent, gravité artificielle, cryo) |
-| U / UAV | Drone | |
+| U / UAV | Drone | `U` officiel — `UAV` collisionne avec Technicien drone (`infanterie.md`) |
 | UE | Drone embarqué | |
 | UH | Drone hydravion | |
 | UV | Drone VTOL | |
@@ -80,14 +80,14 @@ Format : `{Gabarit}-({Propulsion-Vitesse}) {Rôle1}-{Rôle2}`
 | CAS | Close Air Support | Attaque cibles au sol, soutien troupes |
 | ATT | Avion d'attaque | Appui canon / roquette |
 | DB | Bombardier en piqué | Largage de bombes |
-| CN / G | Canonière / Gunship | Canon latéraux/gros calibre (AC-130) |
+| G / CN | Canonière / Gunship | **`G` officiel** (2026-08-04). Canon latéraux/gros calibre (AC-130). `G` est commun à Gunship (aérien) et Canon/Obusier (terrestre) — pas un conflit, même concept décliné par le Type porteur (voir SKILL.md § Cas confirmés sans conflit) |
 | TB | Bombardier tactique | Frappes ciblées |
 | SB | Bombardier stratégique | Longue distance |
 | NB | Bombardier naval | Cibles maritimes |
 | SA | Supériorité aérienne | Domination aérienne |
-| F | Chasseur | Rapide et maniable |
-| HF | Chasseur lourd | Plus grand, meilleure autonomie |
-| I | Intercepteur | Abattre bombardiers rapidement |
+| FC | Chasseur | **Officiel** (2026-08-04), remplace `P` (libéré) — `F` collisionne avec Fusil/Fusilier (`infanterie.md`). `P`/`F` restent alternatifs en lecture. Rapide et maniable |
+| FH | Chasseur lourd | **Officiel** (2026-08-04), suit `FC`. Exception gabarit-suffixe documentée (`F`+`H`, `H` en suffixe). Plus grand, meilleure autonomie. `HF` conservé en lecture |
+| FI | Intercepteur | **Officiel** (2026-08-04), suit `FC`/`FH`. Abattre bombardiers rapidement. `I` reste lu Infanterie par défaut (position Type) |
 | MR | Multirôle | Chasse + bombardement léger + etc. |
 | REC | Reconnaissance | Surveillance / collecte info |
 | TR / TT | Transport / Transport troupes | |
@@ -122,14 +122,14 @@ Format : `{Gabarit}-({Propulsion-Vitesse}) {Rôle1}-{Rôle2}`
 |----------|---------|
 | SA | Supériorité aérienne |
 | CAS | Attaque au sol |
-| F | Chasseurs |
+| FC / P / F | Chasseurs |
 | RES | Réserves |
 | LOG | Train aérien |
 | W | Reconnaissance / AWACS |
 | TB | Bombardement tactique |
 | SB | Bombardement stratégique |
 | MR | Multi-rôle |
-| I | Interceptions |
+| FI | Interceptions |
 | PAR | Soutien parachutage |
 | DC / Ma | Surveillance des côtes |
 | GAE | Groupe embarqué |

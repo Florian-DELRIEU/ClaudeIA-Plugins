@@ -18,7 +18,7 @@ description: >
 
 ## Objectif
 
-Prendre un fichier ORBAT JSON (format `orbat-mapper.app`, voir skill `orbat` /
+Prendre un fichier ORBAT JSON (format `orbat-mapper.app`, voir skill `orbat-json` /
 `references/format.md`) et remplacer les **noms** des entrées des catalogues
 `equipment` (véhicules/matériel) et `personnel` (troupes) par leur code du
 système `/acronyme` V4, en propageant le changement partout où ces noms sont
@@ -26,7 +26,7 @@ référencés dans l'arbre d'unités.
 
 Ce skill ne modifie **que les catalogues et leurs références** — pas les noms
 des unités/formations (`Unit.name` / `Unit.shortName`), qui relèvent des
-conventions du skill `orbat` (`references/naming.md`), sauf demande explicite
+conventions du skill `orbat-json` (`references/naming.md`), sauf demande explicite
 de Florian en ce sens.
 
 ## Pipeline
@@ -35,20 +35,32 @@ de Florian en ce sens.
    fichier ORBAT JSON à traiter.
 
 2. **Lire les catalogues racine** `equipment` et `personnel` du fichier
-   (liste de `{name, description}` — voir skill `orbat`, `references/format.md`,
+   (liste de `{name, description}` — voir skill `orbat-json`, `references/format.md`,
    section "Enveloppe (racine)"). Ce sont les `name` de ces catalogues qu'il
    faut convertir — pas les noms d'unités.
 
 3. **Pour chaque nom de catalogue, déterminer son code v4** en suivant le
    skill `acronyme` :
-   - Consulter d'abord `acronyme/identification/lexique.json` (registre
-     désignation réelle ↔ code v4) — réutiliser un code existant si le même
-     matériel/châssis y figure déjà (cohérence inter-fichiers, règle P5 de
-     `METHODE.md`).
+   - **Déterminer d'abord si la source est du matériel réel ou un univers fictif**
+     (Warhammer 40,000, Cosmotter…). Consulter en priorité le lexique correspondant :
+     `acronyme/identification/lexique.json` pour le matériel réel, ou
+     `acronyme/identification/lexique-40k.json` pour un univers fictif — réutiliser un
+     code existant si le même matériel/châssis y figure déjà (cohérence inter-fichiers,
+     règle P5 de `METHODE.md`). **Ne jamais mélanger les deux lexiques** : certains
+     codes (ex. `VB`) portent un sens différent selon le contexte (voir
+     `chassis-types.md`, décision « VBCI vs VB — rôle combattant vs soutien »).
    - Sinon, appliquer le pipeline en 6 étapes de
      `acronyme/identification/METHODE.md` : châssis → Type
      (`identification/chassis-types.md`), rôle/armement → suffixes, gabarit,
      fusions, décisions établies (`acronyme/SKILL.md`).
+   - **Attention châssis partagé combat/soutien** : quand plusieurs variantes
+     d'entrée de catalogue partagent le même châssis (ex. plusieurs véhicules dérivés
+     d'un même transport de troupes), vérifier laquelle combat réellement aux côtés
+     d'une escouade (garde le Type de combat complet, ex. `VBCI`/`VBTT`) et lesquelles
+     sont des variantes de soutien non-combattantes (sanitaire, dépannage, génie/
+     logistique, artillerie, mortier, AA automoteur — dégradent vers `VB` générique,
+     voir `chassis-types.md`). Ne jamais appliquer le Type de combat à une variante de
+     soutien par simple réflexe de cohérence de châssis.
    - Pour le personnel, utiliser `acronyme/identification/personnel.md`
      (échelon escouade/équipe/binôme + rôle dominant).
    - Ne jamais deviner sans consulter ces fichiers — le principe du châssis
@@ -96,17 +108,29 @@ de Florian en ce sens.
    ou `--no-legend` / `--no-titles` pour désactiver l'une des deux
    annotations.
 
-6. **Journaliser les nouveaux codes résolus** dans
-   `acronyme/identification/lexique.json` (ajouter les paires
-   désignation réelle ↔ code v4 nouvellement tranchées), pour que les
+6. **Journaliser les nouveaux codes résolus** dans le lexique approprié —
+   `acronyme/identification/lexique.json` pour du matériel réel,
+   `acronyme/identification/lexique-40k.json` pour un univers fictif (ajouter les
+   paires désignation réelle ↔ code v4 nouvellement tranchées), pour que les
    prochains ORBAT réutilisent les mêmes codes (règle P5).
 
-7. **Valider le fichier résultant** avec le script du skill `orbat` :
+7. **Valider le fichier résultant** avec le script du skill `orbat-json` :
    ```
-   python3 ../orbat/scripts/validate.py <orbat.json>
+   python3 ../orbat-json/scripts/validate.py <orbat.json>
    ```
    (adapter le chemin relatif selon l'emplacement des skills installés).
    Corriger avant de considérer la tâche terminée si la validation échoue.
+
+   > 🔴 **Cette passe n'est pas optionnelle depuis le 2026-08-10.** La conversion
+   > fait converger des désignations réelles distinctes vers un même code V4
+   > (deux modèles de camion différents → `VU-LOG`, deux types d'escouade →
+   > `SQ-INF`…). Quand les deux se trouvaient dans la **même unité**, le résultat
+   > est **deux lignes du même code** au lieu d'une seule — renommer n'est pas
+   > fusionner. Les totaux restent justes (`aggregate()` somme par nom), donc
+   > l'anomalie est invisible partout ailleurs ; seul `validate.py` la détecte,
+   > depuis le correctif `orbat-json` du 2026-08-10. Fusionner les lignes
+   > convergentes en cumulant les `count`. **Ne jamais livrer une conversion sans
+   > cette passe.**
 
 8. **Résumer** à Florian : nombre d'entrées renommées, nombre de références
    propagées, nouveaux codes ajoutés au lexique, résultat de la validation.
@@ -122,6 +146,6 @@ de Florian en ce sens.
   mapping proposé.
 - Si Florian veut aussi convertir les noms d'unités/formations (`Unit.name`),
   le signaler comme hors du périmètre par défaut de ce skill et rediriger
-  vers les conventions `orbat/references/naming.md` (règle 4, table de
+  vers les conventions `orbat-json/references/naming.md` (règle 4, table de
   traduction des échelons) — c'est un renommage de nature différente
   (échelon d'organisation, pas matériel/personnel).

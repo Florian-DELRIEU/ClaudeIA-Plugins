@@ -1,0 +1,191 @@
+{
+  "_comment": "Lexique d'identification spécifique aux univers fictifs (Warhammer 40,000, Cosmotter, etc.) où le matériel n'a pas d'équivalent réel direct. Séparé du lexique.json généraliste (matériel réel) pour éviter toute confusion, notamment sur les codes réutilisés dans un sens différent selon le contexte roues/chenillé (voir chassis-types.md, décision « VBCI vs VB — rôle combattant vs soutien »). Un même code (ex. VB) peut ainsi coexister ici et dans lexique.json avec un sens distinct selon univers/contexte : toujours vérifier lequel des deux lexiques s'applique avant de réutiliser un code.",
+  "VBCI": {
+    "kind": "equipment",
+    "parts": [
+      "VBCI"
+    ],
+    "univers": "Warhammer 40,000 — Astra Militarum",
+    "note_florian": "Châssis Chimera : transport de troupes chenillé + tourelle d'appui, combat aux côtés de l'escouade. Type de combat complet, distinct du VB (variantes de soutien du même châssis).",
+    "materiel_reel": [
+      "Chimera"
+    ]
+  },
+  "VB-MOR": {
+    "kind": "equipment",
+    "parts": [
+      "VB",
+      "MOR"
+    ],
+    "univers": "Warhammer 40,000 — Astra Militarum",
+    "note_florian": "Griffon : mortier lourd automoteur sur châssis Chimera. Ne combat pas au contact -> Type dégradé VB (pas VBCI).",
+    "materiel_reel": [
+      "Griffon"
+    ]
+  },
+  "VB-AACA": {
+    "kind": "equipment",
+    "parts": [
+      "VB",
+      "AACA"
+    ],
+    "univers": "Warhammer 40,000 — Astra Militarum",
+    "note_florian": "Hydra : affût antiaérien automoteur quadruple sur châssis Chimera. AA automoteur dédié -> VB-AACA.",
+    "materiel_reel": [
+      "Hydra"
+    ]
+  },
+  "VB-MED": {
+    "kind": "equipment",
+    "parts": [
+      "VB",
+      "MED"
+    ],
+    "univers": "Warhammer 40,000 — Astra Militarum",
+    "note_florian": "Samaritan : véhicule sanitaire chenillé sur châssis Chimera. Rôle non-combattant -> VB-MED.",
+    "materiel_reel": [
+      "Samaritan"
+    ]
+  },
+  "VB-MAIN": {
+    "kind": "equipment",
+    "parts": [
+      "VB",
+      "MAIN"
+    ],
+    "univers": "Warhammer 40,000 — Astra Militarum",
+    "note_florian": "Atlas : véhicule de dépannage et de récupération sur châssis Chimera. Rôle non-combattant -> VB-MAIN.",
+    "materiel_reel": [
+      "Atlas"
+    ]
+  },
+  "VB-GEN/LOG": {
+    "kind": "equipment",
+    "parts": [
+      "VB",
+      "GEN",
+      "LOG"
+    ],
+    "univers": "Warhammer 40,000 — Astra Militarum",
+    "note_florian": "Trojan : tracteur de soutien et de ravitaillement sur châssis Chimera. Génie ET logistique coexistants (rôles simultanés, séparateur /) -> VB-GEN/LOG.",
+    "materiel_reel": [
+      "Trojan"
+    ]
+  },
+  "SPART": {
+    "kind": "equipment",
+    "parts": [
+      "SPART"
+    ],
+    "univers": "Warhammer 40,000 — Astra Militarum",
+    "note_florian": "Basilisk : obusier automoteur Earthshaker, tir indirect longue portée. Châssis distinct du Chimera, pas de Type VB/VBCI ici.",
+    "materiel_reel": [
+      "Basilisk"
+    ]
+  },
+  "V-REC": {
+    "kind": "equipment",
+    "parts": [
+      "V",
+      "REC"
+    ],
+    "univers": "Warhammer 40,000 — Astra Militarum",
+    "note_florian": "Salamander : véhicule de reconnaissance/commandement à roues légèrement blindé. Voiture blindée classique (V), pas de collision avec le VB chenillé ci-dessus.",
+    "materiel_reel": [
+      "Salamander"
+    ]
+  },
+  "MK2-REC": {
+    "kind": "equipment",
+    "parts": [
+      "MK2",
+      "REC"
+    ],
+    "univers": "Warhammer 40,000 — Astra Militarum",
+    "note_florian": "Sentinel : marcheur léger bipède de reconnaissance. Extension Type mecha (MK + nombre de pattes, cf. Cosmotter) appliquée à un marcheur non spatial.",
+    "materiel_reel": [
+      "Sentinel"
+    ]
+  },
+  "OFF": {
+    "kind": "personnel",
+    "parts": [
+      "OFF"
+    ],
+    "univers": "Warhammer 40,000 — Astra Militarum",
+    "note_florian": "Officier — code déjà standard, inchangé.",
+    "materiel_reel": [
+      "Officier"
+    ]
+  },
+  "I": {
+    "kind": "personnel",
+    "parts": [
+      "INF"
+    ],
+    "univers": "Warhammer 40,000 — Astra Militarum",
+    "note_florian": "Guardsman — hommes du rang et sous-officiers, fantassin de base. Élémentarisé en SQ-I (escouade, 10) / GRP-I (groupe, 5) via orbat-compact ; les groupes de commandement (officier + escorte) sont codés GRP-HQ, pas SQ-I/GRP-I. Migré depuis INF le 2026-07-30 (INF déprécié au profit de I).",
+    "materiel_reel": [
+      "Guardsman"
+    ]
+  },
+  "POL": {
+    "kind": "personnel",
+    "parts": [
+      "POL"
+    ],
+    "univers": "Warhammer 40,000 — Astra Militarum",
+    "note_florian": "Commissaire (Officio Prefectus) — code déjà standard (Politicien militaire), inchangé.",
+    "materiel_reel": [
+      "Commissaire"
+    ]
+  },
+  "GEN": {
+    "kind": "personnel",
+    "parts": [
+      "GEN"
+    ],
+    "univers": "Warhammer 40,000 — Astra Militarum",
+    "note_florian": "Techprêtre (Adeptus Mechanicus) — spécialiste technique, rapproché du rôle Génie faute de code dédié.",
+    "materiel_reel": [
+      "Techprêtre"
+    ]
+  },
+  "SQ-INF": {
+    "kind": "personnel",
+    "parts": [
+      "SQ",
+      "INF"
+    ],
+    "univers": "Warhammer 40,000 — Astra Militarum",
+    "note_florian": "Escouade de Guardsmen (10 hommes) — élément issu de l'élémentarisation orbat-compact, remplace l'ancien ESC-INF. Migré depuis SQ-INF le 2026-07-30 (INF déprécié au profit de I). [maj 2026-08-05 : SQ-I→SQ-INF (INF officiel, EQP officiel)]",
+    "materiel_reel": [
+      "Guardsman"
+    ]
+  },
+  "GRP-INF": {
+    "kind": "personnel",
+    "parts": [
+      "GRP",
+      "INF"
+    ],
+    "univers": "Warhammer 40,000 — Astra Militarum",
+    "note_florian": "Groupe/demi-escouade de Guardsmen (5 hommes) — élément issu de l'élémentarisation orbat-compact. Migré depuis GRP-INF le 2026-07-30 (INF déprécié au profit de I). [maj 2026-08-05 : GRP-I→GRP-INF (INF officiel, EQP officiel)]",
+    "materiel_reel": [
+      "Guardsman"
+    ]
+  },
+  "GRP-HQ": {
+    "kind": "personnel",
+    "parts": [
+      "GRP",
+      "HQ"
+    ],
+    "univers": "Warhammer 40,000 — Astra Militarum",
+    "note_florian": "Groupe de commandement : 1 officier + son escorte, effectif réduit (sous le seuil escouade). Remplace un OFF isolé + reliquat d'infanterie non élémentarisable.",
+    "materiel_reel": [
+      "Officier",
+      "Guardsman"
+    ]
+  }
+}

@@ -1,15 +1,8 @@
 {
   "name": "orbat-tools",
-  "version": "0.2.0",
-  "description": "Outils ORBAT de Florian : lecture/écriture/agrégation d'ordres de bataille (orbat-mapper.app, ODIN/JTDS), recherche historique d'organisation militaire, système de nomenclature d'acronymes V4, et conversion automatique des noms de véhicules/troupes d'un ORBAT existant en acronymes.",
+  "version": "0.21.0",
+  "description": "Outils ORBAT (Order of Battle) de Florian : nomenclature militaire /acronyme, lecture/écriture/restructuration d'ORBAT au format JSON orbat-mapper.app (orbat-json) et au format tableur xlsx ODIN/JTDS (orbat-xlsx), conversion acronymes<->noms réels (orbat-acronymize), usage du site orbat-mapper.app (orbat-app), et recherche en organisation militaire historique réelle (orbat-historique).",
   "author": {
     "name": "Florian"
-  },
-  "keywords": [
-    "orbat",
-    "military",
-    "acronym",
-    "order-of-battle",
-    "nomenclature"
-  ]
+  }
 }

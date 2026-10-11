@@ -32,7 +32,7 @@ relancé sans dupliquer légendes ou suffixes de titre déjà appliqués.
 import json
 import argparse
 
-LEGEND_MARKER = "Équipement : "
+LEGEND_MARKER = "Équipement :"
 VOWELS = "aàâeéèêiîïoôuùûhAÀÂEÉÈÊIÎÏOÔUÙÛH"
 
 
@@ -85,6 +85,20 @@ def _own_acronyms(node, reverse_map):
     return own
 
 
+def _strip_old_legend(desc):
+    """Retire un bloc de légende déjà présent (marqueur + puces qui suivent),
+    pour permettre de relancer le script sans dupliquer la légende."""
+    lines = desc.split("\n")
+    try:
+        idx = next(i for i, l in enumerate(lines) if l.strip() == LEGEND_MARKER.strip())
+    except StopIteration:
+        return desc
+    end = idx + 1
+    while end < len(lines) and lines[end].strip().startswith("* "):
+        end += 1
+    return "\n".join(lines[:idx] + lines[end:]).strip()
+
+
 def annotate_units(node, reverse_map, log):
     """Parcourt récursivement, ajoute la légende de description à chaque
     noeud nommé dont le sous-arbre contient au moins un acronyme, et
@@ -104,14 +118,11 @@ def annotate_units(node, reverse_map, log):
             combined.append(a)
 
     if combined and "name" in node:
-        legend = " · ".join(f"{a} = {reverse_map[a]}" for a in combined)
-        desc = node.get("description", "") or ""
-        if LEGEND_MARKER in desc:
-            desc = "\n".join(
-                line for line in desc.split("\n") if not line.strip().startswith(LEGEND_MARKER)
-            ).strip()
-        node["description"] = (desc + ("\n\n" if desc else "") + LEGEND_MARKER + legend).strip()
-        log.setdefault("legends", []).append((node.get("name", "?"), legend))
+        legend_lines = [f"* {a} = {reverse_map[a]}" for a in combined]
+        desc = _strip_old_legend(node.get("description", "") or "")
+        legend_block = LEGEND_MARKER + "\n" + "\n".join(legend_lines)
+        node["description"] = (desc + ("\n\n" if desc else "") + legend_block).strip()
+        log.setdefault("legends", []).append((node.get("name", "?"), legend_lines))
 
     return combined
 
